@@ -1,29 +1,29 @@
 <!DOCTYPE html>
-<html data-filename="pages/Admin" data-linenumber="160" data-visual-selector-id="pages/Admin160" lang="en">
-<head data-filename="pages/Admin" data-linenumber="161" data-visual-selector-id="pages/Admin161">
-    <meta data-filename="pages/Admin" data-linenumber="162" data-visual-selector-id="pages/Admin162" charset="UTF-8">
-    <meta data-filename="pages/Admin" data-linenumber="163" data-visual-selector-id="pages/Admin163" name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-filename="pages/Admin" data-linenumber="164" data-visual-selector-id="pages/Admin164">StreamX - Standalone</title>
-    <style data-filename="pages/Admin" data-linenumber="165" data-visual-selector-id="pages/Admin165">
+<html data-filename="pages/Admin" data-linenumber="12" data-visual-selector-id="pages/Admin12" lang="en">
+<head data-filename="pages/Admin" data-linenumber="13" data-visual-selector-id="pages/Admin13">
+    <meta data-filename="pages/Admin" data-linenumber="14" data-visual-selector-id="pages/Admin14" charset="UTF-8">
+    <meta data-filename="pages/Admin" data-linenumber="15" data-visual-selector-id="pages/Admin15" name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-filename="pages/Admin" data-linenumber="16" data-visual-selector-id="pages/Admin16">StreamX - Social Feed</title>
+    <style data-filename="pages/Admin" data-linenumber="17" data-visual-selector-id="pages/Admin17">
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f9fafb;
-            color: #374151;
-            line-height: 1.5;
+            background: #ffffff;
+            color: #000000;
+            line-height: 1.6;
+            min-height: 100vh;
         }
         
-        .container { max-width: 1280px; margin: 0 auto; padding: 0 1rem; }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 1rem; }
         
         /* Header */
         .header {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
             position: sticky;
             top: 0;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid #e5e7eb;
-            z-index: 50;
+            z-index: 100;
         }
         
         .header-content {
@@ -31,6 +31,7 @@
             align-items: center;
             justify-content: space-between;
             height: 4rem;
+            padding: 0 2rem;
         }
         
         .logo {
@@ -40,931 +41,1587 @@
         }
         
         .logo-icon {
-            width: 2.5rem;
-            height: 2.5rem;
-            background: #111827;
-            border-radius: 0.75rem;
+            width: 2rem;
+            height: 2rem;
+            background: #000000;
+            border-radius: 0.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            color: white;
+            font-weight: bold;
+            font-size: 0.875rem;
         }
         
         .logo h1 {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: bold;
-            color: #111827;
+            color: #000000;
         }
         
         .nav {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.25rem;
         }
         
         .nav-btn {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.625rem 1.25rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
+            padding: 0.5rem 1rem;
             border: none;
+            background: transparent;
+            color: #6b7280;
+            font-weight: 500;
+            border-radius: 0.5rem;
             cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            background: white;
-            color: #374151;
-        }
-        
-        .nav-btn:hover {
-            background: #f3f4f6;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.2s;
         }
         
         .nav-btn.active {
-            background: #111827;
+            background: #000000;
+            color: #ffffff;
+        }
+        
+        .nav-btn:hover:not(.active) {
+            background: #f3f4f6;
+        }
+        
+        .profile-icon {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .profile-icon:hover {
+            border-color: #000000;
+        }
+
+        .admin-btn {
+            background: #dc2626;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .admin-btn:hover {
+            background: #b91c1c;
+        }
+        
+        /* Main Content */
+        .main-content {
+            max-width: 32rem;
+            margin: 0 auto;
+            padding: 4rem 1rem;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #000000;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-header p {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+        
+        /* Search Bar */
+        .search-container {
+            margin-bottom: 2rem;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 1rem center;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #000000;
+            ring: 2px;
+        }
+        
+        /* Custom Alert/Prompt Overlay */
+        .custom-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .custom-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .custom-modal {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        
+        .custom-modal-overlay.active .custom-modal {
+            transform: scale(1);
+        }
+        
+        .custom-modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #000000;
+            margin-bottom: 0.5rem;
+        }
+        
+        .custom-modal-message {
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .custom-modal-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            transition: border-color 0.2s;
+        }
+        
+        .custom-modal-input:focus {
+            outline: none;
+            border-color: #000000;
+        }
+        
+        .custom-modal-buttons {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+        
+        .custom-modal-btn {
+            padding: 0.625rem 1.25rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+        
+        .custom-modal-btn-primary {
+            background: #000000;
             color: white;
         }
         
-        .icon-btn {
-            padding: 0.625rem;
-            border-radius: 50%;
+        .custom-modal-btn-primary:hover {
+            background: #374151;
         }
         
-        /* Main content */
-        .main { min-height: calc(100vh - 4rem); }
-        
-        .hero {
-            padding: 4rem 1rem;
-            text-align: center;
-            background: white;
+        .custom-modal-btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
         }
         
-        .hero h1 {
-            font-size: clamp(3rem, 8vw, 4rem);
-            font-weight: bold;
-            color: #111827;
+        .custom-modal-btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        .custom-modal-error {
+            color: #dc2626;
+            font-size: 0.875rem;
             margin-bottom: 1rem;
         }
         
-        .hero p {
-            font-size: 1.125rem;
-            color: #6b7280;
-            max-width: 32rem;
-            margin: 0 auto 2rem;
+        /* Paid Partner Banner */
+        .partner-banner {
+            background: #000000;
+            color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #000000;
         }
         
-        /* Grid */
-        .posts-grid {
+        .partner-title {
+            font-size: 1.125rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .partner-amount {
+            color: #fbbf24;
+            font-weight: bold;
+        }
+        
+        .partner-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1rem;
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+        
+        .partner-badge {
+            background: #374151;
+            color: #d1d5db;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 5rem 0;
+        }
+        
+        .empty-icon {
+            width: 4rem;
+            height: 4rem;
+            margin: 0 auto 1.5rem;
+            background: #f3f4f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .empty-state h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 0.5rem;
+        }
+        
+        .empty-state p {
+            color: #6b7280;
+        }
+        
+        /* Posts Feed */
+        .posts-feed {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.5rem;
-            padding: 1rem;
         }
         
         /* Post Card */
         .post-card {
-            background: white;
+            background: #ffffff;
             border: 1px solid #e5e7eb;
-            border-radius: 1rem;
+            border-radius: 0.5rem;
             overflow: hidden;
-            transition: all 0.3s ease;
         }
         
-        .post-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        .post-header {
+            display: flex;
+            align-items: center;
+            justify-between;
+            padding: 1rem;
+            padding-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .post-date-location {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .post-views {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            color: #3b82f6;
+            font-weight: 600;
+            font-size: 0.9375rem;
+        }
+        
+        .post-views-icon {
+            width: 20px;
+            height: 20px;
+            fill: #000000;
+        }
+        
+        .post-views-text {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        
+        .post-content {
+            padding: 0 1rem;
+        }
+        
+        .post-caption {
+            color: #000000;
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
         }
         
         .post-media {
+            border-radius: 0.5rem;
+            overflow: hidden;
+            cursor: pointer;
+            margin-bottom: 0.75rem;
+        }
+        
+        .post-image {
+            width: 100%;
+            max-height: 24rem;
+            object-fit: cover;
+        }
+        
+        .post-hashtags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .hashtag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        /* User Info */
+        .post-user {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-top: 1px solid #f3f4f6;
+            background: #f9fafb;
+        }
+        
+        .user-avatar {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: #000000;
+            font-size: 0.875rem;
+        }
+        
+        .user-email {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        
+        /* Lightbox */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .lightbox-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+        
+        .lightbox-image {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 0.5rem;
+        }
+        
+        .lightbox-close {
+            position: absolute;
+            top: -3rem;
+            right: 0;
+            width: 2rem;
+            height: 2rem;
+            background: transparent;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .hidden { display: none !important; }
+        
+        /* Multi-image grid */
+        .image-grid {
+            display: grid;
+            gap: 0.125rem;
+            cursor: pointer;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            margin-bottom: 0.75rem;
+        }
+        
+        .image-grid.grid-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        .image-grid.grid-multiple {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+        }
+        
+        .grid-image {
             width: 100%;
             aspect-ratio: 1;
             object-fit: cover;
         }
         
-        .post-content {
-            padding: 1.25rem;
+        .image-overlay {
+            position: relative;
         }
         
-        .post-description {
-            color: #374151;
-            margin-bottom: 0.75rem;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+        .image-count {
+            position: absolute;
+            bottom: 0.5rem;
+            right: 0.5rem;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
         }
         
-        .post-footer {
+        /* Profile Page */
+        .profile-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .profile-avatar-large {
+            width: 8rem;
+            height: 8rem;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #e5e7eb;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .profile-name {
+            font-size: 1.875rem;
+            font-weight: bold;
+            color: #000000;
+            margin-bottom: 0.5rem;
+        }
+        
+        .profile-email {
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+        
+        .profile-stats {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-top: 0.75rem;
-            border-top: 1px solid #f3f4f6;
+            justify-content: center;
+            gap: 2rem;
             font-size: 0.875rem;
             color: #6b7280;
         }
         
-        .post-stats {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .stat {
-            display: flex;
-            align-items: center;
-            gap: 0.375rem;
-        }
-        
-        /* Create Post Form */
-        .create-form {
-            max-width: 48rem;
-            margin: 3rem auto;
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 1rem;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        }
-        
-        .form-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        
-        .form-title {
-            font-size: 1.25rem;
+        .stat-value {
             font-weight: bold;
-            color: #111827;
+            font-size: 1.125rem;
+            color: #000000;
+            display: block;
         }
         
-        .form-content {
-            padding: 1.5rem;
+        /* Create Post Page */
+        .create-form {
+            max-width: 32rem;
+            margin: 0 auto;
         }
         
         .form-group {
             margin-bottom: 1.5rem;
         }
         
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #111827;
-        }
-        
-        .form-input, .form-textarea {
+        .form-input,
+        .form-textarea {
             width: 100%;
             padding: 0.75rem;
             border: 1px solid #d1d5db;
             border-radius: 0.5rem;
             font-size: 1rem;
+            font-family: inherit;
         }
         
         .form-textarea {
+            min-height: 6rem;
             resize: vertical;
-            min-height: 7rem;
         }
         
-        .upload-zone {
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #000000;
+        }
+        
+        .file-upload-area {
             border: 2px dashed #d1d5db;
-            border-radius: 0.75rem;
+            border-radius: 0.5rem;
             padding: 2rem;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
         }
         
-        .upload-zone:hover {
-            border-color: #111827;
+        .file-upload-area:hover {
+            border-color: #000000;
             background: #f9fafb;
         }
         
-        .tabs {
-            display: flex;
-            background: #f3f4f6;
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
             border-radius: 0.5rem;
-            padding: 0.25rem;
-            margin-bottom: 1rem;
-        }
-        
-        .tab {
-            flex: 1;
-            padding: 0.5rem 1rem;
-            border: none;
-            background: transparent;
-            border-radius: 0.25rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        
-        .tab.active {
-            background: white;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-        
-        .submit-btn {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            background: #111827;
-            color: white;
-            border: none;
-            border-radius: 0.75rem;
-            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: #000000;
+            color: #ffffff;
+        }
+        
+        .btn-primary:hover {
+            background: #374151;
+        }
+        
+        .btn-block {
+            width: 100%;
+        }
+        
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 0.5rem;
+            margin-bottom: 1rem;
         }
         
-        .submit-btn:hover {
-            background: #1f2937;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-        
-        .submit-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        /* Modal */
-        .modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-        }
-        
-        .modal-content {
-            background: white;
-            border-radius: 1rem;
-            padding: 2rem;
-            max-width: 28rem;
-            width: 90%;
-            text-align: center;
-        }
-        
-        .admin-modal-content {
-            background: #111827;
-            color: white;
-            max-width: 50rem;
-            text-align: left;
-        }
-        
-        .success-icon {
-            width: 4rem;
-            height: 4rem;
-            background: #dcfce7;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
+        .preview-image {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 0.5rem;
         }
         
         /* Admin Panel */
-        .admin-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #374151;
-        }
-        
-        .admin-posts {
-            display: grid;
-            gap: 1rem;
-            max-height: 60vh;
-            overflow-y: auto;
-        }
-        
-        .admin-post {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            background: #1f2937;
-            padding: 1rem;
-            border-radius: 0.75rem;
-            border: 1px solid #374151;
-        }
-        
-        .admin-post-thumb {
-            width: 4rem;
-            height: 4rem;
-            object-fit: cover;
+        .admin-panel {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
             border-radius: 0.5rem;
-            flex-shrink: 0;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
         }
         
-        .admin-post-info {
-            flex: 1;
-            min-width: 0;
-        }
-        
-        .admin-post-desc {
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .admin-post-meta {
-            font-size: 0.875rem;
-            color: #9ca3af;
+        .admin-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
         }
         
         .admin-actions {
             display: flex;
             gap: 0.5rem;
-            flex-shrink: 0;
+            flex-wrap: wrap;
         }
         
-        .admin-btn {
-            padding: 0.5rem;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .admin-btn.views {
-            background: #1d4ed8;
+        .btn-delete {
+            background: #ef4444;
             color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.875rem;
         }
         
-        .admin-btn.views:hover {
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+        
+        .btn-views {
+            background: #3b82f6;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+        
+        .btn-views:hover {
             background: #2563eb;
         }
-        
-        .admin-btn.delete {
-            background: #dc2626;
+
+        .btn-custom-views {
+            background: #10b981;
             color: white;
-        }
-        
-        .admin-btn.delete:hover {
-            background: #ef4444;
-        }
-        
-        .close-btn {
-            background: #374151;
-            color: white;
+            padding: 0.5rem 1rem;
             border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
+            border-radius: 0.375rem;
             cursor: pointer;
-            font-weight: 500;
-            margin-top: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-custom-views:hover {
+            background: #059669;
         }
         
-        .close-btn:hover {
-            background: #4b5563;
+        .admin-post-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
         }
         
-        .hidden { display: none; }
+        .admin-post-thumbnail {
+            width: 4rem;
+            height: 4rem;
+            object-fit: cover;
+            border-radius: 0.375rem;
+        }
         
-        /* Responsive */
-        @media (max-width: 640px) {
-            .nav-btn span { display: none; }
-            .posts-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
-            .hero { padding: 2rem 1rem; }
-            .admin-post { flex-direction: column; align-items: flex-start; }
-            .admin-actions { align-self: stretch; justify-content: flex-end; }
+        .admin-post-info {
+            flex: 1;
+        }
+        
+        .admin-post-caption {
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 0.25rem;
+        }
+        
+        .admin-post-stats {
+            font-size: 0.875rem;
+            color: #6b7280;
         }
     </style>
 </head>
-<body data-filename="pages/Admin" data-linenumber="611" data-visual-selector-id="pages/Admin611">
-    <!-- Header -->
-    <header data-filename="pages/Admin" data-linenumber="613" data-visual-selector-id="pages/Admin613" class="header">
-        <div data-filename="pages/Admin" data-linenumber="614" data-visual-selector-id="pages/Admin614" class="container">
-            <div data-filename="pages/Admin" data-linenumber="615" data-visual-selector-id="pages/Admin615" class="header-content">
-                <div data-filename="pages/Admin" data-linenumber="616" data-visual-selector-id="pages/Admin616" class="logo">
-                    <div data-filename="pages/Admin" data-linenumber="617" data-visual-selector-id="pages/Admin617" class="logo-icon">
-                        <svg data-filename="pages/Admin" data-linenumber="618" data-visual-selector-id="pages/Admin618" width="24" height="24" fill="white" viewBox="0 0 24 24">
-                            <path data-filename="pages/Admin" data-linenumber="619" data-visual-selector-id="pages/Admin619" d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-                        </svg>
-                    </div>
-                    <h1 data-filename="pages/Admin" data-linenumber="622" data-visual-selector-id="pages/Admin622">StreamX</h1>
+<body data-filename="pages/Admin" data-linenumber="777" data-visual-selector-id="pages/Admin777">
+    <div data-filename="pages/Admin" data-linenumber="778" data-visual-selector-id="pages/Admin778" id="app">
+        <!-- Header -->
+        <header data-filename="pages/Admin" data-linenumber="780" data-visual-selector-id="pages/Admin780" class="header">
+            <div data-filename="pages/Admin" data-linenumber="781" data-visual-selector-id="pages/Admin781" class="header-content">
+                <div data-filename="pages/Admin" data-linenumber="782" data-visual-selector-id="pages/Admin782" class="logo">
+                    <div data-filename="pages/Admin" data-linenumber="783" data-visual-selector-id="pages/Admin783" class="logo-icon">S</div>
+                    <h1 data-filename="pages/Admin" data-linenumber="784" data-visual-selector-id="pages/Admin784">StreamX</h1>
                 </div>
                 
-                <nav data-filename="pages/Admin" data-linenumber="625" data-visual-selector-id="pages/Admin625" class="nav">
-                    <button data-filename="pages/Admin" data-linenumber="626" data-visual-selector-id="pages/Admin626" class="nav-btn active" id="feedBtn">
-                        <svg data-filename="pages/Admin" data-linenumber="627" data-visual-selector-id="pages/Admin627" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                            <path data-filename="pages/Admin" data-linenumber="628" data-visual-selector-id="pages/Admin628" d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                            <polyline data-filename="pages/Admin" data-linenumber="629" data-visual-selector-id="pages/Admin629" points="9,22 9,12 15,12 15,22"/>
-                        </svg>
-                        <span data-filename="pages/Admin" data-linenumber="631" data-visual-selector-id="pages/Admin631">Feed</span>
-                    </button>
-                    <button data-filename="pages/Admin" data-linenumber="633" data-visual-selector-id="pages/Admin633" class="nav-btn" id="createBtn">
-                        <svg data-filename="pages/Admin" data-linenumber="634" data-visual-selector-id="pages/Admin634" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                            <circle data-filename="pages/Admin" data-linenumber="635" data-visual-selector-id="pages/Admin635" cx="12" cy="12" r="10"/>
-                            <line data-filename="pages/Admin" data-linenumber="636" data-visual-selector-id="pages/Admin636" x1="12" y1="8" x2="12" y2="16"/>
-                            <line data-filename="pages/Admin" data-linenumber="637" data-visual-selector-id="pages/Admin637" x1="8" y1="12" x2="16" y2="12"/>
-                        </svg>
-                        <span data-filename="pages/Admin" data-linenumber="639" data-visual-selector-id="pages/Admin639">Create</span>
-                    </button>
-                    <button data-filename="pages/Admin" data-linenumber="641" data-visual-selector-id="pages/Admin641" class="nav-btn icon-btn" id="adminBtn">
-                        <svg data-filename="pages/Admin" data-linenumber="642" data-visual-selector-id="pages/Admin642" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                            <path data-filename="pages/Admin" data-linenumber="643" data-visual-selector-id="pages/Admin643" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                        </svg>
-                    </button>
+                <nav data-filename="pages/Admin" data-linenumber="787" data-visual-selector-id="pages/Admin787" class="nav">
+                    <button data-filename="pages/Admin" data-linenumber="788" data-visual-selector-id="pages/Admin788" class="nav-btn" data-page="feed">Feed</button>
+                    <span data-filename="pages/Admin" data-linenumber="789" data-visual-selector-id="pages/Admin789" style="color: #9ca3af; margin: 0 0.5rem;">+</span>
+                    <button data-filename="pages/Admin" data-linenumber="790" data-visual-selector-id="pages/Admin790" class="nav-btn" data-page="create">Create</button>
+                    <img data-filename="pages/Admin" data-linenumber="791" data-visual-selector-id="pages/Admin791" id="headerProfileIcon" class="profile-icon" src="" alt="Profile" style="display:none;">
+                    <button data-filename="pages/Admin" data-linenumber="792" data-visual-selector-id="pages/Admin792" class="admin-btn" onclick="promptAdminPassword()">Admin</button>
                 </nav>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <!-- Main Content -->
-    <main data-filename="pages/Admin" data-linenumber="652" data-visual-selector-id="pages/Admin652" class="main">
         <!-- Feed Page -->
-        <div data-filename="pages/Admin" data-linenumber="654" data-visual-selector-id="pages/Admin654" id="feedPage">
-            <section data-filename="pages/Admin" data-linenumber="655" data-visual-selector-id="pages/Admin655" class="hero">
-                <h1 data-filename="pages/Admin" data-linenumber="656" data-visual-selector-id="pages/Admin656">Feed</h1>
-                <p data-filename="pages/Admin" data-linenumber="657" data-visual-selector-id="pages/Admin657">Explore content from the community.</p>
-            </section>
+        <div data-filename="pages/Admin" data-linenumber="798" data-visual-selector-id="pages/Admin798" id="feedPage" class="main-content">
+            <div data-filename="pages/Admin" data-linenumber="799" data-visual-selector-id="pages/Admin799" class="page-header">
+                <h1 data-filename="pages/Admin" data-linenumber="800" data-visual-selector-id="pages/Admin800">Feed</h1>
+                <p data-filename="pages/Admin" data-linenumber="801" data-visual-selector-id="pages/Admin801">Explore content from the community.</p>
+            </div>
             
-            <section data-filename="pages/Admin" data-linenumber="660" data-visual-selector-id="pages/Admin660">
-                <div data-filename="pages/Admin" data-linenumber="661" data-visual-selector-id="pages/Admin661" class="container">
-                    <div data-filename="pages/Admin" data-linenumber="662" data-visual-selector-id="pages/Admin662" id="postsGrid" class="posts-grid">
-                        <!-- Posts will be loaded here -->
-                    </div>
+            <div data-filename="pages/Admin" data-linenumber="804" data-visual-selector-id="pages/Admin804" class="search-container">
+                <input data-filename="pages/Admin" data-linenumber="805" data-visual-selector-id="pages/Admin805" type="text" id="searchInput" class="search-input" placeholder="Search posts by caption, hashtag, or location...">
+            </div>
+            
+            <div data-filename="pages/Admin" data-linenumber="808" data-visual-selector-id="pages/Admin808" class="partner-banner">
+                <div data-filename="pages/Admin" data-linenumber="809" data-visual-selector-id="pages/Admin809" class="partner-title">
+                    <svg data-filename="pages/Admin" data-linenumber="810" data-visual-selector-id="pages/Admin810" width="20" height="20" fill="#fbbf24" viewBox="0 0 24 24"><path data-filename='pages/Admin' data-linenumber='810' data-visual-selector-id='pages/Admin810' d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    Become a StreamX Partner!
                 </div>
-            </section>
+                <p data-filename="pages/Admin" data-linenumber="813" data-visual-selector-id="pages/Admin813">Get <span data-filename="pages/Admin" data-linenumber="813" data-visual-selector-id="pages/Admin813" class="partner-amount">R15 000 monthly</span> for being a top creator. Reach 300 posts in a year to qualify.</p>
+                <div data-filename="pages/Admin" data-linenumber="814" data-visual-selector-id="pages/Admin814" class="partner-footer">
+                    <span data-filename="pages/Admin" data-linenumber="815" data-visual-selector-id="pages/Admin815">
+                        <svg data-filename="pages/Admin" data-linenumber="816" data-visual-selector-id="pages/Admin816" width="16" height="16" fill="currentColor" viewBox="0 0 24 24" style="display:inline;vertical-align:middle;margin-right:0.25rem;"><circle data-filename='pages/Admin' data-linenumber='816' data-visual-selector-id='pages/Admin816' cx="12" cy="12" r="10"/><path data-filename='pages/Admin' data-linenumber='816' data-visual-selector-id='pages/Admin816' d="M12 16v-4M12 8h.01"/></svg>
+                        Future updates will track signed-in users for eligibility.
+                    </span>
+                    <span data-filename="pages/Admin" data-linenumber="819" data-visual-selector-id="pages/Admin819" class="partner-badge">Unavailable for now</span>
+                </div>
+            </div>
+
+            <div data-filename="pages/Admin" data-linenumber="823" data-visual-selector-id="pages/Admin823" id="postsFeed" class="posts-feed"></div>
         </div>
 
-        <!-- Create Post Page -->
-        <div data-filename="pages/Admin" data-linenumber="670" data-visual-selector-id="pages/Admin670" id="createPage" class="hidden">
-            <div data-filename="pages/Admin" data-linenumber="671" data-visual-selector-id="pages/Admin671" class="container">
-                <section data-filename="pages/Admin" data-linenumber="672" data-visual-selector-id="pages/Admin672" class="hero">
-                    <h1 data-filename="pages/Admin" data-linenumber="673" data-visual-selector-id="pages/Admin673">Create a new post</h1>
-                    <p data-filename="pages/Admin" data-linenumber="674" data-visual-selector-id="pages/Admin674">Share your content with the community.</p>
-                </section>
+        <!-- Create Page -->
+        <div data-filename="pages/Admin" data-linenumber="827" data-visual-selector-id="pages/Admin827" id="createPage" class="main-content hidden">
+            <div data-filename="pages/Admin" data-linenumber="828" data-visual-selector-id="pages/Admin828" class="page-header">
+                <h1 data-filename="pages/Admin" data-linenumber="829" data-visual-selector-id="pages/Admin829">Create</h1>
+                <p data-filename="pages/Admin" data-linenumber="830" data-visual-selector-id="pages/Admin830">Share your moment with the community.</p>
+            </div>
+            
+            <div data-filename="pages/Admin" data-linenumber="833" data-visual-selector-id="pages/Admin833" class="create-form">
+                <div data-filename="pages/Admin" data-linenumber="834" data-visual-selector-id="pages/Admin834" class="form-group">
+                    <textarea data-filename="pages/Admin" data-linenumber="835" data-visual-selector-id="pages/Admin835" id="createCaption" class="form-textarea" placeholder="What's on your mind?" rows="4"></textarea>
+                </div>
                 
-                <div data-filename="pages/Admin" data-linenumber="677" data-visual-selector-id="pages/Admin677" class="create-form">
-                    <div data-filename="pages/Admin" data-linenumber="678" data-visual-selector-id="pages/Admin678" class="form-header">
-                        <h2 data-filename="pages/Admin" data-linenumber="679" data-visual-selector-id="pages/Admin679" class="form-title">Post Details</h2>
+                <div data-filename="pages/Admin" data-linenumber="838" data-visual-selector-id="pages/Admin838" class="form-group">
+                    <input data-filename="pages/Admin" data-linenumber="839" data-visual-selector-id="pages/Admin839" type="text" id="createLocation" class="form-input" placeholder="📍 Location">
+                </div>
+                
+                <div data-filename="pages/Admin" data-linenumber="842" data-visual-selector-id="pages/Admin842" class="form-group">
+                    <input data-filename="pages/Admin" data-linenumber="843" data-visual-selector-id="pages/Admin843" type="text" id="createHashtag" class="form-input" placeholder="# Add hashtag">
+                </div>
+                
+                <div data-filename="pages/Admin" data-linenumber="846" data-visual-selector-id="pages/Admin846" id="hashtagsList" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1rem;"></div>
+                
+                <div data-filename="pages/Admin" data-linenumber="848" data-visual-selector-id="pages/Admin848" id="previewContainer" class="preview-grid hidden"></div>
+                
+                <div data-filename="pages/Admin" data-linenumber="850" data-visual-selector-id="pages/Admin850" class="file-upload-area" id="fileUploadArea">
+                    <input data-filename="pages/Admin" data-linenumber="851" data-visual-selector-id="pages/Admin851" type="file" id="fileInput" accept="image/*,video/*" multiple style="display:none;">
+                    <svg data-filename="pages/Admin" data-linenumber="852" data-visual-selector-id="pages/Admin852" width="32" height="32" fill="#9ca3af" viewBox="0 0 24 24" style="margin:0 auto 0.5rem;display:block;"><path data-filename='pages/Admin' data-linenumber='852' data-visual-selector-id='pages/Admin852' d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline data-filename='pages/Admin' data-linenumber='852' data-visual-selector-id='pages/Admin852' points="17 8 12 3 7 8"/><line data-filename='pages/Admin' data-linenumber='852' data-visual-selector-id='pages/Admin852' x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <p data-filename="pages/Admin" data-linenumber="853" data-visual-selector-id="pages/Admin853" style="color:#6b7280;">Click to upload photos or videos</p>
+                </div>
+                
+                <button data-filename="pages/Admin" data-linenumber="856" data-visual-selector-id="pages/Admin856" class="btn btn-primary btn-block" id="createPostBtn">Share Post</button>
+            </div>
+        </div>
+
+        <!-- Profile Page -->
+        <div data-filename="pages/Admin" data-linenumber="861" data-visual-selector-id="pages/Admin861" id="profilePage" class="main-content hidden">
+            <div data-filename="pages/Admin" data-linenumber="862" data-visual-selector-id="pages/Admin862" class="profile-header">
+                <img data-filename="pages/Admin" data-linenumber="863" data-visual-selector-id="pages/Admin863" id="profileAvatar" class="profile-avatar-large" src="" alt="Profile">
+                <h1 data-filename="pages/Admin" data-linenumber="864" data-visual-selector-id="pages/Admin864" class="profile-name" id="profileName">User</h1>
+                <p data-filename="pages/Admin" data-linenumber="865" data-visual-selector-id="pages/Admin865" class="profile-email" id="profileEmail">user@example.com</p>
+                
+                <div data-filename="pages/Admin" data-linenumber="867" data-visual-selector-id="pages/Admin867" class="profile-stats">
+                    <div data-filename="pages/Admin" data-linenumber="868" data-visual-selector-id="pages/Admin868">
+                        <span data-filename="pages/Admin" data-linenumber="869" data-visual-selector-id="pages/Admin869" class="stat-value" id="profilePostCount">0</span>
+                        <span data-filename="pages/Admin" data-linenumber="870" data-visual-selector-id="pages/Admin870">Posts</span>
                     </div>
-                    <div data-filename="pages/Admin" data-linenumber="681" data-visual-selector-id="pages/Admin681" class="form-content">
-                        <form data-filename="pages/Admin" data-linenumber="682" data-visual-selector-id="pages/Admin682" id="createForm">
-                            <div data-filename="pages/Admin" data-linenumber="683" data-visual-selector-id="pages/Admin683" class="tabs">
-                                <button data-filename="pages/Admin" data-linenumber="684" data-visual-selector-id="pages/Admin684" type="button" class="tab active" id="uploadTab">
-                                    <svg data-filename="pages/Admin" data-linenumber="685" data-visual-selector-id="pages/Admin685" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                        <path data-filename="pages/Admin" data-linenumber="686" data-visual-selector-id="pages/Admin686" d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                        <polyline data-filename="pages/Admin" data-linenumber="687" data-visual-selector-id="pages/Admin687" points="7,10 12,15 17,10"/>
-                                        <line data-filename="pages/Admin" data-linenumber="688" data-visual-selector-id="pages/Admin688" x1="12" y1="15" x2="12" y2="3"/>
-                                    </svg>
-                                    Upload File
-                                </button>
-                                <button data-filename="pages/Admin" data-linenumber="692" data-visual-selector-id="pages/Admin692" type="button" class="tab" id="urlTab">
-                                    <svg data-filename="pages/Admin" data-linenumber="693" data-visual-selector-id="pages/Admin693" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                        <path data-filename="pages/Admin" data-linenumber="694" data-visual-selector-id="pages/Admin694" d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-                                        <path data-filename="pages/Admin" data-linenumber="695" data-visual-selector-id="pages/Admin695" d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-                                    </svg>
-                                    From URL
-                                </button>
-                            </div>
-                            
-                            <div data-filename="pages/Admin" data-linenumber="701" data-visual-selector-id="pages/Admin701" id="uploadSection" class="form-group">
-                                <label data-filename="pages/Admin" data-linenumber="702" data-visual-selector-id="pages/Admin702" class="form-label">Image or Video File *</label>
-                                <div data-filename="pages/Admin" data-linenumber="703" data-visual-selector-id="pages/Admin703" class="upload-zone" id="uploadZone">
-                                    <input data-filename="pages/Admin" data-linenumber="704" data-visual-selector-id="pages/Admin704" type="file" id="fileInput" accept="image/*,video/*" style="display: none;">
-                                    <div data-filename="pages/Admin" data-linenumber="705" data-visual-selector-id="pages/Admin705">
-                                        <svg data-filename="pages/Admin" data-linenumber="706" data-visual-selector-id="pages/Admin706" width="32" height="32" fill="currentColor" viewBox="0 0 24 24" style="margin: 0 auto 0.5rem;">
-                                            <path data-filename="pages/Admin" data-linenumber="707" data-visual-selector-id="pages/Admin707" d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                            <polyline data-filename="pages/Admin" data-linenumber="708" data-visual-selector-id="pages/Admin708" points="7,10 12,15 17,10"/>
-                                            <line data-filename="pages/Admin" data-linenumber="709" data-visual-selector-id="pages/Admin709" x1="12" y1="15" x2="12" y2="3"/>
-                                        </svg>
-                                        <div data-filename="pages/Admin" data-linenumber="711" data-visual-selector-id="pages/Admin711" style="font-weight: 500;">Click to upload</div>
-                                        <div data-filename="pages/Admin" data-linenumber="712" data-visual-selector-id="pages/Admin712" style="font-size: 0.875rem; color: #6b7280;">Image or Video</div>
-                                    </div>
-                                </div>
-                                <div data-filename="pages/Admin" data-linenumber="715" data-visual-selector-id="pages/Admin715" id="preview" class="hidden" style="position: relative; margin-top: 1rem;">
-                                    <img data-filename="pages/Admin" data-linenumber="716" data-visual-selector-id="pages/Admin716" id="previewImg" style="width: 100%; border-radius: 0.75rem; border: 1px solid #e5e7eb;">
-                                    <button data-filename="pages/Admin" data-linenumber="717" data-visual-selector-id="pages/Admin717" type="button" id="removeBtn" style="position: absolute; top: 0.5rem; right: 0.5rem; background: #ef4444; color: white; border: none; border-radius: 50%; width: 2rem; height: 2rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                                        <svg data-filename="pages/Admin" data-linenumber="718" data-visual-selector-id="pages/Admin718" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
-                                            <line data-filename="pages/Admin" data-linenumber="719" data-visual-selector-id="pages/Admin719" x1="18" y1="6" x2="6" y2="18"/>
-                                            <line data-filename="pages/Admin" data-linenumber="720" data-visual-selector-id="pages/Admin720" x1="6" y1="6" x2="18" y2="18"/>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div data-filename="pages/Admin" data-linenumber="726" data-visual-selector-id="pages/Admin726" id="urlSection" class="form-group hidden">
-                                <label data-filename="pages/Admin" data-linenumber="727" data-visual-selector-id="pages/Admin727" for="urlInput" class="form-label">Image/Video URL *</label>
-                                <input data-filename="pages/Admin" data-linenumber="728" data-visual-selector-id="pages/Admin728" type="url" id="urlInput" class="form-input" placeholder="https://example.com/image.png">
-                            </div>
-                            
-                            <div data-filename="pages/Admin" data-linenumber="731" data-visual-selector-id="pages/Admin731" class="form-group">
-                                <label data-filename="pages/Admin" data-linenumber="732" data-visual-selector-id="pages/Admin732" for="description" class="form-label">Description</label>
-                                <textarea data-filename="pages/Admin" data-linenumber="733" data-visual-selector-id="pages/Admin733" id="description" class="form-textarea" placeholder="Add a caption..."></textarea>
-                            </div>
-                            
-                            <button data-filename="pages/Admin" data-linenumber="736" data-visual-selector-id="pages/Admin736" type="submit" class="submit-btn" id="submitBtn">
-                                <svg data-filename="pages/Admin" data-linenumber="737" data-visual-selector-id="pages/Admin737" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                                    <line data-filename="pages/Admin" data-linenumber="738" data-visual-selector-id="pages/Admin738" x1="22" y1="2" x2="11" y2="13"/>
-                                    <polygon data-filename="pages/Admin" data-linenumber="739" data-visual-selector-id="pages/Admin739" points="22,2 15,22 11,13 2,9 22,2"/>
-                                </svg>
-                                Publish Post
-                            </button>
-                        </form>
+                    <div data-filename="pages/Admin" data-linenumber="872" data-visual-selector-id="pages/Admin872">
+                        <span data-filename="pages/Admin" data-linenumber="873" data-visual-selector-id="pages/Admin873" class="stat-value" id="profileViewCount">0</span>
+                        <span data-filename="pages/Admin" data-linenumber="874" data-visual-selector-id="pages/Admin874">Total Views</span>
                     </div>
                 </div>
             </div>
-        </div>
-    </main>
-
-    <!-- Success Modal -->
-    <div data-filename="pages/Admin" data-linenumber="751" data-visual-selector-id="pages/Admin751" id="successModal" class="modal hidden">
-        <div data-filename="pages/Admin" data-linenumber="752" data-visual-selector-id="pages/Admin752" class="modal-content">
-            <div data-filename="pages/Admin" data-linenumber="753" data-visual-selector-id="pages/Admin753" class="success-icon">
-                <svg data-filename="pages/Admin" data-linenumber="754" data-visual-selector-id="pages/Admin754" width="32" height="32" fill="#22c55e" viewBox="0 0 24 24">
-                    <polyline data-filename="pages/Admin" data-linenumber="755" data-visual-selector-id="pages/Admin755" points="20,6 9,17 4,12"/>
-                </svg>
+            
+            <div data-filename="pages/Admin" data-linenumber="879" data-visual-selector-id="pages/Admin879" class="form-group">
+                <label data-filename="pages/Admin" data-linenumber="880" data-visual-selector-id="pages/Admin880" style="display:block;margin-bottom:0.5rem;font-weight:600;">Upload Profile Picture</label>
+                <input data-filename="pages/Admin" data-linenumber="881" data-visual-selector-id="pages/Admin881" type="file" id="profilePictureFile" accept="image/*" class="form-input">
             </div>
-            <h2 data-filename="pages/Admin" data-linenumber="758" data-visual-selector-id="pages/Admin758" style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">Post Created!</h2>
-            <p data-filename="pages/Admin" data-linenumber="759" data-visual-selector-id="pages/Admin759" style="color: #6b7280;">Your content is now live on the feed.</p>
+            <button data-filename="pages/Admin" data-linenumber="883" data-visual-selector-id="pages/Admin883" class="btn btn-primary btn-block" id="saveProfileBtn">Save Profile Picture</button>
+            
+            <h2 data-filename="pages/Admin" data-linenumber="885" data-visual-selector-id="pages/Admin885" style="margin:2rem 0 1rem;font-size:1.5rem;font-weight:bold;">My Posts</h2>
+            <div data-filename="pages/Admin" data-linenumber="886" data-visual-selector-id="pages/Admin886" id="profilePosts" class="posts-feed"></div>
         </div>
-    </div>
 
-    <!-- Admin Modal -->
-    <div data-filename="pages/Admin" data-linenumber="764" data-visual-selector-id="pages/Admin764" id="adminModal" class="modal hidden">
-        <div data-filename="pages/Admin" data-linenumber="765" data-visual-selector-id="pages/Admin765" class="modal-content admin-modal-content">
-            <div data-filename="pages/Admin" data-linenumber="766" data-visual-selector-id="pages/Admin766" class="admin-header">
-                <svg data-filename="pages/Admin" data-linenumber="767" data-visual-selector-id="pages/Admin767" width="32" height="32" fill="#22c55e" viewBox="0 0 24 24">
-                    <path data-filename="pages/Admin" data-linenumber="768" data-visual-selector-id="pages/Admin768" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                </svg>
-                <div data-filename="pages/Admin" data-linenumber="770" data-visual-selector-id="pages/Admin770">
-                    <h2 data-filename="pages/Admin" data-linenumber="771" data-visual-selector-id="pages/Admin771" style="font-size: 1.5rem; font-weight: bold;">Admin Panel</h2>
-                    <p data-filename="pages/Admin" data-linenumber="772" data-visual-selector-id="pages/Admin772" style="color: #9ca3af;">Manage posts and analytics</p>
+        <!-- Admin Panel -->
+        <div data-filename="pages/Admin" data-linenumber="890" data-visual-selector-id="pages/Admin890" id="adminPanel" class="main-content hidden">
+            <div data-filename="pages/Admin" data-linenumber="891" data-visual-selector-id="pages/Admin891" class="admin-panel">
+                <h2 data-filename="pages/Admin" data-linenumber="892" data-visual-selector-id="pages/Admin892" class="admin-title">Admin Panel</h2>
+                <p data-filename="pages/Admin" data-linenumber="893" data-visual-selector-id="pages/Admin893" style="color:#6b7280;margin-bottom:1rem;">Manage posts and views</p>
+                <div data-filename="pages/Admin" data-linenumber="894" data-visual-selector-id="pages/Admin894" id="adminPostsList"></div>
+            </div>
+        </div>
+
+        <!-- Lightbox -->
+        <div data-filename="pages/Admin" data-linenumber="899" data-visual-selector-id="pages/Admin899" id="lightbox" class="lightbox">
+            <div data-filename="pages/Admin" data-linenumber="900" data-visual-selector-id="pages/Admin900" class="lightbox-content">
+                <button data-filename="pages/Admin" data-linenumber="901" data-visual-selector-id="pages/Admin901" class="lightbox-close" id="lightboxClose">×</button>
+                <img data-filename="pages/Admin" data-linenumber="902" data-visual-selector-id="pages/Admin902" id="lightboxImage" class="lightbox-image" src="" alt="">
+            </div>
+        </div>
+        
+        <!-- Custom Modal -->
+        <div data-filename="pages/Admin" data-linenumber="907" data-visual-selector-id="pages/Admin907" id="customModal" class="custom-modal-overlay">
+            <div data-filename="pages/Admin" data-linenumber="908" data-visual-selector-id="pages/Admin908" class="custom-modal">
+                <h2 data-filename="pages/Admin" data-linenumber="909" data-visual-selector-id="pages/Admin909" class="custom-modal-title" id="modalTitle">Enter Password</h2>
+                <p data-filename="pages/Admin" data-linenumber="910" data-visual-selector-id="pages/Admin910" class="custom-modal-message" id="modalMessage">Please enter the admin password to continue.</p>
+                <div data-filename="pages/Admin" data-linenumber="911" data-visual-selector-id="pages/Admin911" id="modalError" class="custom-modal-error hidden"></div>
+                <input data-filename="pages/Admin" data-linenumber="912" data-visual-selector-id="pages/Admin912" type="password" id="modalInput" class="custom-modal-input" placeholder="Password">
+                <div data-filename="pages/Admin" data-linenumber="913" data-visual-selector-id="pages/Admin913" class="custom-modal-buttons">
+                    <button data-filename="pages/Admin" data-linenumber="914" data-visual-selector-id="pages/Admin914" class="custom-modal-btn custom-modal-btn-secondary" id="modalCancel">Cancel</button>
+                    <button data-filename="pages/Admin" data-linenumber="915" data-visual-selector-id="pages/Admin915" class="custom-modal-btn custom-modal-btn-primary" id="modalConfirm">Submit</button>
                 </div>
             </div>
-            
-            <div data-filename="pages/Admin" data-linenumber="776" data-visual-selector-id="pages/Admin776" id="adminPosts" class="admin-posts">
-                <!-- Admin posts will be loaded here -->
-            </div>
-            
-            <button data-filename="pages/Admin" data-linenumber="780" data-visual-selector-id="pages/Admin780" class="close-btn" id="closeAdminBtn">Close Admin Panel</button>
         </div>
     </div>
 
-    <!-- Admin Password Modal -->
-    <div data-filename="pages/Admin" data-linenumber="785" data-visual-selector-id="pages/Admin785" id="passwordModal" class="modal hidden">
-        <div data-filename="pages/Admin" data-linenumber="786" data-visual-selector-id="pages/Admin786" class="modal-content">
-            <h2 data-filename="pages/Admin" data-linenumber="787" data-visual-selector-id="pages/Admin787" style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">Admin Access</h2>
-            <p data-filename="pages/Admin" data-linenumber="788" data-visual-selector-id="pages/Admin788" style="color: #6b7280; margin-bottom: 1.5rem;">Enter password to access admin panel</p>
-            <form data-filename="pages/Admin" data-linenumber="789" data-visual-selector-id="pages/Admin789" id="passwordForm">
-                <input data-filename="pages/Admin" data-linenumber="790" data-visual-selector-id="pages/Admin790" type="password" id="passwordInput" class="form-input" placeholder="Password" style="margin-bottom: 1rem;">
-                <button data-filename="pages/Admin" data-linenumber="791" data-visual-selector-id="pages/Admin791" type="submit" class="submit-btn">
-                    <svg data-filename="pages/Admin" data-linenumber="792" data-visual-selector-id="pages/Admin792" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                        <path data-filename="pages/Admin" data-linenumber="793" data-visual-selector-id="pages/Admin793" d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-                        <polyline data-filename="pages/Admin" data-linenumber="794" data-visual-selector-id="pages/Admin794" points="10,17 15,12 10,7"/>
-                        <line data-filename="pages/Admin" data-linenumber="795" data-visual-selector-id="pages/Admin795" x1="15" y1="12" x2="3" y2="12"/>
-                    </svg>
-                    Unlock
-                </button>
-            </form>
-            <p data-filename="pages/Admin" data-linenumber="800" data-visual-selector-id="pages/Admin800" id="passwordError" class="hidden" style="color: #ef4444; margin-top: 0.5rem; font-size: 0.875rem;">Incorrect password</p>
-        </div>
-    </div>
 
-    <script data-filename="pages/Admin" data-linenumber="804" data-visual-selector-id="pages/Admin804">
-        // Data storage
-        let posts = JSON.parse(localStorage.getItem('streamx-posts') || '[]');
+
+
+
+<!-- Firebase App (core SDK) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
+<!-- Firebase Database -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+
+<script>
+
+
+  // Your Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyBQ7GlECxqXbL4bXFWY08mFeVJuPpBhTIU",
+    authDomain: "vstreamxpromax.firebaseapp.com",
+    databaseURL: "https://vstreamxpromax-default-rtdb.firebaseio.com", // add this
+    projectId: "vstreamxpromax",
+    storageBucket: "vstreamxpromax.firebasestorage.app",
+    messagingSenderId: "537113780677",
+    appId: "1:537113780677:web:e8e499c95caf044e91abac",
+    measurementId: "G-3YLEXBPH1T"
+  };
+
+
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  // Get database reference
+  const database = firebase.database();
+
+  // Example test write
+  database.ref("test").set({ message: "Hello from HTML!" });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Storage keys
+        const STORAGE_KEYS = {
+            posts: 'streamx-posts',
+            users: 'streamx-users',
+            currentUser: 'streamx-current-user',
+            nextId: 'streamx-next-id',
+            adminAuth: 'streamx-admin-auth'
+        };
+        
+        const ADMIN_PASSWORD = 'VNAXXTTM';
+        
+        // Current state
+        let posts = JSON.parse(localStorage.getItem(STORAGE_KEYS.posts) || '[]');
+        let users = JSON.parse(localStorage.getItem(STORAGE_KEYS.users) || '{}');
+        let currentUser = JSON.parse(localStorage.getItem(STORAGE_KEYS.currentUser) || 'null');
+        let nextId = parseInt(localStorage.getItem(STORAGE_KEYS.nextId) || '1');
         let currentPage = 'feed';
-        let activeTab = 'upload';
+        let uploadedFiles = [];
+        let currentHashtags = [];
+        
+        // Custom modal functions
+        function showCustomModal(title, message, isPassword = false) {
+            return new Promise((resolve, reject) => {
+                const modal = document.getElementById('customModal');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalMessage = document.getElementById('modalMessage');
+                const modalInput = document.getElementById('modalInput');
+                const modalError = document.getElementById('modalError');
+                const modalCancel = document.getElementById('modalCancel');
+                const modalConfirm = document.getElementById('modalConfirm');
+                
+                modalTitle.textContent = title;
+                modalMessage.textContent = message;
+                modalInput.value = '';
+                modalInput.type = isPassword ? 'password' : 'text';
+                modalError.classList.add('hidden');
+                
+                modal.classList.add('active');
+                modalInput.focus();
+                
+                const handleConfirm = () => {
+                    const value = modalInput.value;
+                    if (!value && isPassword) {
+                        modalError.textContent = 'Please enter a value';
+                        modalError.classList.remove('hidden');
+                        return;
+                    }
+                    cleanup();
+                    resolve(value);
+                };
+                
+                const handleCancel = () => {
+                    cleanup();
+                    reject(null);
+                };
+                
+                const handleEnter = (e) => {
+                    if (e.key === 'Enter') {
+                        handleConfirm();
+                    }
+                };
+                
+                const cleanup = () => {
+                    modal.classList.remove('active');
+                    modalConfirm.removeEventListener('click', handleConfirm);
+                    modalCancel.removeEventListener('click', handleCancel);
+                    modalInput.removeEventListener('keypress', handleEnter);
+                };
+                
+                modalConfirm.addEventListener('click', handleConfirm);
+                modalCancel.addEventListener('click', handleCancel);
+                modalInput.addEventListener('keypress', handleEnter);
+            });
+        }
+        
+        async function customPrompt(message, isPassword = false) {
+            try {
+                return await showCustomModal(isPassword ? 'Admin Access' : 'Input Required', message, isPassword);
+            } catch {
+                return null;
+            }
+        }
+        
+        async function customConfirm(message) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('customModal');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalMessage = document.getElementById('modalMessage');
+                const modalInput = document.getElementById('modalInput');
+                const modalError = document.getElementById('modalError');
+                const modalCancel = document.getElementById('modalCancel');
+                const modalConfirm = document.getElementById('modalConfirm');
+                
+                modalTitle.textContent = 'Confirm Action';
+                modalMessage.textContent = message;
+                modalInput.style.display = 'none';
+                modalError.classList.add('hidden');
+                
+                modal.classList.add('active');
+                
+                const handleConfirm = () => {
+                    cleanup();
+                    resolve(true);
+                };
+                
+                const handleCancel = () => {
+                    cleanup();
+                    resolve(false);
+                };
+                
+                const cleanup = () => {
+                    modal.classList.remove('active');
+                    modalInput.style.display = 'block';
+                    modalConfirm.removeEventListener('click', handleConfirm);
+                    modalCancel.removeEventListener('click', handleCancel);
+                };
+                
+                modalConfirm.addEventListener('click', handleConfirm);
+                modalCancel.addEventListener('click', handleCancel);
+            });
+        }
         
         // Initialize with sample data if empty
         if (posts.length === 0) {
+            const sampleUser = {
+                email: 'demo@streamx.com',
+                full_name: 'Demo User',
+                profile_picture: 'https://ui-avatars.com/api/?name=Demo+User&size=128&background=000000&color=ffffff'
+            };
+            users['demo@streamx.com'] = sampleUser;
+            
             posts = [
                 {
-                    id: 1,
-                    description: "Clean, simple, and white. A fresh start.",
-                    content_url: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=800",
+                    id: nextId++,
+                    caption: "Beautiful sunset today! 🌅 Nothing beats the golden hour.",
+                    content_urls: ["https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800"],
                     content_type: "image",
-                    view_count: 10,
-                    created_date: new Date().toISOString()
+                    hashtags: ["sunset", "photography", "nature"],
+                    location: "Malibu Beach",
+                    views_count: Math.floor(Math.random() * (50000 - 20000 + 1)) + 20000,
+                    created_date: new Date().toISOString(),
+                    created_by: 'demo@streamx.com'
                 },
                 {
-                    id: 2,
-                    description: "Minimalist vibes only.",
-                    content_url: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800",
+                    id: nextId++,
+                    caption: "Just finished my morning workout! 💪 Starting the week strong.",
+                    content_urls: ["https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800"],
                     content_type: "image",
-                    view_count: 25,
-                    created_date: new Date(Date.now() - 86400000).toISOString()
+                    hashtags: ["fitness", "workout", "motivation"],
+                    location: "Downtown Gym",
+                    views_count: Math.floor(Math.random() * (50000 - 20000 + 1)) + 20000,
+                    created_date: new Date(Date.now() - 3600000).toISOString(),
+                    created_by: 'demo@streamx.com'
                 }
             ];
             savePosts();
+            saveUsers();
+            saveNextId();
+        }
+        
+        // Initialize current user if not set
+        if (!currentUser) {
+            customPrompt("Enter your email to continue:", false).then(userEmail => {
+                if (!userEmail) userEmail = `user${Date.now()}@streamx.com`;
+                customPrompt("Enter your name:", false).then(userName => {
+                    if (!userName) userName = "StreamX User";
+                    currentUser = {
+                        email: userEmail,
+                        full_name: userName,
+                        profile_picture: `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&size=128&background=000000&color=ffffff`
+                    };
+                    users[currentUser.email] = currentUser;
+                    saveCurrentUser();
+                    saveUsers();
+                    updateHeaderProfileIcon();
+                });
+            });
         }
         
         // DOM elements
-        const feedBtn = document.getElementById('feedBtn');
-        const createBtn = document.getElementById('createBtn');
-        const adminBtn = document.getElementById('adminBtn');
         const feedPage = document.getElementById('feedPage');
         const createPage = document.getElementById('createPage');
-        const postsGrid = document.getElementById('postsGrid');
-        const uploadTab = document.getElementById('uploadTab');
-        const urlTab = document.getElementById('urlTab');
-        const uploadSection = document.getElementById('uploadSection');
-        const urlSection = document.getElementById('urlSection');
-        const fileInput = document.getElementById('fileInput');
-        const uploadZone = document.getElementById('uploadZone');
-        const preview = document.getElementById('preview');
-        const previewImg = document.getElementById('previewImg');
-        const removeBtn = document.getElementById('removeBtn');
-        const createForm = document.getElementById('createForm');
-        const successModal = document.getElementById('successModal');
-        const adminModal = document.getElementById('adminModal');
-        const passwordModal = document.getElementById('passwordModal');
-        const passwordForm = document.getElementById('passwordForm');
-        const passwordInput = document.getElementById('passwordInput');
-        const passwordError = document.getElementById('passwordError');
-        const closeAdminBtn = document.getElementById('closeAdminBtn');
-        const adminPosts = document.getElementById('adminPosts');
+        const profilePage = document.getElementById('profilePage');
+        const adminPanel = document.getElementById('adminPanel');
+        const postsFeed = document.getElementById('postsFeed');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImage = document.getElementById('lightboxImage');
+        const lightboxClose = document.getElementById('lightboxClose');
+        const searchInput = document.getElementById('searchInput');
+        const headerProfileIcon = document.getElementById('headerProfileIcon');
         
-        // Navigation
-        feedBtn.addEventListener('click', () => showPage('feed'));
-        createBtn.addEventListener('click', () => showPage('create'));
-        adminBtn.addEventListener('click', () => passwordModal.classList.remove('hidden'));
-        
-        function showPage(page) {
-            currentPage = page;
-            
-            // Update nav buttons
-            feedBtn.classList.toggle('active', page === 'feed');
-            createBtn.classList.toggle('active', page === 'create');
-            
-            // Show/hide pages
-            feedPage.classList.toggle('hidden', page !== 'feed');
-            createPage.classList.toggle('hidden', page !== 'create');
-            
-            if (page === 'feed') {
-                renderPosts();
+        // Set header profile icon
+        function updateHeaderProfileIcon() {
+            if (currentUser && currentUser.profile_picture) {
+                headerProfileIcon.src = currentUser.profile_picture;
+                headerProfileIcon.style.display = 'block';
+                headerProfileIcon.onclick = () => navigateTo('profile');
             }
         }
+        updateHeaderProfileIcon();
         
-        // Admin access
-        passwordForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (passwordInput.value === 'VNAXXTTM') {
-                passwordModal.classList.add('hidden');
-                adminModal.classList.remove('hidden');
-                passwordInput.value = '';
-                passwordError.classList.add('hidden');
-                renderAdminPosts();
-            } else {
-                passwordError.classList.remove('hidden');
-            }
-        });
-        
-        closeAdminBtn.addEventListener('click', () => {
-            adminModal.classList.add('hidden');
-        });
-        
-        // Close modals on background click
-        [successModal, adminModal, passwordModal].forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.add('hidden');
-                }
+        // Navigation
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const page = btn.getAttribute('data-page');
+                navigateTo(page);
             });
         });
         
-        // Tabs
-        uploadTab.addEventListener('click', () => switchTab('upload'));
-        urlTab.addEventListener('click', () => switchTab('url'));
-        
-        function switchTab(tab) {
-            activeTab = tab;
-            uploadTab.classList.toggle('active', tab === 'upload');
-            urlTab.classList.toggle('active', tab === 'url');
-            uploadSection.classList.toggle('hidden', tab !== 'upload');
-            urlSection.classList.toggle('hidden', tab !== 'url');
-        }
-        
-        // File upload
-        uploadZone.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', handleFileSelect);
-        removeBtn.addEventListener('click', removeFile);
-        
-        function handleFileSelect(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    previewImg.src = e.target.result;
-                    preview.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-        
-        function removeFile() {
-            fileInput.value = '';
-            preview.classList.add('hidden');
-        }
-        
-        // Form submission
-        createForm.addEventListener('submit', handleSubmit);
-        
-        function handleSubmit(e) {
-            e.preventDefault();
+        function navigateTo(page) {
+            currentPage = page;
             
-            const description = document.getElementById('description').value;
-            let contentUrl = '';
-            let contentType = 'image';
+            // Hide all pages
+            feedPage.classList.add('hidden');
+            createPage.classList.add('hidden');
+            profilePage.classList.add('hidden');
+            adminPanel.classList.add('hidden');
             
-            if (activeTab === 'upload') {
-                if (!fileInput.files[0]) {
-                    alert('Please upload a file.');
-                    return;
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-page') === page) {
+                    btn.classList.add('active');
                 }
-                contentUrl = previewImg.src;
-                contentType = fileInput.files[0].type.startsWith('video/') ? 'video' : 'image';
-            } else {
-                const urlInput = document.getElementById('urlInput');
-                if (!urlInput.value.trim()) {
-                    alert('Please enter a URL.');
-                    return;
-                }
-                contentUrl = urlInput.value;
-                contentType = detectContentType(contentUrl);
+            });
+            
+            // Show selected page
+            if (page === 'feed') {
+                feedPage.classList.remove('hidden');
+                renderPosts();
+            } else if (page === 'create') {
+                createPage.classList.remove('hidden');
+            } else if (page === 'profile') {
+                profilePage.classList.remove('hidden');
+                renderProfile();
+            } else if (page === 'admin') {
+                adminPanel.classList.remove('hidden');
+                renderAdminPanel();
             }
-            
-            // Create new post
-            const newPost = {
-                id: Date.now(),
-                description,
-                content_url: contentUrl,
-                content_type: contentType,
-                view_count: 0,
-                created_date: new Date().toISOString()
-            };
-            
-            posts.unshift(newPost);
-            savePosts();
-            
-            // Show success modal
-            successModal.classList.remove('hidden');
-            setTimeout(() => {
-                successModal.classList.add('hidden');
-                showPage('feed');
-                createForm.reset();
-                removeFile();
-                switchTab('upload');
-            }, 1500);
         }
         
-        function detectContentType(url) {
-            const videoExtensions = ['.mp4', '.mov', '.avi', '.mkv', '.webm'];
-            const urlLower = url.toLowerCase();
-            if (videoExtensions.some(ext => urlLower.includes(ext)) || 
-                urlLower.includes('youtube.com') || 
-                urlLower.includes('vimeo.com')) {
-                return 'video';
+        // Password protection for admin
+        window.promptAdminPassword = async function() {
+            const savedAuth = sessionStorage.getItem(STORAGE_KEYS.adminAuth);
+            if (savedAuth === ADMIN_PASSWORD) {
+                navigateTo('admin');
+                return;
             }
-            return 'image';
-        }
+            
+            const password = await customPrompt('Enter admin password to access the panel:', true);
+            if (password === ADMIN_PASSWORD) {
+                sessionStorage.setItem(STORAGE_KEYS.adminAuth, ADMIN_PASSWORD);
+                navigateTo('admin');
+            } else if (password !== null) {
+                const modalError = document.getElementById('modalError');
+                modalError.textContent = 'Incorrect password. Access denied.';
+                modalError.classList.remove('hidden');
+            }
+        };
+
+        // Search functionality
+        searchInput.addEventListener('input', (e) => {
+            renderPosts(e.target.value);
+        });
         
-        // Posts rendering
-        function renderPosts() {
-            postsGrid.innerHTML = posts.map(post => createPostHTML(post)).join('');
+        // Post rendering
+        function renderPosts(searchQuery = '') {
+            let filtered = posts;
+            
+            if (searchQuery) {
+                const query = searchQuery.toLowerCase();
+                filtered = posts.filter(post => {
+                    return (post.caption && post.caption.toLowerCase().includes(query)) ||
+                           (post.location && post.location.toLowerCase().includes(query)) ||
+                           (post.hashtags && post.hashtags.some(tag => tag.toLowerCase().includes(query)));
+                });
+            }
+            
+            if (filtered.length === 0) {
+                postsFeed.innerHTML = `
+                    <div data-filename="pages/Admin" data-linenumber="1202" data-visual-selector-id="pages/Admin1202" class="empty-state">
+                        <div data-filename="pages/Admin" data-linenumber="1203" data-visual-selector-id="pages/Admin1203" class="empty-icon">
+                            <svg data-filename="pages/Admin" data-linenumber="1204" data-visual-selector-id="pages/Admin1204" width="32" height="32" fill="#9ca3af" viewBox="0 0 24 24">
+                                <circle data-filename="pages/Admin" data-linenumber="1205" data-visual-selector-id="pages/Admin1205" cx="11" cy="11" r="8"/>
+                                <path data-filename="pages/Admin" data-linenumber="1206" data-visual-selector-id="pages/Admin1206" d="m21 21-4.35-4.35"/>
+                            </svg>
+                        </div>
+                        <h2 data-filename="pages/Admin" data-linenumber="1209" data-visual-selector-id="pages/Admin1209">No posts found</h2>
+                        <p data-filename="pages/Admin" data-linenumber="1210" data-visual-selector-id="pages/Admin1210">${searchQuery ? 'Try a different search term.' : 'Be the first to create a post!'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort by date
+            filtered.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+            
+            postsFeed.innerHTML = filtered.map(post => createPostHTML(post)).join('');
         }
         
         function createPostHTML(post) {
-            const mediaHTML = post.content_type === 'video' 
-                ? `<video data-filename="pages/Admin" data-linenumber="1010" data-visual-selector-id="pages/Admin1010" class="post-media" controls><source data-filename='pages/Admin' data-linenumber='1010' data-visual-selector-id='pages/Admin1010' src="${post.content_url}" type="video/mp4"></video>`
-                : `<img data-filename="pages/Admin" data-linenumber="1011" data-visual-selector-id="pages/Admin1011" class="post-media" src="${post.content_url}" alt="${post.description || 'StreamX Post'}" loading="lazy">`;
-                
-            const date = new Date(post.created_date).toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric', 
-                year: 'numeric' 
-            });
+            const urls = post.content_urls || [];
+            const postUser = users[post.created_by] || { 
+                full_name: 'Unknown User', 
+                email: post.created_by,
+                profile_picture: `https://ui-avatars.com/api/?name=Unknown&size=32&background=6b7280&color=ffffff`
+            };
+            
+            let imageHTML = '';
+            if (urls.length > 0) {
+                if (urls.length === 1) {
+                    imageHTML = `
+                        <div data-filename="pages/Admin" data-linenumber="1234" data-visual-selector-id="pages/Admin1234" class="post-media" onclick="openLightbox('${urls[0]}')">
+                            <img data-filename="pages/Admin" data-linenumber="1235" data-visual-selector-id="pages/Admin1235" class="post-image" src="${urls[0]}" alt="Post content" loading="lazy">
+                        </div>
+                    `;
+                } else if (urls.length === 2) {
+                    imageHTML = `
+                        <div data-filename="pages/Admin" data-linenumber="1240" data-visual-selector-id="pages/Admin1240" class="image-grid grid-2">
+                            ${urls.slice(0, 2).map((url, index) => `
+                                <img data-filename="pages/Admin" data-linenumber="1242" data-visual-selector-id="pages/Admin1242" class="grid-image" src="${url}" alt="Post content ${index + 1}" onclick="openLightbox('${url}')" loading="lazy">
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    imageHTML = `
+                        <div data-filename="pages/Admin" data-linenumber="1248" data-visual-selector-id="pages/Admin1248" class="image-grid grid-multiple">
+                            ${urls.slice(0, 4).map((url, index) => `
+                                <div data-filename="pages/Admin" data-linenumber="1250" data-visual-selector-id="pages/Admin1250" class="image-overlay">
+                                    <img data-filename="pages/Admin" data-linenumber="1251" data-visual-selector-id="pages/Admin1251" class="grid-image" src="${url}" alt="Post content ${index + 1}" onclick="openLightbox('${url}')" loading="lazy">
+                                    ${index === 3 && urls.length > 4 ? `<div data-filename="pages/Admin" data-linenumber="1252" data-visual-selector-id="pages/Admin1252" class="image-count">+${urls.length - 4}</div>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+            }
+            
+            const hashtagsHTML = post.hashtags && post.hashtags.length > 0 ? 
+                `<div data-filename="pages/Admin" data-linenumber="1261" data-visual-selector-id="pages/Admin1261" class="post-hashtags">${post.hashtags.map(tag => `<span data-filename='pages/Admin' data-linenumber='1261' data-visual-selector-id='pages/Admin1261' class="hashtag"><svg data-filename='pages/Admin' data-linenumber='1261' data-visual-selector-id='pages/Admin1261' width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><line data-filename='pages/Admin' data-linenumber='1261' data-visual-selector-id='pages/Admin1261' x1="4" y1="9" x2="20" y2="9" stroke="currentColor" stroke-width="2"/><line data-filename='pages/Admin' data-linenumber='1261' data-visual-selector-id='pages/Admin1261' x1="4" y1="15" x2="20" y2="15" stroke="currentColor" stroke-width="2"/><line data-filename='pages/Admin' data-linenumber='1261' data-visual-selector-id='pages/Admin1261' x1="10" y1="3" x2="8" y2="21" stroke="currentColor" stroke-width="2"/><line data-filename='pages/Admin' data-linenumber='1261' data-visual-selector-id='pages/Admin1261' x1="16" y1="3" x2="14" y2="21" stroke="currentColor" stroke-width="2"/></svg>${tag}</span>`).join('')}</div>` : '';
             
             return `
-                <div data-filename="pages/Admin" data-linenumber="1020" data-visual-selector-id="pages/Admin1020" class="post-card" onclick="incrementView(${post.id})">
-                    ${mediaHTML}
-                    <div data-filename="pages/Admin" data-linenumber="1022" data-visual-selector-id="pages/Admin1022" class="post-content">
-                        ${post.description ? `<p data-filename="pages/Admin" data-linenumber="1023" data-visual-selector-id="pages/Admin1023" class="post-description">${post.description}</p>` : ''}
-                        <div data-filename="pages/Admin" data-linenumber="1024" data-visual-selector-id="pages/Admin1024" class="post-footer">
-                            <div data-filename="pages/Admin" data-linenumber="1025" data-visual-selector-id="pages/Admin1025" class="post-stats">
-                                <div data-filename="pages/Admin" data-linenumber="1026" data-visual-selector-id="pages/Admin1026" class="stat">
-                                    <svg data-filename="pages/Admin" data-linenumber="1027" data-visual-selector-id="pages/Admin1027" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                        <path data-filename="pages/Admin" data-linenumber="1028" data-visual-selector-id="pages/Admin1028" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                        <circle data-filename="pages/Admin" data-linenumber="1029" data-visual-selector-id="pages/Admin1029" cx="12" cy="12" r="3"/>
-                                    </svg>
-                                    ${post.view_count || 0}
-                                </div>
-                                <div data-filename="pages/Admin" data-linenumber="1033" data-visual-selector-id="pages/Admin1033" class="stat">
-                                    <svg data-filename="pages/Admin" data-linenumber="1034" data-visual-selector-id="pages/Admin1034" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                        <rect data-filename="pages/Admin" data-linenumber="1035" data-visual-selector-id="pages/Admin1035" x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                                        <line data-filename="pages/Admin" data-linenumber="1036" data-visual-selector-id="pages/Admin1036" x1="16" y1="2" x2="16" y2="6"/>
-                                        <line data-filename="pages/Admin" data-linenumber="1037" data-visual-selector-id="pages/Admin1037" x1="8" y1="2" x2="8" y2="6"/>
-                                        <line data-filename="pages/Admin" data-linenumber="1038" data-visual-selector-id="pages/Admin1038" x1="3" y1="10" x2="21" y2="10"/>
-                                    </svg>
-                                    ${date}
-                                </div>
-                            </div>
+                <div data-filename="pages/Admin" data-linenumber="1264" data-visual-selector-id="pages/Admin1264" class="post-card">
+                    <div data-filename="pages/Admin" data-linenumber="1265" data-visual-selector-id="pages/Admin1265" class="post-header">
+                        <div data-filename="pages/Admin" data-linenumber="1266" data-visual-selector-id="pages/Admin1266" class="post-date-location">
+                            ${new Date(post.created_date).toLocaleDateString()}
+                            ${post.location ? `• <svg data-filename="pages/Admin" data-linenumber="1268" data-visual-selector-id="pages/Admin1268" width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path data-filename='pages/Admin' data-linenumber='1268' data-visual-selector-id='pages/Admin1268' d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle data-filename='pages/Admin' data-linenumber='1268' data-visual-selector-id='pages/Admin1268' cx="12" cy="10" r="3"/></svg> ${post.location}` : ''}
+                        </div>
+                        <div data-filename="pages/Admin" data-linenumber="1270" data-visual-selector-id="pages/Admin1270" class="post-views">
+                            <svg data-filename="pages/Admin" data-linenumber="1271" data-visual-selector-id="pages/Admin1271" class="post-views-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path data-filename="pages/Admin" data-linenumber="1272" data-visual-selector-id="pages/Admin1272" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle data-filename="pages/Admin" data-linenumber="1273" data-visual-selector-id="pages/Admin1273" cx="12" cy="12" r="3"/>
+                            </svg>
+                            <span data-filename="pages/Admin" data-linenumber="1275" data-visual-selector-id="pages/Admin1275" class="post-views-text">${(post.views_count || 0).toLocaleString()} views</span>
+                        </div>
+                    </div>
+                    <div data-filename="pages/Admin" data-linenumber="1278" data-visual-selector-id="pages/Admin1278" class="post-content">
+                        ${post.caption ? `<p data-filename="pages/Admin" data-linenumber="1279" data-visual-selector-id="pages/Admin1279" class="post-caption">${post.caption}</p>` : ''}
+                        ${imageHTML}
+                        ${hashtagsHTML}
+                    </div>
+                    <div data-filename="pages/Admin" data-linenumber="1283" data-visual-selector-id="pages/Admin1283" class="post-user">
+                        <img data-filename="pages/Admin" data-linenumber="1284" data-visual-selector-id="pages/Admin1284" class="user-avatar" src="${postUser.profile_picture}" alt="${postUser.full_name}">
+                        <div data-filename="pages/Admin" data-linenumber="1285" data-visual-selector-id="pages/Admin1285" class="user-info">
+                            <div data-filename="pages/Admin" data-linenumber="1286" data-visual-selector-id="pages/Admin1286" class="user-name">${postUser.full_name}</div>
+                            <div data-filename="pages/Admin" data-linenumber="1287" data-visual-selector-id="pages/Admin1287" class="user-email">${postUser.email}</div>
                         </div>
                     </div>
                 </div>
             `;
         }
         
-        // Admin posts rendering
-        function renderAdminPosts() {
-            adminPosts.innerHTML = posts.map(post => createAdminPostHTML(post)).join('');
-        }
+        // Create Post
+        const fileInput = document.getElementById('fileInput');
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const previewContainer = document.getElementById('previewContainer');
+        const createPostBtn = document.getElementById('createPostBtn');
+        const createCaption = document.getElementById('createCaption');
+        const createLocation = document.getElementById('createLocation');
+        const createHashtag = document.getElementById('createHashtag');
+        const hashtagsList = document.getElementById('hashtagsList');
         
-        function createAdminPostHTML(post) {
-            const date = new Date(post.created_date).toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric' 
-            });
+        fileUploadArea.addEventListener('click', () => fileInput.click());
+        
+        fileInput.addEventListener('change', (e) => {
+            uploadedFiles = Array.from(e.target.files);
+            renderPreviews();
+        });
+        
+        function renderPreviews() {
+            if (uploadedFiles.length === 0) {
+                previewContainer.classList.add('hidden');
+                return;
+            }
             
-            return `
-                <div data-filename="pages/Admin" data-linenumber="1061" data-visual-selector-id="pages/Admin1061" class="admin-post">
-                    <img data-filename="pages/Admin" data-linenumber="1062" data-visual-selector-id="pages/Admin1062" src="${post.content_url}" alt="Post thumbnail" class="admin-post-thumb">
-                    <div data-filename="pages/Admin" data-linenumber="1063" data-visual-selector-id="pages/Admin1063" class="admin-post-info">
-                        <div data-filename="pages/Admin" data-linenumber="1064" data-visual-selector-id="pages/Admin1064" class="admin-post-desc">${post.description || 'No description'}</div>
-                        <div data-filename="pages/Admin" data-linenumber="1065" data-visual-selector-id="pages/Admin1065" class="admin-post-meta">${post.view_count || 0} views • ${date}</div>
-                    </div>
-                    <div data-filename="pages/Admin" data-linenumber="1067" data-visual-selector-id="pages/Admin1067" class="admin-actions">
-                        <button data-filename="pages/Admin" data-linenumber="1068" data-visual-selector-id="pages/Admin1068" class="admin-btn views" onclick="increaseViews(${post.id})" title="Add 10 views">
-                            <svg data-filename="pages/Admin" data-linenumber="1069" data-visual-selector-id="pages/Admin1069" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                <path data-filename="pages/Admin" data-linenumber="1070" data-visual-selector-id="pages/Admin1070" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                <circle data-filename="pages/Admin" data-linenumber="1071" data-visual-selector-id="pages/Admin1071" cx="12" cy="12" r="3"/>
-                            </svg>
-                        </button>
-                        <button data-filename="pages/Admin" data-linenumber="1074" data-visual-selector-id="pages/Admin1074" class="admin-btn delete" onclick="deletePost(${post.id})" title="Delete post">
-                            <svg data-filename="pages/Admin" data-linenumber="1075" data-visual-selector-id="pages/Admin1075" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                <polyline data-filename="pages/Admin" data-linenumber="1076" data-visual-selector-id="pages/Admin1076" points="3,6 5,6 21,6"/>
-                                <path data-filename="pages/Admin" data-linenumber="1077" data-visual-selector-id="pages/Admin1077" d="m19,6v14a2,2 0,0,1-2,2H7a2,2 0,0,1-2-2V6m3,0V4a2,2 0,0,1,2-2h4a2,2 0,0,1,2,2v2"/>
-                                <line data-filename="pages/Admin" data-linenumber="1078" data-visual-selector-id="pages/Admin1078" x1="10" y1="11" x2="10" y2="17"/>
-                                <line data-filename="pages/Admin" data-linenumber="1079" data-visual-selector-id="pages/Admin1079" x1="14" y1="11" x2="14" y2="17"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            `;
+            previewContainer.classList.remove('hidden');
+            previewContainer.innerHTML = uploadedFiles.map((file, index) => {
+                const url = URL.createObjectURL(file);
+                return `<img data-filename="pages/Admin" data-linenumber="1320" data-visual-selector-id="pages/Admin1320" class="preview-image" src="${url}" alt="Preview ${index + 1}">`;
+            }).join('');
         }
         
-        // Admin functions
-        function increaseViews(postId) {
-            const post = posts.find(p => p.id === postId);
-            if (post) {
-                post.view_count = (post.view_count || 0) + 10;
-                savePosts();
-                renderAdminPosts();
-                if (currentPage === 'feed') {
-                    renderPosts();
+        createHashtag.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const tag = createHashtag.value.trim().replace('#', '');
+                if (tag && !currentHashtags.includes(tag)) {
+                    currentHashtags.push(tag);
+                    renderHashtags();
+                    createHashtag.value = '';
                 }
+            }
+        });
+        
+        function renderHashtags() {
+            hashtagsList.innerHTML = currentHashtags.map(tag => `
+                <span data-filename="pages/Admin" data-linenumber="1338" data-visual-selector-id="pages/Admin1338" style="background:#f3f4f6;padding:0.375rem 0.75rem;border-radius:9999px;font-size:0.875rem;display:inline-flex;align-items:center;gap:0.25rem;">
+                    #${tag}
+                    <button data-filename="pages/Admin" data-linenumber="1340" data-visual-selector-id="pages/Admin1340" onclick="removeHashtag('${tag}')" style="background:none;border:none;cursor:pointer;color:#6b7280;font-size:1rem;">×</button>
+                </span>
+            `).join('');
+        }
+        
+        window.removeHashtag = function(tag) {
+            currentHashtags = currentHashtags.filter(t => t !== tag);
+            renderHashtags();
+        };
+        
+        createPostBtn.addEventListener('click', async () => {
+            const caption = createCaption.value.trim();
+            const location = createLocation.value.trim();
+            
+            if (!caption && uploadedFiles.length === 0) {
+                showCustomModal('Error', 'Please add a caption or upload some media.', false);
+                return;
+            }
+            
+            const contentUrls = [];
+            for (const file of uploadedFiles) {
+                const reader = new FileReader();
+                const dataUrl = await new Promise((resolve) => {
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.readAsDataURL(file);
+                });
+                contentUrls.push(dataUrl);
+            }
+            
+            const initialViews = Math.floor(Math.random() * (50000 - 20000 + 1)) + 20000;
+            
+            const newPost = {
+                id: nextId++,
+                caption,
+                location,
+                hashtags: [...currentHashtags],
+                content_urls: contentUrls,
+                content_type: uploadedFiles[0]?.type.startsWith('video/') ? 'video' : 'image',
+                views_count: initialViews,
+                created_date: new Date().toISOString(),
+                created_by: currentUser.email
+            };
+            
+            posts.unshift(newPost);
+            savePosts();
+            saveNextId();
+            
+            // Reset form
+            createCaption.value = '';
+            createLocation.value = '';
+            createHashtag.value = '';
+            fileInput.value = '';
+            uploadedFiles = [];
+            currentHashtags = [];
+            previewContainer.classList.add('hidden');
+            hashtagsList.innerHTML = '';
+            
+            navigateTo('feed');
+        });
+        
+        // Profile
+        function renderProfile() {
+            const profileAvatar = document.getElementById('profileAvatar');
+            const profileName = document.getElementById('profileName');
+            const profileEmail = document.getElementById('profileEmail');
+            const profilePostCount = document.getElementById('profilePostCount');
+            const profileViewCount = document.getElementById('profileViewCount');
+            const profilePosts = document.getElementById('profilePosts');
+            
+            profileAvatar.src = currentUser.profile_picture;
+            profileName.textContent = currentUser.full_name;
+            profileEmail.textContent = currentUser.email;
+            
+            const userPosts = posts.filter(p => p.created_by === currentUser.email);
+            profilePostCount.textContent = userPosts.length;
+            profileViewCount.textContent = userPosts.reduce((sum, p) => sum + (p.views_count || 0), 0).toLocaleString();
+            
+            if (userPosts.length === 0) {
+                profilePosts.innerHTML = `
+                    <div data-filename="pages/Admin" data-linenumber="1419" data-visual-selector-id="pages/Admin1419" class="empty-state">
+                        <div data-filename="pages/Admin" data-linenumber="1420" data-visual-selector-id="pages/Admin1420" class="empty-icon">
+                            <svg data-filename="pages/Admin" data-linenumber="1421" data-visual-selector-id="pages/Admin1421" width="32" height="32" fill="#9ca3af" viewBox="0 0 24 24">
+                                <path data-filename="pages/Admin" data-linenumber="1422" data-visual-selector-id="pages/Admin1422" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle data-filename="pages/Admin" data-linenumber="1423" data-visual-selector-id="pages/Admin1423" cx="12" cy="12" r="3"/>
+                            </svg>
+                        </div>
+                        <h2 data-filename="pages/Admin" data-linenumber="1426" data-visual-selector-id="pages/Admin1426">No posts yet</h2>
+                        <p data-filename="pages/Admin" data-linenumber="1427" data-visual-selector-id="pages/Admin1427">Share your first post with the community!</p>
+                    </div>
+                `;
+            } else {
+                profilePosts.innerHTML = userPosts.map(post => createPostHTML(post)).join('');
             }
         }
         
-        function deletePost(postId) {
-            if (confirm('Are you sure you want to delete this post?')) {
-                posts = posts.filter(p => p.id !== postId);
-                savePosts();
-                renderAdminPosts();
-                if (currentPage === 'feed') {
-                    renderPosts();
-                }
+        const saveProfileBtn = document.getElementById('saveProfileBtn');
+        const profilePictureFile = document.getElementById('profilePictureFile');
+        
+        saveProfileBtn.addEventListener('click', async () => {
+            const file = profilePictureFile.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    currentUser.profile_picture = e.target.result;
+                    users[currentUser.email] = currentUser;
+                    saveCurrentUser();
+                    saveUsers();
+                    updateHeaderProfileIcon();
+                    renderProfile();
+                    showCustomModal('Success', 'Profile picture updated successfully!', false);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                showCustomModal('Error', 'Please select a profile picture.', false);
             }
+        });
+        
+        // Admin Panel
+        function renderAdminPanel() {
+            const adminPostsList = document.getElementById('adminPostsList');
+            
+            if (posts.length === 0) {
+                adminPostsList.innerHTML = '<p data-filename="pages/Admin" data-linenumber="1462" data-visual-selector-id="pages/Admin1462" style="text-align:center;color:#6b7280;">No posts to manage.</p>';
+                return;
+            }
+            
+            adminPostsList.innerHTML = posts.map(post => {
+                const postUser = users[post.created_by] || { full_name: 'Unknown', email: post.created_by };
+                return `
+                    <div data-filename="pages/Admin" data-linenumber="1469" data-visual-selector-id="pages/Admin1469" class="admin-post-item">
+                        <img data-filename="pages/Admin" data-linenumber="1470" data-visual-selector-id="pages/Admin1470" class="admin-post-thumbnail" src="${post.content_urls[0] || 'https://via.placeholder.com/64'}" alt="Post">
+                        <div data-filename="pages/Admin" data-linenumber="1471" data-visual-selector-id="pages/Admin1471" class="admin-post-info">
+                            <div data-filename="pages/Admin" data-linenumber="1472" data-visual-selector-id="pages/Admin1472" class="admin-post-caption">${post.caption || 'No caption'}</div>
+                            <div data-filename="pages/Admin" data-linenumber="1473" data-visual-selector-id="pages/Admin1473" class="admin-post-stats">${(post.views_count || 0).toLocaleString()} views • ${postUser.full_name}</div>
+                        </div>
+                        <div data-filename="pages/Admin" data-linenumber="1475" data-visual-selector-id="pages/Admin1475" class="admin-actions">
+                            <button data-filename="pages/Admin" data-linenumber="1476" data-visual-selector-id="pages/Admin1476" class="btn-views" onclick="increaseViews(${post.id}, 1050)">+1050 Views</button>
+                            <button data-filename="pages/Admin" data-linenumber="1477" data-visual-selector-id="pages/Admin1477" class="btn-custom-views" onclick="customViews(${post.id})">Custom</button>
+                            <button data-filename="pages/Admin" data-linenumber="1478" data-visual-selector-id="pages/Admin1478" class="btn-delete" onclick="deletePost(${post.id})">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
         
-        function incrementView(postId) {
+        window.increaseViews = function(postId, amount) {
             const post = posts.find(p => p.id === postId);
             if (post) {
-                post.view_count = (post.view_count || 0) + 1;
+                post.views_count = (post.views_count || 0) + amount;
                 savePosts();
+                renderAdminPanel();
                 renderPosts();
             }
-        }
+        };
+
+        window.customViews = async function(postId) {
+            const amount = await customPrompt('Enter number of views to add:', false);
+            if (amount && !isNaN(amount)) {
+                const post = posts.find(p => p.id === postId);
+                if (post) {
+                    post.views_count = (post.views_count || 0) + parseInt(amount);
+                    savePosts();
+                    renderAdminPanel();
+                    renderPosts();
+                }
+            }
+        };
         
+        window.deletePost = async function(postId) {
+            const confirmed = await customConfirm('Are you sure you want to delete this post?');
+            if (confirmed) {
+                posts = posts.filter(p => p.id !== postId);
+                savePosts();
+                renderAdminPanel();
+                renderPosts();
+            }
+        };
+        
+        // Lightbox functionality
+        lightboxClose.addEventListener('click', () => lightbox.classList.remove('active'));
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) lightbox.classList.remove('active');
+        });
+        
+        window.openLightbox = function(imageSrc) {
+            lightboxImage.src = imageSrc;
+            lightbox.classList.add('active');
+        };
+        
+        // Storage functions
         function savePosts() {
-            localStorage.setItem('streamx-posts', JSON.stringify(posts));
+            localStorage.setItem(STORAGE_KEYS.posts, JSON.stringify(posts));
         }
         
-        // Initialize
-        showPage('feed');
+        function saveUsers() {
+            localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users));
+        }
+        
+        function saveCurrentUser() {
+            localStorage.setItem(STORAGE_KEYS.currentUser, JSON.stringify(currentUser));
+        }
+
+        function saveNextId() {
+            localStorage.setItem(STORAGE_KEYS.nextId, nextId.toString());
+        }
+        
+        // Auto-save every 5 seconds to prevent data loss
+        setInterval(() => {
+            savePosts();
+            saveUsers();
+            saveCurrentUser();
+            saveNextId();
+        }, 5000);
+        
+        // Initialize app
+        renderPosts();
     </script>
 </body>
 </html>

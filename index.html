@@ -912,21 +912,18 @@
 
 
 
-<!-- Firebase App (core SDK) -->
+<!-- Firebase v8 (easiest for plain HTML) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-
-<!-- Firebase Database -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 
 <script>
 
 
-  // Your Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyBQ7GlECxqXbL4bXFWY08mFeVJuPpBhTIU",
     authDomain: "vstreamxpromax.firebaseapp.com",
-    databaseURL: "https://vstreamxpromax-default-rtdb.firebaseio.com", // add this
+    databaseURL: "https://vstreamxpromax-default-rtdb.firebaseio.com", // make sure this line exists
     projectId: "vstreamxpromax",
     storageBucket: "vstreamxpromax.firebasestorage.app",
     messagingSenderId: "537113780677",
@@ -934,18 +931,13 @@
     measurementId: "G-3YLEXBPH1T"
   };
 
-
-
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
 
-  // Get database reference
+  // Connect to Realtime Database
   const database = firebase.database();
 
-  // Example test write
-  database.ref("test").set({ message: "Hello from HTML!" });
-
-
+  firebase.database().ref("test").set({ message: "Hello Firebase!" });
 
 
 

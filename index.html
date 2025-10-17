@@ -910,46 +910,65 @@
 
 
 
-<!-- Firebase App -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<!-- Firestore -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-<script>
+
+
+
+
+    
+
+
+<!-- Firebase (v9+) Modular SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+  // Your Firebase configuration
   const firebaseConfig = {
-    apiKey: "AIzaSyBQ7GlECxqXbL4bXFWY08mFeVJuPpBhTIU",
-    authDomain: "vstreamxpromax.firebaseapp.com",
-    projectId: "vstreamxpromax",
-    storageBucket: "vstreamxpromax.firebasestorage.app",
-    messagingSenderId: "537113780677",
-    appId: "1:537113780677:web:e8e499c95caf044e91abac",
-    measurementId: "G-3YLEXBPH1T"
+    apiKey: "AIzaSyB6aQzf6_emQki8mjNcNpLuhr9DgwLA9D0",
+    authDomain: "streamxnew-a932a.firebaseapp.com",
+    projectId: "streamxnew-a932a",
+    storageBucket: "streamxnew-a932a.firebasestorage.app",
+    messagingSenderId: "1083798642537",
+    appId: "1:1083798642537:web:523bd47a2386eed3ce67f8"
   };
 
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
+  // Initialize Firebase + Firestore
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-  // Initialize Firestore
-  const db = firebase.firestore();
+  // Reference to Firestore collection
+  const postsRef = collection(db, "posts");
 
-  // Reference to the posts collection
-  const postsRef = db.collection("posts");
+  // Handle post creation
+  document.getElementById("createPostBtn").addEventListener("click", async () => {
+    const text = document.getElementById("createCaption").value;
+    if (!text.trim()) return alert("Please write something before posting!");
+    await addDoc(postsRef, {
+      text,
+      createdAt: serverTimestamp()
+    });
+    alert("✅ Post saved!");
+    document.getElementById("createCaption").value = "";
+    loadPosts();
+  });
 
-  // Save a post
-  function savePost(text) {
-    postsRef.add({
-      text: text,
-      time: firebase.firestore.FieldValue.serverTimestamp()
-    })
-    .then(() => console.log("Post saved!"))
-    .catch(err => console.error("Error saving post:", err));
+  // Load and display posts
+  async function loadPosts() {
+    const postsFeed = document.getElementById("postsFeed");
+    postsFeed.innerHTML = "";
+    const snapshot = await getDocs(postsRef);
+    snapshot.forEach(doc => {
+      const post = doc.data();
+      const div = document.createElement("div");
+      div.className = "post-item";
+      div.innerHTML = `<p>${post.text || "(no text)"}</p>`;
+      postsFeed.appendChild(div);
+    });
   }
 
-
-
-
-
-
+  // Load on startup
+  loadPosts();
 
 
 

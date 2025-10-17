@@ -910,20 +910,15 @@
 
 
 
-
-
-<!-- Firebase v8 (easiest for plain HTML) -->
+<!-- Firebase App -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
+<!-- Firestore -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
-
-
   const firebaseConfig = {
     apiKey: "AIzaSyBQ7GlECxqXbL4bXFWY08mFeVJuPpBhTIU",
     authDomain: "vstreamxpromax.firebaseapp.com",
-    databaseURL: "https://vstreamxpromax-default-rtdb.firebaseio.com", // make sure this line exists
     projectId: "vstreamxpromax",
     storageBucket: "vstreamxpromax.firebasestorage.app",
     messagingSenderId: "537113780677",
@@ -934,17 +929,21 @@
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
 
-  // Connect to Realtime Database
-  const database = firebase.database();
+  // Initialize Firestore
+  const db = firebase.firestore();
 
-  firebase.database().ref("test").set({ message: "Hello Firebase!" });
+  // Reference to the posts collection
+  const postsRef = db.collection("posts");
 
-
-
-
-
-
-
+  // Save a post
+  function savePost(text) {
+    postsRef.add({
+      text: text,
+      time: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => console.log("Post saved!"))
+    .catch(err => console.error("Error saving post:", err));
+  }
 
 
 

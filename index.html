@@ -912,49 +912,38 @@
 
 
 
+<!-- Firebase App (core SDK) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
+<!-- Firebase Database -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 
-
-    
-
-
-<!-- Firebase (v9+) Modular SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } 
-  from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+<script>
 
 
-  
-  // Your Firebase configuration
+  // Your Firebase config
   const firebaseConfig = {
-    apiKey: "AIzaSyB6aQzf6_emQki8mjNcNpLuhr9DgwLA9D0",
-    authDomain: "streamxnew-a932a.firebaseapp.com",
-    projectId: "streamxnew-a932a",
-    storageBucket: "streamxnew-a932a.firebasestorage.app",
-    messagingSenderId: "1083798642537",
-    appId: "1:1083798642537:web:523bd47a2386eed3ce67f8"
+    apiKey: "AIzaSyBQ7GlECxqXbL4bXFWY08mFeVJuPpBhTIU",
+    authDomain: "vstreamxpromax.firebaseapp.com",
+    databaseURL: "https://vstreamxpromax-default-rtdb.firebaseio.com", // add this
+    projectId: "vstreamxpromax",
+    storageBucket: "vstreamxpromax.firebasestorage.app",
+    messagingSenderId: "537113780677",
+    appId: "1:537113780677:web:e8e499c95caf044e91abac",
+    measurementId: "G-3YLEXBPH1T"
   };
 
-  // Initialize Firebase + Firestore
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
 
-  // Reference to Firestore collection
-  const postsRef = collection(db, "posts");
 
-  // Handle post creation
-  document.getElementById("createPostBtn").addEventListener("click", async () => {
-    const text = document.getElementById("createCaption").value;
-    if (!text.trim()) return alert("Please write something before posting!");
-    await addDoc(postsRef, {
-      text,
-      createdAt: serverTimestamp()
-    });
-    alert("✅ Post saved!");
-    document.getElementById("createCaption").value = "";
-    loadPosts();
-  });
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  // Get database reference
+  const database = firebase.database();
+
+  // Example test write
+  database.ref("test").set({ message: "Hello from HTML!" });
 
 
 
@@ -963,23 +952,15 @@
 
 
 
-  // Load and display posts in real time
-  function loadPosts() {
-    const postsFeed = document.getElementById("postsFeed");
-    postsFeed.innerHTML = "";
 
-    // Listen for live updates
-    onSnapshot(postsRef, snapshot => {
-      postsFeed.innerHTML = ""; // clear and re-render
-      snapshot.forEach(doc => {
-        const post = doc.data();
-        const div = document.createElement("div");
-        div.className = "post-item";
-        div.innerHTML = `<p>${post.text || "(no text)"}</p>`;
-        postsFeed.appendChild(div);
-      });
-    });
-  }
+
+
+
+
+
+
+
+
 
 
 
@@ -1641,17 +1622,6 @@
         
         // Initialize app
         renderPosts();
-
-
-
-
-
-
-
-
-loadPosts();
-
-
     </script>
 </body>
 </html>

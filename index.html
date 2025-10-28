@@ -1,10 +1,16 @@
 <!DOCTYPE html>
-<html data-filename="pages/Admin" data-linenumber="12" data-visual-selector-id="pages/Admin12" lang="en">
-<head data-filename="pages/Admin" data-linenumber="13" data-visual-selector-id="pages/Admin13">
-    <meta data-filename="pages/Admin" data-linenumber="14" data-visual-selector-id="pages/Admin14" charset="UTF-8">
-    <meta data-filename="pages/Admin" data-linenumber="15" data-visual-selector-id="pages/Admin15" name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-filename="pages/Admin" data-linenumber="16" data-visual-selector-id="pages/Admin16">StreamX - Social Feed</title>
-    <style data-filename="pages/Admin" data-linenumber="17" data-visual-selector-id="pages/Admin17">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamX - Social Feed</title>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
+    <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
@@ -15,7 +21,21 @@
             min-height: 100vh;
         }
         
-        .container { max-width: 800px; margin: 0 auto; padding: 0 1rem; }
+        /* Loading Spinner */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #000000;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         
         /* Header */
         .header {
@@ -32,6 +52,8 @@
             justify-content: space-between;
             height: 4rem;
             padding: 0 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
         .logo {
@@ -50,7 +72,6 @@
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 0.875rem;
         }
         
         .logo h1 {
@@ -62,7 +83,7 @@
         .nav {
             display: flex;
             align-items: center;
-            gap: 0.25rem;
+            gap: 0.5rem;
         }
         
         .nav-btn {
@@ -92,12 +113,9 @@
             object-fit: cover;
             cursor: pointer;
             border: 2px solid #e5e7eb;
+            margin-left: 0.5rem;
         }
         
-        .profile-icon:hover {
-            border-color: #000000;
-        }
-
         .admin-btn {
             background: #dc2626;
             color: white;
@@ -108,16 +126,12 @@
             font-weight: 600;
             margin-left: 0.5rem;
         }
-
-        .admin-btn:hover {
-            background: #b91c1c;
-        }
         
         /* Main Content */
         .main-content {
-            max-width: 32rem;
+            max-width: 600px;
             margin: 0 auto;
-            padding: 4rem 1rem;
+            padding: 2rem 1rem;
         }
         
         .page-header {
@@ -126,7 +140,7 @@
         }
         
         .page-header h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: bold;
             color: #000000;
             margin-bottom: 0.5rem;
@@ -134,137 +148,9 @@
         
         .page-header p {
             color: #6b7280;
-            font-size: 1rem;
         }
         
-        /* Search Bar */
-        .search-container {
-            margin-bottom: 2rem;
-        }
-        
-        .search-input {
-            width: 100%;
-            padding: 0.75rem 1rem 0.75rem 3rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: 1rem center;
-        }
-        
-        .search-input:focus {
-            outline: none;
-            border-color: #000000;
-            ring: 2px;
-        }
-        
-        /* Custom Alert/Prompt Overlay */
-        .custom-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .custom-modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .custom-modal {
-            background: white;
-            border-radius: 1rem;
-            padding: 2rem;
-            max-width: 400px;
-            width: 90%;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
-        }
-        
-        .custom-modal-overlay.active .custom-modal {
-            transform: scale(1);
-        }
-        
-        .custom-modal-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #000000;
-            margin-bottom: 0.5rem;
-        }
-        
-        .custom-modal-message {
-            color: #6b7280;
-            margin-bottom: 1.5rem;
-            font-size: 0.875rem;
-        }
-        
-        .custom-modal-input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            transition: border-color 0.2s;
-        }
-        
-        .custom-modal-input:focus {
-            outline: none;
-            border-color: #000000;
-        }
-        
-        .custom-modal-buttons {
-            display: flex;
-            gap: 0.75rem;
-            justify-content: flex-end;
-        }
-        
-        .custom-modal-btn {
-            padding: 0.625rem 1.25rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.875rem;
-        }
-        
-        .custom-modal-btn-primary {
-            background: #000000;
-            color: white;
-        }
-        
-        .custom-modal-btn-primary:hover {
-            background: #374151;
-        }
-        
-        .custom-modal-btn-secondary {
-            background: #f3f4f6;
-            color: #374151;
-        }
-        
-        .custom-modal-btn-secondary:hover {
-            background: #e5e7eb;
-        }
-        
-        .custom-modal-error {
-            color: #dc2626;
-            font-size: 0.875rem;
-            margin-bottom: 1rem;
-        }
-        
-        /* Paid Partner Banner */
+        /* Partner Banner */
         .partner-banner {
             background: #000000;
             color: #ffffff;
@@ -277,9 +163,6 @@
         .partner-title {
             font-size: 1.125rem;
             font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
             margin-bottom: 0.75rem;
         }
         
@@ -305,123 +188,64 @@
             font-size: 0.75rem;
         }
         
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 5rem 0;
+        /* Search */
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            margin-bottom: 2rem;
         }
         
-        .empty-icon {
-            width: 4rem;
-            height: 4rem;
-            margin: 0 auto 1.5rem;
-            background: #f3f4f6;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .empty-state h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #000000;
-            margin-bottom: 0.5rem;
-        }
-        
-        .empty-state p {
-            color: #6b7280;
-        }
-        
-        /* Posts Feed */
-        .posts-feed {
-            display: grid;
-            gap: 1.5rem;
-        }
-        
-        /* Post Card */
+        /* Posts */
         .post-card {
             background: #ffffff;
             border: 1px solid #e5e7eb;
             border-radius: 0.5rem;
             overflow: hidden;
+            margin-bottom: 1.5rem;
         }
         
         .post-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-between;
             padding: 1rem;
-            padding-bottom: 0.5rem;
             font-size: 0.875rem;
+        }
+        
+        .post-date {
             color: #6b7280;
         }
         
-        .post-date-location {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
         .post-views {
-            display: flex;
-            align-items: center;
-            gap: 0.375rem;
             color: #3b82f6;
             font-weight: 600;
-            font-size: 0.9375rem;
-        }
-        
-        .post-views-icon {
-            width: 20px;
-            height: 20px;
-            fill: #000000;
-        }
-        
-        .post-views-text {
-            color: #3b82f6;
-            font-weight: 600;
-        }
-        
-        .post-content {
-            padding: 0 1rem;
         }
         
         .post-caption {
+            padding: 0 1rem 1rem 1rem;
             color: #000000;
-            line-height: 1.6;
-            margin-bottom: 0.75rem;
-        }
-        
-        .post-media {
-            border-radius: 0.5rem;
-            overflow: hidden;
-            cursor: pointer;
-            margin-bottom: 0.75rem;
         }
         
         .post-image {
             width: 100%;
-            max-height: 24rem;
+            max-height: 500px;
             object-fit: cover;
         }
         
         .post-hashtags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
+            padding: 0 1rem 1rem 1rem;
         }
         
         .hashtag {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            color: #6b7280;
+            display: inline-block;
+            color: #3b82f6;
+            margin-right: 0.5rem;
             font-size: 0.875rem;
         }
         
-        /* User Info */
         .post-user {
             display: flex;
             align-items: center;
@@ -438,14 +262,9 @@
             object-fit: cover;
         }
         
-        .user-info {
-            flex: 1;
-        }
-        
         .user-name {
             font-weight: 600;
             color: #000000;
-            font-size: 0.875rem;
         }
         
         .user-email {
@@ -453,149 +272,7 @@
             color: #6b7280;
         }
         
-        /* Lightbox */
-        .lightbox {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .lightbox.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .lightbox-content {
-            position: relative;
-            max-width: 90vw;
-            max-height: 90vh;
-        }
-        
-        .lightbox-image {
-            max-width: 100%;
-            max-height: 90vh;
-            object-fit: contain;
-            border-radius: 0.5rem;
-        }
-        
-        .lightbox-close {
-            position: absolute;
-            top: -3rem;
-            right: 0;
-            width: 2rem;
-            height: 2rem;
-            background: transparent;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-        
-        .hidden { display: none !important; }
-        
-        /* Multi-image grid */
-        .image-grid {
-            display: grid;
-            gap: 0.125rem;
-            cursor: pointer;
-            border-radius: 0.5rem;
-            overflow: hidden;
-            margin-bottom: 0.75rem;
-        }
-        
-        .image-grid.grid-2 {
-            grid-template-columns: 1fr 1fr;
-        }
-        
-        .image-grid.grid-multiple {
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
-        }
-        
-        .grid-image {
-            width: 100%;
-            aspect-ratio: 1;
-            object-fit: cover;
-        }
-        
-        .image-overlay {
-            position: relative;
-        }
-        
-        .image-count {
-            position: absolute;
-            bottom: 0.5rem;
-            right: 0.5rem;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            font-size: 0.875rem;
-        }
-        
-        /* Profile Page */
-        .profile-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        
-        .profile-avatar-large {
-            width: 8rem;
-            height: 8rem;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #e5e7eb;
-            margin: 0 auto 1.5rem;
-        }
-        
-        .profile-name {
-            font-size: 1.875rem;
-            font-weight: bold;
-            color: #000000;
-            margin-bottom: 0.5rem;
-        }
-        
-        .profile-email {
-            color: #6b7280;
-            margin-bottom: 1rem;
-        }
-        
-        .profile-stats {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            font-size: 0.875rem;
-            color: #6b7280;
-        }
-        
-        .stat-value {
-            font-weight: bold;
-            font-size: 1.125rem;
-            color: #000000;
-            display: block;
-        }
-        
-        /* Create Post Page */
-        .create-form {
-            max-width: 32rem;
-            margin: 0 auto;
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
+        /* Forms */
         .form-input,
         .form-textarea {
             width: 100%;
@@ -603,26 +280,22 @@
             border: 1px solid #d1d5db;
             border-radius: 0.5rem;
             font-size: 1rem;
+            margin-bottom: 1rem;
             font-family: inherit;
         }
         
         .form-textarea {
-            min-height: 6rem;
+            min-height: 100px;
             resize: vertical;
-        }
-        
-        .form-input:focus,
-        .form-textarea:focus {
-            outline: none;
-            border-color: #000000;
         }
         
         .file-upload-area {
             border: 2px dashed #d1d5db;
             border-radius: 0.5rem;
-            padding: 2rem;
+            padding: 3rem 2rem;
             text-align: center;
             cursor: pointer;
+            margin-bottom: 1rem;
             transition: all 0.2s;
         }
         
@@ -638,114 +311,57 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
+            font-size: 0.875rem;
         }
         
         .btn-primary {
             background: #000000;
             color: #ffffff;
+            width: 100%;
         }
         
         .btn-primary:hover {
             background: #374151;
         }
         
-        .btn-block {
-            width: 100%;
+        .btn-primary:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
         }
         
-        .preview-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+        .btn-blue {
+            background: #3b82f6;
+            color: white;
         }
         
-        .preview-image {
-            width: 100%;
-            aspect-ratio: 1;
-            object-fit: cover;
-            border-radius: 0.5rem;
+        .btn-green {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-red {
+            background: #ef4444;
+            color: white;
         }
         
         /* Admin Panel */
-        .admin-panel {
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .admin-title {
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-        
-        .admin-actions {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-        
-        .btn-delete {
-            background: #ef4444;
-            color: white;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            font-size: 0.875rem;
-        }
-        
-        .btn-delete:hover {
-            background: #dc2626;
-        }
-        
-        .btn-views {
-            background: #3b82f6;
-            color: white;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            font-size: 0.875rem;
-        }
-        
-        .btn-views:hover {
-            background: #2563eb;
-        }
-
-        .btn-custom-views {
-            background: #10b981;
-            color: white;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            font-size: 0.875rem;
-        }
-
-        .btn-custom-views:hover {
-            background: #059669;
-        }
-        
         .admin-post-item {
             display: flex;
-            align-items: center;
+            align-items: start;
             gap: 1rem;
-            padding: 0.75rem;
-            background: white;
-            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            padding: 1rem;
+            margin-bottom: 1rem;
             border-radius: 0.5rem;
-            margin-bottom: 0.5rem;
+            border: 1px solid #e5e7eb;
         }
         
         .admin-post-thumbnail {
             width: 4rem;
             height: 4rem;
             object-fit: cover;
-            border-radius: 0.375rem;
+            border-radius: 0.5rem;
+            flex-shrink: 0;
         }
         
         .admin-post-info {
@@ -762,874 +378,784 @@
             font-size: 0.875rem;
             color: #6b7280;
         }
+        
+        .admin-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+        
+        /* Modal */
+        .custom-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .custom-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .custom-modal {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .custom-modal h2 {
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .custom-modal p {
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+        
+        .custom-modal-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        
+        .custom-modal-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .custom-modal-buttons button {
+            flex: 1;
+        }
+        
+        /* Utility */
+        .hidden { display: none !important; }
+        
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .preview-image {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .hashtag-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f3f4f6;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .hashtag-tag button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: #6b7280;
+            padding: 0;
+            line-height: 1;
+        }
+        
+        /* Alert */
+        .alert {
+            position: fixed;
+            top: 5rem;
+            right: 1rem;
+            background: #10b981;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .alert.error {
+            background: #ef4444;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
-<body data-filename="pages/Admin" data-linenumber="777" data-visual-selector-id="pages/Admin777">
-    <div data-filename="pages/Admin" data-linenumber="778" data-visual-selector-id="pages/Admin778" id="app">
+<body>
+    <div id="app">
         <!-- Header -->
-        <header data-filename="pages/Admin" data-linenumber="780" data-visual-selector-id="pages/Admin780" class="header">
-            <div data-filename="pages/Admin" data-linenumber="781" data-visual-selector-id="pages/Admin781" class="header-content">
-                <div data-filename="pages/Admin" data-linenumber="782" data-visual-selector-id="pages/Admin782" class="logo">
-                    <div data-filename="pages/Admin" data-linenumber="783" data-visual-selector-id="pages/Admin783" class="logo-icon">S</div>
-                    <h1 data-filename="pages/Admin" data-linenumber="784" data-visual-selector-id="pages/Admin784">StreamX</h1>
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">S</div>
+                    <h1>StreamX</h1>
                 </div>
                 
-                <nav data-filename="pages/Admin" data-linenumber="787" data-visual-selector-id="pages/Admin787" class="nav">
-                    <button data-filename="pages/Admin" data-linenumber="788" data-visual-selector-id="pages/Admin788" class="nav-btn" data-page="feed">Feed</button>
-                    <span data-filename="pages/Admin" data-linenumber="789" data-visual-selector-id="pages/Admin789" style="color: #9ca3af; margin: 0 0.5rem;">+</span>
-                    <button data-filename="pages/Admin" data-linenumber="790" data-visual-selector-id="pages/Admin790" class="nav-btn" data-page="create">Create</button>
-                    <img data-filename="pages/Admin" data-linenumber="791" data-visual-selector-id="pages/Admin791" id="headerProfileIcon" class="profile-icon" src="" alt="Profile" style="display:none;">
-                    <button data-filename="pages/Admin" data-linenumber="792" data-visual-selector-id="pages/Admin792" class="admin-btn" onclick="promptAdminPassword()">Admin</button>
+                <nav class="nav">
+                    <button class="nav-btn active" data-page="feed">Feed</button>
+                    <button class="nav-btn" data-page="create">Create</button>
+                    <img id="headerProfileIcon" class="profile-icon hidden" src="" alt="Profile">
+                    <button class="admin-btn" onclick="promptAdminPassword()">Admin</button>
                 </nav>
             </div>
         </header>
 
         <!-- Feed Page -->
-        <div data-filename="pages/Admin" data-linenumber="798" data-visual-selector-id="pages/Admin798" id="feedPage" class="main-content">
-            <div data-filename="pages/Admin" data-linenumber="799" data-visual-selector-id="pages/Admin799" class="page-header">
-                <h1 data-filename="pages/Admin" data-linenumber="800" data-visual-selector-id="pages/Admin800">Feed</h1>
-                <p data-filename="pages/Admin" data-linenumber="801" data-visual-selector-id="pages/Admin801">Explore content from the community.</p>
+        <div id="feedPage" class="main-content">
+            <div class="page-header">
+                <h1>Feed</h1>
+                <p>Explore content from the community</p>
             </div>
             
-            <div data-filename="pages/Admin" data-linenumber="804" data-visual-selector-id="pages/Admin804" class="search-container">
-                <input data-filename="pages/Admin" data-linenumber="805" data-visual-selector-id="pages/Admin805" type="text" id="searchInput" class="search-input" placeholder="Search posts by caption, hashtag, or location...">
+            <!-- Partner Banner -->
+            <div class="partner-banner">
+                <div class="partner-title">
+                    ⭐ Become a StreamX Partner!
+                </div>
+                <p>Get <span class="partner-amount">R15,000 monthly</span> for being a top creator. Reach 300 posts in a year to qualify.</p>
+                <div class="partner-footer">
+                    <span>ℹ️ Future updates will track signed-in users for eligibility.</span>
+                    <span class="partner-badge">Unavailable for now</span>
+                </div>
             </div>
             
-            <div data-filename="pages/Admin" data-linenumber="808" data-visual-selector-id="pages/Admin808" class="partner-banner">
-                <div data-filename="pages/Admin" data-linenumber="809" data-visual-selector-id="pages/Admin809" class="partner-title">
-                    <svg data-filename="pages/Admin" data-linenumber="810" data-visual-selector-id="pages/Admin810" width="20" height="20" fill="#fbbf24" viewBox="0 0 24 24"><path data-filename='pages/Admin' data-linenumber='810' data-visual-selector-id='pages/Admin810' d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    Become a StreamX Partner!
-                </div>
-                <p data-filename="pages/Admin" data-linenumber="813" data-visual-selector-id="pages/Admin813">Get <span data-filename="pages/Admin" data-linenumber="813" data-visual-selector-id="pages/Admin813" class="partner-amount">R15 000 monthly</span> for being a top creator. Reach 300 posts in a year to qualify.</p>
-                <div data-filename="pages/Admin" data-linenumber="814" data-visual-selector-id="pages/Admin814" class="partner-footer">
-                    <span data-filename="pages/Admin" data-linenumber="815" data-visual-selector-id="pages/Admin815">
-                        <svg data-filename="pages/Admin" data-linenumber="816" data-visual-selector-id="pages/Admin816" width="16" height="16" fill="currentColor" viewBox="0 0 24 24" style="display:inline;vertical-align:middle;margin-right:0.25rem;"><circle data-filename='pages/Admin' data-linenumber='816' data-visual-selector-id='pages/Admin816' cx="12" cy="12" r="10"/><path data-filename='pages/Admin' data-linenumber='816' data-visual-selector-id='pages/Admin816' d="M12 16v-4M12 8h.01"/></svg>
-                        Future updates will track signed-in users for eligibility.
-                    </span>
-                    <span data-filename="pages/Admin" data-linenumber="819" data-visual-selector-id="pages/Admin819" class="partner-badge">Unavailable for now</span>
-                </div>
-            </div>
-
-            <div data-filename="pages/Admin" data-linenumber="823" data-visual-selector-id="pages/Admin823" id="postsFeed" class="posts-feed"></div>
+            <input type="text" id="searchInput" class="search-input" placeholder="Search posts by caption, hashtag, or location...">
+            
+            <div id="postsFeed"></div>
         </div>
 
         <!-- Create Page -->
-        <div data-filename="pages/Admin" data-linenumber="827" data-visual-selector-id="pages/Admin827" id="createPage" class="main-content hidden">
-            <div data-filename="pages/Admin" data-linenumber="828" data-visual-selector-id="pages/Admin828" class="page-header">
-                <h1 data-filename="pages/Admin" data-linenumber="829" data-visual-selector-id="pages/Admin829">Create</h1>
-                <p data-filename="pages/Admin" data-linenumber="830" data-visual-selector-id="pages/Admin830">Share your moment with the community.</p>
+        <div id="createPage" class="main-content hidden">
+            <div class="page-header">
+                <h1>Create Post</h1>
+                <p>Share your moment with the community</p>
             </div>
             
-            <div data-filename="pages/Admin" data-linenumber="833" data-visual-selector-id="pages/Admin833" class="create-form">
-                <div data-filename="pages/Admin" data-linenumber="834" data-visual-selector-id="pages/Admin834" class="form-group">
-                    <textarea data-filename="pages/Admin" data-linenumber="835" data-visual-selector-id="pages/Admin835" id="createCaption" class="form-textarea" placeholder="What's on your mind?" rows="4"></textarea>
+            <form id="createForm">
+                <textarea id="createCaption" class="form-textarea" placeholder="What's on your mind?" required></textarea>
+                
+                <input type="text" id="createLocation" class="form-input" placeholder="📍 Location (optional)">
+                
+                <input type="text" id="createHashtag" class="form-input" placeholder="# Add hashtag (press Enter)">
+                
+                <div id="hashtagsList"></div>
+                
+                <div id="previewContainer" class="preview-grid hidden"></div>
+                
+                <div class="file-upload-area" id="fileUploadArea">
+                    <input type="file" id="fileInput" accept="image/*,video/*" multiple style="display:none;">
+                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">📷</div>
+                    <p style="color: #6b7280;">Click to upload photos or videos</p>
                 </div>
                 
-                <div data-filename="pages/Admin" data-linenumber="838" data-visual-selector-id="pages/Admin838" class="form-group">
-                    <input data-filename="pages/Admin" data-linenumber="839" data-visual-selector-id="pages/Admin839" type="text" id="createLocation" class="form-input" placeholder="📍 Location">
-                </div>
-                
-                <div data-filename="pages/Admin" data-linenumber="842" data-visual-selector-id="pages/Admin842" class="form-group">
-                    <input data-filename="pages/Admin" data-linenumber="843" data-visual-selector-id="pages/Admin843" type="text" id="createHashtag" class="form-input" placeholder="# Add hashtag">
-                </div>
-                
-                <div data-filename="pages/Admin" data-linenumber="846" data-visual-selector-id="pages/Admin846" id="hashtagsList" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1rem;"></div>
-                
-                <div data-filename="pages/Admin" data-linenumber="848" data-visual-selector-id="pages/Admin848" id="previewContainer" class="preview-grid hidden"></div>
-                
-                <div data-filename="pages/Admin" data-linenumber="850" data-visual-selector-id="pages/Admin850" class="file-upload-area" id="fileUploadArea">
-                    <input data-filename="pages/Admin" data-linenumber="851" data-visual-selector-id="pages/Admin851" type="file" id="fileInput" accept="image/*,video/*" multiple style="display:none;">
-                    <svg data-filename="pages/Admin" data-linenumber="852" data-visual-selector-id="pages/Admin852" width="32" height="32" fill="#9ca3af" viewBox="0 0 24 24" style="margin:0 auto 0.5rem;display:block;"><path data-filename='pages/Admin' data-linenumber='852' data-visual-selector-id='pages/Admin852' d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline data-filename='pages/Admin' data-linenumber='852' data-visual-selector-id='pages/Admin852' points="17 8 12 3 7 8"/><line data-filename='pages/Admin' data-linenumber='852' data-visual-selector-id='pages/Admin852' x1="12" y1="3" x2="12" y2="15"/></svg>
-                    <p data-filename="pages/Admin" data-linenumber="853" data-visual-selector-id="pages/Admin853" style="color:#6b7280;">Click to upload photos or videos</p>
-                </div>
-                
-                <button data-filename="pages/Admin" data-linenumber="856" data-visual-selector-id="pages/Admin856" class="btn btn-primary btn-block" id="createPostBtn">Share Post</button>
-            </div>
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <span id="submitText">Share Post</span>
+                    <span id="submitLoading" class="loading hidden"></span>
+                </button>
+            </form>
         </div>
 
         <!-- Profile Page -->
-        <div data-filename="pages/Admin" data-linenumber="861" data-visual-selector-id="pages/Admin861" id="profilePage" class="main-content hidden">
-            <div data-filename="pages/Admin" data-linenumber="862" data-visual-selector-id="pages/Admin862" class="profile-header">
-                <img data-filename="pages/Admin" data-linenumber="863" data-visual-selector-id="pages/Admin863" id="profileAvatar" class="profile-avatar-large" src="" alt="Profile">
-                <h1 data-filename="pages/Admin" data-linenumber="864" data-visual-selector-id="pages/Admin864" class="profile-name" id="profileName">User</h1>
-                <p data-filename="pages/Admin" data-linenumber="865" data-visual-selector-id="pages/Admin865" class="profile-email" id="profileEmail">user@example.com</p>
-                
-                <div data-filename="pages/Admin" data-linenumber="867" data-visual-selector-id="pages/Admin867" class="profile-stats">
-                    <div data-filename="pages/Admin" data-linenumber="868" data-visual-selector-id="pages/Admin868">
-                        <span data-filename="pages/Admin" data-linenumber="869" data-visual-selector-id="pages/Admin869" class="stat-value" id="profilePostCount">0</span>
-                        <span data-filename="pages/Admin" data-linenumber="870" data-visual-selector-id="pages/Admin870">Posts</span>
+        <div id="profilePage" class="main-content hidden">
+            <div class="page-header">
+                <img id="profileAvatar" src="" alt="Profile" style="width: 8rem; height: 8rem; border-radius: 50%; object-fit: cover; margin: 0 auto 1rem; display: block; border: 4px solid #e5e7eb;">
+                <h1 id="profileName">User</h1>
+                <p id="profileEmail" style="margin-bottom: 1rem;">user@example.com</p>
+                <div style="display: flex; justify-content: center; gap: 2rem; font-size: 0.875rem; color: #6b7280; margin-bottom: 2rem;">
+                    <div style="text-align: center;">
+                        <div id="profilePostCount" style="font-weight: bold; font-size: 1.5rem; color: #000000;">0</div>
+                        <div>Posts</div>
                     </div>
-                    <div data-filename="pages/Admin" data-linenumber="872" data-visual-selector-id="pages/Admin872">
-                        <span data-filename="pages/Admin" data-linenumber="873" data-visual-selector-id="pages/Admin873" class="stat-value" id="profileViewCount">0</span>
-                        <span data-filename="pages/Admin" data-linenumber="874" data-visual-selector-id="pages/Admin874">Total Views</span>
+                    <div style="text-align: center;">
+                        <div id="profileViewCount" style="font-weight: bold; font-size: 1.5rem; color: #000000;">0</div>
+                        <div>Total Views</div>
                     </div>
                 </div>
             </div>
             
-            <div data-filename="pages/Admin" data-linenumber="879" data-visual-selector-id="pages/Admin879" class="form-group">
-                <label data-filename="pages/Admin" data-linenumber="880" data-visual-selector-id="pages/Admin880" style="display:block;margin-bottom:0.5rem;font-weight:600;">Upload Profile Picture</label>
-                <input data-filename="pages/Admin" data-linenumber="881" data-visual-selector-id="pages/Admin881" type="file" id="profilePictureFile" accept="image/*" class="form-input">
+            <div style="background: #f9fafb; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Update Profile Picture</h3>
+                <input type="file" id="profilePictureFile" accept="image/*" class="form-input">
+                <button onclick="saveProfilePicture()" class="btn btn-primary" id="profileBtn">
+                    <span id="profileText">Save Profile Picture</span>
+                    <span id="profileLoading" class="loading hidden"></span>
+                </button>
             </div>
-            <button data-filename="pages/Admin" data-linenumber="883" data-visual-selector-id="pages/Admin883" class="btn btn-primary btn-block" id="saveProfileBtn">Save Profile Picture</button>
             
-            <h2 data-filename="pages/Admin" data-linenumber="885" data-visual-selector-id="pages/Admin885" style="margin:2rem 0 1rem;font-size:1.5rem;font-weight:bold;">My Posts</h2>
-            <div data-filename="pages/Admin" data-linenumber="886" data-visual-selector-id="pages/Admin886" id="profilePosts" class="posts-feed"></div>
+            <h2 style="margin-bottom: 1rem; font-size: 1.5rem;">My Posts</h2>
+            <div id="profilePosts"></div>
         </div>
 
         <!-- Admin Panel -->
-        <div data-filename="pages/Admin" data-linenumber="890" data-visual-selector-id="pages/Admin890" id="adminPanel" class="main-content hidden">
-            <div data-filename="pages/Admin" data-linenumber="891" data-visual-selector-id="pages/Admin891" class="admin-panel">
-                <h2 data-filename="pages/Admin" data-linenumber="892" data-visual-selector-id="pages/Admin892" class="admin-title">Admin Panel</h2>
-                <p data-filename="pages/Admin" data-linenumber="893" data-visual-selector-id="pages/Admin893" style="color:#6b7280;margin-bottom:1rem;">Manage posts and views</p>
-                <div data-filename="pages/Admin" data-linenumber="894" data-visual-selector-id="pages/Admin894" id="adminPostsList"></div>
+        <div id="adminPanel" class="main-content hidden">
+            <div class="page-header">
+                <h1>🛡️ Admin Panel</h1>
+                <p>Post Management</p>
             </div>
+            <div id="adminPostsList"></div>
         </div>
 
-        <!-- Lightbox -->
-        <div data-filename="pages/Admin" data-linenumber="899" data-visual-selector-id="pages/Admin899" id="lightbox" class="lightbox">
-            <div data-filename="pages/Admin" data-linenumber="900" data-visual-selector-id="pages/Admin900" class="lightbox-content">
-                <button data-filename="pages/Admin" data-linenumber="901" data-visual-selector-id="pages/Admin901" class="lightbox-close" id="lightboxClose">×</button>
-                <img data-filename="pages/Admin" data-linenumber="902" data-visual-selector-id="pages/Admin902" id="lightboxImage" class="lightbox-image" src="" alt="">
-            </div>
-        </div>
-        
-        <!-- Custom Modal -->
-        <div data-filename="pages/Admin" data-linenumber="907" data-visual-selector-id="pages/Admin907" id="customModal" class="custom-modal-overlay">
-            <div data-filename="pages/Admin" data-linenumber="908" data-visual-selector-id="pages/Admin908" class="custom-modal">
-                <h2 data-filename="pages/Admin" data-linenumber="909" data-visual-selector-id="pages/Admin909" class="custom-modal-title" id="modalTitle">Enter Password</h2>
-                <p data-filename="pages/Admin" data-linenumber="910" data-visual-selector-id="pages/Admin910" class="custom-modal-message" id="modalMessage">Please enter the admin password to continue.</p>
-                <div data-filename="pages/Admin" data-linenumber="911" data-visual-selector-id="pages/Admin911" id="modalError" class="custom-modal-error hidden"></div>
-                <input data-filename="pages/Admin" data-linenumber="912" data-visual-selector-id="pages/Admin912" type="password" id="modalInput" class="custom-modal-input" placeholder="Password">
-                <div data-filename="pages/Admin" data-linenumber="913" data-visual-selector-id="pages/Admin913" class="custom-modal-buttons">
-                    <button data-filename="pages/Admin" data-linenumber="914" data-visual-selector-id="pages/Admin914" class="custom-modal-btn custom-modal-btn-secondary" id="modalCancel">Cancel</button>
-                    <button data-filename="pages/Admin" data-linenumber="915" data-visual-selector-id="pages/Admin915" class="custom-modal-btn custom-modal-btn-primary" id="modalConfirm">Submit</button>
+        <!-- Modal -->
+        <div id="customModal" class="custom-modal-overlay">
+            <div class="custom-modal">
+                <h2 id="modalTitle">Title</h2>
+                <p id="modalMessage">Message</p>
+                <input type="text" id="modalInput" class="custom-modal-input" placeholder="Enter value...">
+                <div class="custom-modal-buttons">
+                    <button id="modalCancel" class="btn" style="background: #f3f4f6; color: #374151;">Cancel</button>
+                    <button id="modalConfirm" class="btn btn-primary">OK</button>
                 </div>
             </div>
         </div>
     </div>
 
-
-
-
-
-
-
-
-    
-
-
-<script data-filename="pages/StreamX" data-linenumber="734" data-visual-selector-id="pages/StreamX734" type="module">
-// Complete Firebase App Code
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { 
-  getFirestore, 
-  collection, 
-  addDoc, 
-  getDocs,
-  doc,
-  updateDoc,
-  deleteDoc,
-  onSnapshot, 
-  serverTimestamp,
-  query,
-  orderBy 
-} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-import { 
-  getStorage, 
-  ref, 
-  uploadBytes, 
-  getDownloadURL 
-} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyB6aQzf6_emQki8mjNcNpLuhr9DgwLA9D0",
-  authDomain: "streamxnew-a932a.firebaseapp.com",
-  projectId: "streamxnew-a932a",
-  storageBucket: "streamxnew-a932a.firebasestorage.app",
-  messagingSenderId: "1083798642537",
-  appId: "1:1083798642537:web:523bd47a2386eed3ce67f8"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const storage = getStorage(app);
-const postsRef = collection(db, "posts");
-const usersRef = collection(db, "users");
-const ADMIN_PASSWORD = 'VNAXXTTM';
-
-let currentUser = JSON.parse(localStorage.getItem('streamx-current-user') || 'null');
-let currentPage = 'feed';
-let uploadedFiles = [];
-let currentHashtags = [];
-let allPosts = [];
-
-function showCustomModal(title, message, isPassword = false) {
-  return new Promise((resolve, reject) => {
-    const modal = document.getElementById('customModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalMessage = document.getElementById('modalMessage');
-    const modalInput = document.getElementById('modalInput');
-    const modalError = document.getElementById('modalError');
-    const modalCancel = document.getElementById('modalCancel');
-    const modalConfirm = document.getElementById('modalConfirm');
-    
-    if (!modal || !modalTitle || !modalMessage || !modalInput || !modalError || !modalCancel || !modalConfirm) {
-      reject('Modal elements not found');
-      return;
-    }
-    
-    modalTitle.textContent = title;
-    modalMessage.textContent = message;
-    modalInput.value = '';
-    modalInput.type = isPassword ? 'password' : 'text';
-    modalInput.style.display = 'block';
-    modalError.classList.add('hidden');
-    modal.classList.add('active');
-    modalInput.focus();
-    
-    const handleConfirm = () => {
-      const value = modalInput.value;
-      if (!value && isPassword) {
-        modalError.textContent = 'Please enter a value';
-        modalError.classList.remove('hidden');
-        return;
-      }
-      cleanup();
-      resolve(value);
-    };
-    
-    const handleCancel = () => {
-      cleanup();
-      reject(null);
-    };
-    
-    const handleEnter = (e) => {
-      if (e.key === 'Enter') handleConfirm();
-    };
-    
-    const cleanup = () => {
-      modal.classList.remove('active');
-      modalConfirm.removeEventListener('click', handleConfirm);
-      modalCancel.removeEventListener('click', handleCancel);
-      modalInput.removeEventListener('keypress', handleEnter);
-    };
-    
-    modalConfirm.addEventListener('click', handleConfirm);
-    modalCancel.addEventListener('click', handleCancel);
-    modalInput.addEventListener('keypress', handleEnter);
-  });
-}
-
-async function customPrompt(message, isPassword = false) {
-  try {
-    return await showCustomModal(isPassword ? 'Admin Access' : 'Input Required', message, isPassword);
-  } catch {
-    return null;
-  }
-}
-
-async function customConfirm(message) {
-  return new Promise((resolve) => {
-    const modal = document.getElementById('customModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalMessage = document.getElementById('modalMessage');
-    const modalInput = document.getElementById('modalInput');
-    const modalError = document.getElementById('modalError');
-    const modalCancel = document.getElementById('modalCancel');
-    const modalConfirm = document.getElementById('modalConfirm');
-    
-    if (!modal || !modalTitle || !modalMessage || !modalInput || !modalError || !modalCancel || !modalConfirm) {
-      resolve(false);
-      return;
-    }
-    
-    modalTitle.textContent = 'Confirm Action';
-    modalMessage.textContent = message;
-    modalInput.style.display = 'none';
-    modalError.classList.add('hidden');
-    modal.classList.add('active');
-    
-    const handleConfirm = () => {
-      cleanup();
-      resolve(true);
-    };
-    
-    const handleCancel = () => {
-      cleanup();
-      resolve(false);
-    };
-    
-    const cleanup = () => {
-      modal.classList.remove('active');
-      modalInput.style.display = 'block';
-      modalConfirm.removeEventListener('click', handleConfirm);
-      modalCancel.removeEventListener('click', handleCancel);
-    };
-    
-    modalConfirm.addEventListener('click', handleConfirm);
-    modalCancel.addEventListener('click', handleCancel);
-  });
-}
-
-async function initializeUser() {
-  if (!currentUser) {
-    const userEmail = await customPrompt("Enter your email to continue:", false);
-    if (!userEmail) return;
-    
-    const userName = await customPrompt("Enter your name:", false);
-    if (!userName) return;
-    
-    currentUser = {
-      email: userEmail,
-      full_name: userName || "StreamX User",
-      profile_picture: `https://ui-avatars.com/api/?name=${encodeURIComponent(userName || "User")}&size=128&background=000000&color=ffffff`,
-      created_date: new Date().toISOString()
-    };
-
-    try {
-      await addDoc(usersRef, currentUser);
-    } catch (error) {
-      console.log("User save:", error);
-    }
-
-    localStorage.setItem('streamx-current-user', JSON.stringify(currentUser));
-    updateHeaderProfileIcon();
-  }
-}
-
-
-
-
-
-
-
-
-
-function updateHeaderProfileIcon() {
-  const headerProfileIcon = document.getElementById('headerProfileIcon');
-  if (headerProfileIcon && currentUser && currentUser.profile_picture) {
-    headerProfileIcon.src = currentUser.profile_picture;
-    headerProfileIcon.style.display = 'block';
-    headerProfileIcon.onclick = () => navigateTo('profile');
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-document.querySelectorAll('.nav-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const page = btn.getAttribute('data-page');
-    navigateTo(page);
-  });
-});
-
-function navigateTo(page) {
-  currentPage = page;
-  
-  const feedPage = document.getElementById('feedPage');
-  const createPage = document.getElementById('createPage');
-  const profilePage = document.getElementById('profilePage');
-  const adminPanel = document.getElementById('adminPanel');
-  
-  if (!feedPage || !createPage || !profilePage || !adminPanel) return;
-  
-  feedPage.classList.add('hidden');
-  createPage.classList.add('hidden');
-  profilePage.classList.add('hidden');
-  adminPanel.classList.add('hidden');
-  
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.classList.remove('active');
-    if (btn.getAttribute('data-page') === page) {
-      btn.classList.add('active');
-    }
-  });
-  
-  if (page === 'feed') {
-    feedPage.classList.remove('hidden');
-    renderPosts();
-  } else if (page === 'create') {
-    createPage.classList.remove('hidden');
-  } else if (page === 'profile') {
-    profilePage.classList.remove('hidden');
-    renderProfile();
-  } else if (page === 'admin') {
-    adminPanel.classList.remove('hidden');
-    renderAdminPanel();
-  }
-}
-
-window.promptAdminPassword = async function() {
-  const savedAuth = sessionStorage.getItem('streamx-admin-auth');
-  if (savedAuth === ADMIN_PASSWORD) {
-    navigateTo('admin');
-    return;
-  }
-  
-  const password = await customPrompt('Enter admin password to access the panel:', true);
-  if (password === ADMIN_PASSWORD) {
-    sessionStorage.setItem('streamx-admin-auth', ADMIN_PASSWORD);
-    navigateTo('admin');
-  } else if (password !== null) {
-    await showCustomModal('Access Denied', 'Incorrect password. Access denied.', false);
-  }
-};
-
-function loadPosts() {
-  const q = query(postsRef, orderBy("created_date", "desc"));
-  
-  onSnapshot(q, (snapshot) => {
-    allPosts = [];
-    snapshot.forEach((doc) => {
-      allPosts.push({ id: doc.id, ...doc.data() });
-    });
-    if (currentPage === 'feed') {
-      renderPosts();
-    } else if (currentPage === 'profile') {
-      renderProfile();
-    } else if (currentPage === 'admin') {
-      renderAdminPanel();
-    }
-  });
-}
-
-const searchInput = document.getElementById('searchInput');
-if (searchInput) {
-  searchInput.addEventListener('input', (e) => {
-    renderPosts(e.target.value);
-  });
-}
-
-function renderPosts(searchQuery = '') {
-  const postsFeed = document.getElementById('postsFeed');
-  if (!postsFeed) return;
-  
-  let filtered = allPosts;
-  
-  if (searchQuery) {
-    const query = searchQuery.toLowerCase();
-    filtered = allPosts.filter(post => {
-      return (post.caption && post.caption.toLowerCase().includes(query)) ||
-             (post.location && post.location.toLowerCase().includes(query)) ||
-             (post.hashtags && post.hashtags.some(tag => tag.toLowerCase().includes(query)));
-    });
-  }
-  
-  if (filtered.length === 0) {
-    postsFeed.innerHTML = `
-      <div data-filename="pages/StreamX" data-linenumber="1023" data-visual-selector-id="pages/StreamX1023" class="empty-state">
-        <div data-filename="pages/StreamX" data-linenumber="1024" data-visual-selector-id="pages/StreamX1024" class="empty-icon">
-          <svg data-filename="pages/StreamX" data-linenumber="1025" data-visual-selector-id="pages/StreamX1025" width="32" height="32" fill="#9ca3af" viewBox="0 0 24 24">
-            <circle data-filename="pages/StreamX" data-linenumber="1026" data-visual-selector-id="pages/StreamX1026" cx="11" cy="11" r="8"/>
-            <path data-filename="pages/StreamX" data-linenumber="1027" data-visual-selector-id="pages/StreamX1027" d="m21 21-4.35-4.35"/>
-          </svg>
-        </div>
-        <h2 data-filename="pages/StreamX" data-linenumber="1030" data-visual-selector-id="pages/StreamX1030">No posts found</h2>
-        <p data-filename="pages/StreamX" data-linenumber="1031" data-visual-selector-id="pages/StreamX1031">${searchQuery ? 'Try a different search term.' : 'Be the first to create a post!'}</p>
-      </div>
-    `;
-    return;
-  }
-  
-  postsFeed.innerHTML = filtered.map(post => createPostHTML(post)).join('');
-}
-
-function createPostHTML(post) {
-  const urls = post.content_urls || [];
-  
-  let imageHTML = '';
-  if (urls.length > 0) {
-    if (urls.length === 1) {
-      imageHTML = `
-        <div data-filename="pages/StreamX" data-linenumber="1047" data-visual-selector-id="pages/StreamX1047" class="post-media" onclick="openLightbox('${urls[0]}')">
-          <img data-filename="pages/StreamX" data-linenumber="1048" data-visual-selector-id="pages/StreamX1048" class="post-image" src="${urls[0]}" alt="Post content" loading="lazy">
-        </div>
-      `;
-    } else if (urls.length === 2) {
-      imageHTML = `
-        <div data-filename="pages/StreamX" data-linenumber="1053" data-visual-selector-id="pages/StreamX1053" class="image-grid grid-2">
-          ${urls.slice(0, 2).map((url, index) => `
-            <img data-filename="pages/StreamX" data-linenumber="1055" data-visual-selector-id="pages/StreamX1055" class="grid-image" src="${url}" alt="Post content ${index + 1}" onclick="openLightbox('${url}')" loading="lazy">
-          `).join('')}
-        </div>
-      `;
-    } else {
-      imageHTML = `
-        <div data-filename="pages/StreamX" data-linenumber="1061" data-visual-selector-id="pages/StreamX1061" class="image-grid grid-multiple">
-          ${urls.slice(0, 4).map((url, index) => `
-            <div data-filename="pages/StreamX" data-linenumber="1063" data-visual-selector-id="pages/StreamX1063" class="image-overlay">
-              <img data-filename="pages/StreamX" data-linenumber="1064" data-visual-selector-id="pages/StreamX1064" class="grid-image" src="${url}" alt="Post content ${index + 1}" onclick="openLightbox('${url}')" loading="lazy">
-              ${index === 3 && urls.length > 4 ? `<div data-filename="pages/StreamX" data-linenumber="1065" data-visual-selector-id="pages/StreamX1065" class="image-count">+${urls.length - 4}</div>` : ''}
-            </div>
-          `).join('')}
-        </div>
-      `;
-    }
-  }
-  
-  const hashtagsHTML = post.hashtags && post.hashtags.length > 0 ? 
-    `<div data-filename="pages/StreamX" data-linenumber="1074" data-visual-selector-id="pages/StreamX1074" class="post-hashtags">${post.hashtags.map(tag => `<span data-filename='pages/StreamX' data-linenumber='1074' data-visual-selector-id='pages/StreamX1074' class="hashtag"><svg data-filename='pages/StreamX' data-linenumber='1074' data-visual-selector-id='pages/StreamX1074' width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><line data-filename='pages/StreamX' data-linenumber='1074' data-visual-selector-id='pages/StreamX1074' x1="4" y1="9" x2="20" y2="9" stroke="currentColor" stroke-width="2"/><line data-filename='pages/StreamX' data-linenumber='1074' data-visual-selector-id='pages/StreamX1074' x1="4" y1="15" x2="20" y2="15" stroke="currentColor" stroke-width="2"/><line data-filename='pages/StreamX' data-linenumber='1074' data-visual-selector-id='pages/StreamX1074' x1="10" y1="3" x2="8" y2="21" stroke="currentColor" stroke-width="2"/><line data-filename='pages/StreamX' data-linenumber='1074' data-visual-selector-id='pages/StreamX1074' x1="16" y1="3" x2="14" y2="21" stroke="currentColor" stroke-width="2"/></svg>${tag}</span>`).join('')}</div>` : '';
-  
-  const postDate = post.created_date ? new Date(post.created_date).toLocaleDateString() : 'Today';
-  
-  return `
-    <div data-filename="pages/StreamX" data-linenumber="1079" data-visual-selector-id="pages/StreamX1079" class="post-card">
-      <div data-filename="pages/StreamX" data-linenumber="1080" data-visual-selector-id="pages/StreamX1080" class="post-header">
-        <div data-filename="pages/StreamX" data-linenumber="1081" data-visual-selector-id="pages/StreamX1081" class="post-date-location">
-          ${postDate}
-          ${post.location ? `• <svg data-filename="pages/StreamX" data-linenumber="1083" data-visual-selector-id="pages/StreamX1083" width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path data-filename='pages/StreamX' data-linenumber='1083' data-visual-selector-id='pages/StreamX1083' d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle data-filename='pages/StreamX' data-linenumber='1083' data-visual-selector-id='pages/StreamX1083' cx="12" cy="10" r="3"/></svg> ${post.location}` : ''}
-        </div>
-        <div data-filename="pages/StreamX" data-linenumber="1085" data-visual-selector-id="pages/StreamX1085" class="post-views">
-          <svg data-filename="pages/StreamX" data-linenumber="1086" data-visual-selector-id="pages/StreamX1086" class="post-views-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path data-filename="pages/StreamX" data-linenumber="1087" data-visual-selector-id="pages/StreamX1087" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-            <circle data-filename="pages/StreamX" data-linenumber="1088" data-visual-selector-id="pages/StreamX1088" cx="12" cy="12" r="3"/>
-          </svg>
-          <span data-filename="pages/StreamX" data-linenumber="1090" data-visual-selector-id="pages/StreamX1090" class="post-views-text">${(post.views_count || 0).toLocaleString()} views</span>
-        </div>
-      </div>
-      <div data-filename="pages/StreamX" data-linenumber="1093" data-visual-selector-id="pages/StreamX1093" class="post-content">
-        ${post.caption ? `<p data-filename="pages/StreamX" data-linenumber="1094" data-visual-selector-id="pages/StreamX1094" class="post-caption">${post.caption}</p>` : ''}
-        ${imageHTML}
-        ${hashtagsHTML}
-      </div>
-      <div data-filename="pages/StreamX" data-linenumber="1098" data-visual-selector-id="pages/StreamX1098" class="post-user">
-        <img data-filename="pages/StreamX" data-linenumber="1099" data-visual-selector-id="pages/StreamX1099" class="user-avatar" src="${post.user_profile_picture || 'https://ui-avatars.com/api/?name=User&size=32&background=6b7280&color=ffffff'}" alt="${post.user_name || 'User'}">
-        <div data-filename="pages/StreamX" data-linenumber="1100" data-visual-selector-id="pages/StreamX1100" class="user-info">
-          <div data-filename="pages/StreamX" data-linenumber="1101" data-visual-selector-id="pages/StreamX1101" class="user-name">${post.user_name || 'Unknown User'}</div>
-          <div data-filename="pages/StreamX" data-linenumber="1102" data-visual-selector-id="pages/StreamX1102" class="user-email">${post.user_email || 'user@streamx.com'}</div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-async function uploadFileToStorage(file) {
-  const storageRef = ref(storage, `posts/${Date.now()}_${file.name}`);
-  await uploadBytes(storageRef, file);
-  const downloadURL = await getDownloadURL(storageRef);
-  return downloadURL;
-}
-
-const fileInput = document.getElementById('fileInput');
-const fileUploadArea = document.getElementById('fileUploadArea');
-const previewContainer = document.getElementById('previewContainer');
-const createPostBtn = document.getElementById('createPostBtn');
-const createCaption = document.getElementById('createCaption');
-const createLocation = document.getElementById('createLocation');
-const createHashtag = document.getElementById('createHashtag');
-const hashtagsList = document.getElementById('hashtagsList');
-
-if (fileUploadArea && fileInput) { // Combined null checks for clarity
-  fileUploadArea.addEventListener('click', () => fileInput.click());
-  fileInput.addEventListener('change', (e) => {
-    uploadedFiles = Array.from(e.target.files);
-    renderPreviews();
-  });
-}
-
-function renderPreviews() {
-  if (!previewContainer) return; // Added null check
-  
-  if (uploadedFiles.length === 0) {
-    previewContainer.classList.add('hidden');
-    return;
-  }
-  
-  previewContainer.classList.remove('hidden');
-  previewContainer.innerHTML = uploadedFiles.map((file, index) => {
-    const url = URL.createObjectURL(file);
-    return `<img data-filename="pages/StreamX" data-linenumber="1144" data-visual-selector-id="pages/StreamX1144" class="preview-image" src="${url}" alt="Preview ${index + 1}">`;
-  }).join('');
-}
-
-if (createHashtag) { // Added null check
-  createHashtag.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      const tag = createHashtag.value.trim().replace('#', '');
-      if (tag && !currentHashtags.includes(tag)) {
-        currentHashtags.push(tag);
-        renderHashtags();
-        createHashtag.value = '';
-      }
-    }
-  });
-}
-
-function renderHashtags() {
-  if (!hashtagsList) return; // Added null check
-  
-  hashtagsList.innerHTML = currentHashtags.map(tag => `
-    <span data-filename="pages/StreamX" data-linenumber="1166" data-visual-selector-id="pages/StreamX1166" style="background:#f3f4f6;padding:0.375rem 0.75rem;border-radius:9999px;font-size:0.875rem;display:inline-flex;align-items:center;gap:0.25rem;">
-      #${tag}
-      <button data-filename="pages/StreamX" data-linenumber="1168" data-visual-selector-id="pages/StreamX1168" onclick="removeHashtag('${tag}')" style="background:none;border:none;cursor:pointer;color:#6b7280;font-size:1rem;">×</button>
-    </span>
-  `).join('');
-}
-
-window.removeHashtag = function(tag) {
-  currentHashtags = currentHashtags.filter(t => t !== tag);
-  renderHashtags();
-};
-
-if (createPostBtn) { // Added null check
-  createPostBtn.addEventListener('click', async () => {
-    if (!currentUser) {
-      await initializeUser();
-      if (!currentUser) return;
-    }
-
-    const caption = createCaption ? createCaption.value.trim() : '';
-    const location = createLocation ? createLocation.value.trim() : '';
-    
-    if (!caption && uploadedFiles.length === 0) {
-      await showCustomModal('Error', 'Please add a caption or upload some media.', false);
-      return;
-    }
-
-    createPostBtn.disabled = true;
-    createPostBtn.textContent = 'Uploading...';
-
-    try {
-      const contentUrls = [];
-      
-      for (const file of uploadedFiles) {
-        const downloadURL = await uploadFileToStorage(file);
-        contentUrls.push(downloadURL);
-      }
-
-      const initialViews = Math.floor(Math.random() * (50000 - 20000 + 1)) + 20000;
-
-      const newPost = {
-        caption,
-        location,
-        hashtags: [...currentHashtags],
-        content_urls: contentUrls,
-        content_type: uploadedFiles[0]?.type.startsWith('video/') ? 'video' : 'image',
-        views_count: initialViews,
-        created_date: new Date().toISOString(),
-        user_email: currentUser.email,
-        user_name: currentUser.full_name,
-        user_profile_picture: currentUser.profile_picture
-      };
-
-      await addDoc(postsRef, newPost);
-
-      if (createCaption) createCaption.value = '';
-      if (createLocation) createLocation.value = '';
-      if (createHashtag) createHashtag.value = '';
-      if (fileInput) fileInput.value = '';
-      uploadedFiles = [];
-      currentHashtags = [];
-      if (previewContainer) previewContainer.classList.add('hidden');
-      if (hashtagsList) hashtagsList.innerHTML = '';
-
-      await showCustomModal('Success', 'Post created successfully!', false);
-      navigateTo('feed');
-    } catch (error) {
-      console.error('Error creating post:', error);
-      await showCustomModal('Error', 'Failed to create post. Please try again.', false);
-    }
-
-    createPostBtn.disabled = false;
-    createPostBtn.textContent = 'Share Post';
-  });
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- // Profile
-        function renderProfile() {
-            const profileAvatar = document.getElementById('profileAvatar');
-            const profileName = document.getElementById('profileName');
-            const profileEmail = document.getElementById('profileEmail');
-            const profilePostCount = document.getElementById('profilePostCount');
-            const profileViewCount = document.getElementById('profileViewCount');
-            const profilePosts = document.getElementById('profilePosts');
+    <script>
+      // ✅ Correct Firebase Configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDO2EKbZYfy6ah_95xDo9m8MRfXtd9BExs",
+    authDomain: "streamx-a4099.firebaseapp.com",
+    databaseURL: "https://streamx-a4099-default-rtdb.firebaseio.com",
+    projectId: "streamx-a4099",
+    storageBucket: "streamx-a4099.appspot.com", // ✅ FIXED HERE
+    messagingSenderId: "1073155867607",
+    appId: "1:1073155867607:web:f4e0496523d360626a0192",
+    measurementId: "G-7DX6HDZ3S6"
+  };
+
+  // ✅ Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  // ✅ Initialize Database and Storage
+  const database = firebase.database();
+  const storage = firebase.storage();
+        
+        // ========== GLOBALS ==========
+        const ADMIN_PASSWORD = 'VNAXXTTM';
+        let posts = [];
+        let users = {};
+        let currentUser = JSON.parse(localStorage.getItem('streamx-current-user') || 'null');
+        let currentPage = 'feed';
+        let uploadedFiles = [];
+        let currentHashtags = [];
+        
+        // ========== ALERT SYSTEM ==========
+        function showAlert(message, isError = false) {
+            const alert = document.createElement('div');
+            alert.className = 'alert' + (isError ? ' error' : '');
+            alert.textContent = message;
+            document.body.appendChild(alert);
             
-            profileAvatar.src = currentUser.profile_picture;
-            profileName.textContent = currentUser.full_name;
-            profileEmail.textContent = currentUser.email;
+            setTimeout(() => {
+                alert.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => alert.remove(), 300);
+            }, 3000);
+        }
+        
+        // ========== MODAL ==========
+        function showCustomModal(title, message, isPassword = false) {
+            return new Promise((resolve, reject) => {
+                const modal = document.getElementById('customModal');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalMessage = document.getElementById('modalMessage');
+                const modalInput = document.getElementById('modalInput');
+                const modalConfirm = document.getElementById('modalConfirm');
+                const modalCancel = document.getElementById('modalCancel');
+                
+                modalTitle.textContent = title;
+                modalMessage.textContent = message;
+                modalInput.value = '';
+                modalInput.type = isPassword ? 'password' : 'text';
+                
+                modal.classList.add('active');
+                modalInput.focus();
+                
+                const handleConfirm = () => {
+                    const value = modalInput.value.trim();
+                    if (!value) {
+                        showAlert('Please enter a value', true);
+                        return;
+                    }
+                    cleanup();
+                    resolve(value);
+                };
+                
+                const handleCancel = () => {
+                    cleanup();
+                    reject(null);
+                };
+                
+                const handleEnter = (e) => {
+                    if (e.key === 'Enter') handleConfirm();
+                };
+                
+                const cleanup = () => {
+                    modal.classList.remove('active');
+                    modalConfirm.removeEventListener('click', handleConfirm);
+                    modalCancel.removeEventListener('click', handleCancel);
+                    modalInput.removeEventListener('keypress', handleEnter);
+                };
+                
+                modalConfirm.addEventListener('click', handleConfirm);
+                modalCancel.addEventListener('click', handleCancel);
+                modalInput.addEventListener('keypress', handleEnter);
+            });
+        }
+        
+        // ========== USER INITIALIZATION ==========
+        async function initializeUser() {
+            if (!currentUser) {
+                try {
+                    const userEmail = await showCustomModal('Welcome to StreamX', 'Enter your email:');
+                    const userName = await showCustomModal('Welcome to StreamX', 'Enter your name:');
+                    
+                    currentUser = {
+                        email: userEmail,
+                        full_name: userName,
+                        profile_picture: `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&size=128&background=000000&color=ffffff`
+                    };
+                    
+                    localStorage.setItem('streamx-current-user', JSON.stringify(currentUser));
+                    await database.ref('users/' + userEmail.replace(/[.#$[\]]/g, '_')).set(currentUser);
+                    
+                    updateHeaderProfileIcon();
+                    showAlert('✅ Welcome to StreamX!');
+                } catch (error) {
+                    console.log('User cancelled registration');
+                }
+            } else {
+                updateHeaderProfileIcon();
+            }
+        }
+        
+        function updateHeaderProfileIcon() {
+            const icon = document.getElementById('headerProfileIcon');
+            if (currentUser && currentUser.profile_picture) {
+                icon.src = currentUser.profile_picture;
+                icon.classList.remove('hidden');
+                icon.onclick = () => navigateTo('profile');
+            }
+        }
+        
+        // ========== LOAD DATA FROM FIREBASE ==========
+        database.ref('posts').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                posts = Object.keys(data).map(key => ({
+                    id: key,
+                    ...data[key]
+                }));
+                posts.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+            } else {
+                posts = [];
+            }
+            
+            if (currentPage === 'feed') renderPosts();
+            if (currentPage === 'profile') renderProfile();
+            if (currentPage === 'admin') renderAdminPanel();
+        });
+        
+        database.ref('users').on('value', (snapshot) => {
+            users = snapshot.val() || {};
+        });
+        
+        // ========== NAVIGATION ==========
+        function navigateTo(page) {
+            currentPage = page;
+            
+            document.getElementById('feedPage').classList.add('hidden');
+            document.getElementById('createPage').classList.add('hidden');
+            document.getElementById('profilePage').classList.add('hidden');
+            document.getElementById('adminPanel').classList.add('hidden');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-page') === page) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            if (page === 'feed') {
+                document.getElementById('feedPage').classList.remove('hidden');
+                renderPosts();
+            } else if (page === 'create') {
+                document.getElementById('createPage').classList.remove('hidden');
+            } else if (page === 'profile') {
+                document.getElementById('profilePage').classList.remove('hidden');
+                renderProfile();
+            } else if (page === 'admin') {
+                document.getElementById('adminPanel').classList.remove('hidden');
+                renderAdminPanel();
+            }
+        }
+        
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                navigateTo(btn.getAttribute('data-page'));
+            });
+        });
+        
+        // ========== RENDER POSTS ==========
+        function renderPosts() {
+            const feed = document.getElementById('postsFeed');
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            
+            let filtered = posts;
+            if (searchQuery) {
+                filtered = posts.filter(post => 
+                    post.caption?.toLowerCase().includes(searchQuery) ||
+                    post.location?.toLowerCase().includes(searchQuery) ||
+                    post.hashtags?.some(tag => tag.toLowerCase().includes(searchQuery))
+                );
+            }
+            
+            if (filtered.length === 0) {
+                feed.innerHTML = '<div style="text-align:center;padding:3rem;color:#6b7280;">No posts found</div>';
+                return;
+            }
+            
+            feed.innerHTML = filtered.map(post => createPostHTML(post)).join('');
+        }
+        
+        function createPostHTML(post) {
+            const postUser = users[post.created_by?.replace(/[.#$[\]]/g, '_')] || { 
+                full_name: 'Unknown User', 
+                email: post.created_by,
+                profile_picture: 'https://ui-avatars.com/api/?name=Unknown&size=32&background=6b7280&color=ffffff'
+            };
+            
+            const imageHTML = (post.content_urls && post.content_urls.length > 0) 
+                ? `<img class="post-image" src="${post.content_urls[0]}" alt="Post content">` 
+                : '';
+            
+            const hashtagsHTML = post.hashtags?.length > 0 
+                ? '<div class="post-hashtags">' + post.hashtags.map(tag => `<span class="hashtag">#${tag}</span>`).join('') + '</div>'
+                : '';
+            
+            const locationHTML = post.location ? ` • ${post.location}` : '';
+            
+            return `
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="post-date">${new Date(post.created_date).toLocaleDateString()}${locationHTML}</div>
+                        <div class="post-views">👁️ ${(post.views_count || 0).toLocaleString()} views</div>
+                    </div>
+                    ${post.caption ? `<div class="post-caption">${post.caption}</div>` : ''}
+                    ${imageHTML}
+                    ${hashtagsHTML}
+                    <div class="post-user">
+                        <img class="user-avatar" src="${postUser.profile_picture}" alt="${postUser.full_name}">
+                        <div>
+                            <div class="user-name">${postUser.full_name}</div>
+                            <div class="user-email">${postUser.email}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        document.getElementById('searchInput').addEventListener('input', () => {
+            if (currentPage === 'feed') renderPosts();
+        });
+        
+        // ========== CREATE POST ==========
+        const fileInput = document.getElementById('fileInput');
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const previewContainer = document.getElementById('previewContainer');
+        const createForm = document.getElementById('createForm');
+        const createHashtag = document.getElementById('createHashtag');
+        
+        fileUploadArea.addEventListener('click', () => fileInput.click());
+        
+        fileInput.addEventListener('change', (e) => {
+            uploadedFiles = Array.from(e.target.files);
+            if (uploadedFiles.length > 0) {
+                previewContainer.classList.remove('hidden');
+                previewContainer.innerHTML = uploadedFiles.map((file, i) => {
+                    const url = URL.createObjectURL(file);
+                    return `<img class="preview-image" src="${url}" alt="Preview ${i + 1}">`;
+                }).join('');
+            }
+        });
+        
+        createHashtag.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const tag = createHashtag.value.trim().replace('#', '');
+                if (tag && !currentHashtags.includes(tag)) {
+                    currentHashtags.push(tag);
+                    renderHashtags();
+                    createHashtag.value = '';
+                }
+            }
+        });
+        
+        function renderHashtags() {
+            const list = document.getElementById('hashtagsList');
+            list.innerHTML = currentHashtags.map(tag => 
+                `<div class="hashtag-tag">#${tag}<button onclick="removeHashtag('${tag}')" type="button">×</button></div>`
+            ).join('');
+        }
+        
+        window.removeHashtag = (tag) => {
+            currentHashtags = currentHashtags.filter(t => t !== tag);
+            renderHashtags();
+        };
+        
+        createForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const caption = document.getElementById('createCaption').value.trim();
+            const location = document.getElementById('createLocation').value.trim();
+            
+            if (!caption && uploadedFiles.length === 0) {
+                showAlert('❌ Please add a caption or upload media', true);
+                return;
+            }
+            
+            // Show loading
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitText').classList.add('hidden');
+            document.getElementById('submitLoading').classList.remove('hidden');
+            
+            try {
+                let contentUrls = [];
+                
+                // Upload files to Firebase Storage
+                if (uploadedFiles.length > 0) {
+                    showAlert('📤 Uploading media...');
+                    
+                    for (const file of uploadedFiles) {
+                        const timestamp = Date.now();
+                        const fileName = `${timestamp}_${file.name}`;
+                        const storageRef = storage.ref('posts/' + fileName);
+                        
+                        const snapshot = await storageRef.put(file);
+                        const downloadURL = await snapshot.ref.getDownloadURL();
+                        contentUrls.push(downloadURL);
+                    }
+                }
+                
+                const initialViews = Math.floor(Math.random() * (10000 - 3400)) + 3400;
+                
+                const newPost = {
+                    caption: caption,
+                    location: location,
+                    hashtags: currentHashtags.slice(),
+                    content_urls: contentUrls,
+                    content_type: uploadedFiles[0]?.type.startsWith('video/') ? 'video' : 'image',
+                    views_count: initialViews,
+                    created_date: new Date().toISOString(),
+                    created_by: currentUser.email
+                };
+                
+                // Save to Firebase Database
+                await database.ref('posts').push(newPost);
+                
+                // Reset form
+                document.getElementById('createCaption').value = '';
+                document.getElementById('createLocation').value = '';
+                document.getElementById('createHashtag').value = '';
+                fileInput.value = '';
+                uploadedFiles = [];
+                currentHashtags = [];
+                previewContainer.classList.add('hidden');
+                document.getElementById('hashtagsList').innerHTML = '';
+                
+                showAlert('✅ Post created successfully!');
+                navigateTo('feed');
+                
+            } catch (error) {
+                console.error('Error creating post:', error);
+                showAlert('❌ Failed to create post: ' + error.message, true);
+            } finally {
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('submitText').classList.remove('hidden');
+                document.getElementById('submitLoading').classList.add('hidden');
+            }
+        });
+        
+        // ========== PROFILE ==========
+        function renderProfile() {
+            document.getElementById('profileAvatar').src = currentUser.profile_picture;
+            document.getElementById('profileName').textContent = currentUser.full_name;
+            document.getElementById('profileEmail').textContent = currentUser.email;
             
             const userPosts = posts.filter(p => p.created_by === currentUser.email);
-            profilePostCount.textContent = userPosts.length;
-            profileViewCount.textContent = userPosts.reduce((sum, p) => sum + (p.views_count || 0), 0).toLocaleString();
+            document.getElementById('profilePostCount').textContent = userPosts.length;
+            document.getElementById('profileViewCount').textContent = userPosts.reduce((sum, p) => sum + (p.views_count || 0), 0);
             
+            const profilePosts = document.getElementById('profilePosts');
             if (userPosts.length === 0) {
-                profilePosts.innerHTML = `
-                    <div data-filename="pages/Admin" data-linenumber="1419" data-visual-selector-id="pages/Admin1419" class="empty-state">
-                        <div data-filename="pages/Admin" data-linenumber="1420" data-visual-selector-id="pages/Admin1420" class="empty-icon">
-                            <svg data-filename="pages/Admin" data-linenumber="1421" data-visual-selector-id="pages/Admin1421" width="32" height="32" fill="#9ca3af" viewBox="0 0 24 24">
-                                <path data-filename="pages/Admin" data-linenumber="1422" data-visual-selector-id="pages/Admin1422" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                <circle data-filename="pages/Admin" data-linenumber="1423" data-visual-selector-id="pages/Admin1423" cx="12" cy="12" r="3"/>
-                            </svg>
-                        </div>
-                        <h2 data-filename="pages/Admin" data-linenumber="1426" data-visual-selector-id="pages/Admin1426">No posts yet</h2>
-                        <p data-filename="pages/Admin" data-linenumber="1427" data-visual-selector-id="pages/Admin1427">Share your first post with the community!</p>
-                    </div>
-                `;
+                profilePosts.innerHTML = '<div style="text-align:center;padding:3rem;color:#6b7280;">No posts yet</div>';
             } else {
                 profilePosts.innerHTML = userPosts.map(post => createPostHTML(post)).join('');
             }
         }
         
-        const saveProfileBtn = document.getElementById('saveProfileBtn');
-        const profilePictureFile = document.getElementById('profilePictureFile');
-        
-        saveProfileBtn.addEventListener('click', async () => {
-            const file = profilePictureFile.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    currentUser.profile_picture = e.target.result;
-                    users[currentUser.email] = currentUser;
-                    saveCurrentUser();
-                    saveUsers();
-                    updateHeaderProfileIcon();
-                    renderProfile();
-                    showCustomModal('Success', 'Profile picture updated successfully!', false);
-                };
-                reader.readAsDataURL(file);
-            } else {
-                showCustomModal('Error', 'Please select a profile picture.', false);
-            }
-        });
-        
-
-
-
-
-
-
-        // Admin Panel
-        function renderAdminPanel() {
-            const adminPostsList = document.getElementById('adminPostsList');
-            
-            if (posts.length === 0) {
-                adminPostsList.innerHTML = '<p data-filename="pages/Admin" data-linenumber="1462" data-visual-selector-id="pages/Admin1462" style="text-align:center;color:#6b7280;">No posts to manage.</p>';
+        window.saveProfilePicture = async () => {
+            const file = document.getElementById('profilePictureFile').files[0];
+            if (!file) {
+                showAlert('❌ Please select a profile picture', true);
                 return;
             }
             
-            adminPostsList.innerHTML = posts.map(post => {
-                const postUser = users[post.created_by] || { full_name: 'Unknown', email: post.created_by };
+            document.getElementById('profileBtn').disabled = true;
+            document.getElementById('profileText').classList.add('hidden');
+            document.getElementById('profileLoading').classList.remove('hidden');
+            
+            try {
+                const timestamp = Date.now();
+                const storageRef = storage.ref('profiles/' + currentUser.email.replace(/[.#$[\]]/g, '_') + '_' + timestamp);
+                
+                const snapshot = await storageRef.put(file);
+                const downloadURL = await snapshot.ref.getDownloadURL();
+                
+                currentUser.profile_picture = downloadURL;
+                
+                await database.ref('users/' + currentUser.email.replace(/[.#$[\]]/g, '_')).update({
+                    profile_picture: downloadURL
+                });
+                
+                localStorage.setItem('streamx-current-user', JSON.stringify(currentUser));
+                
+                updateHeaderProfileIcon();
+                renderProfile();
+                showAlert('✅ Profile picture updated!');
+                
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                showAlert('❌ Failed to update profile picture: ' + error.message, true);
+            } finally {
+                document.getElementById('profileBtn').disabled = false;
+                document.getElementById('profileText').classList.remove('hidden');
+                document.getElementById('profileLoading').classList.add('hidden');
+            }
+        };
+        
+        // ========== ADMIN ==========
+        window.promptAdminPassword = async () => {
+            const savedAuth = sessionStorage.getItem('streamx-admin-auth');
+            if (savedAuth === ADMIN_PASSWORD) {
+                navigateTo('admin');
+                return;
+            }
+            
+            try {
+                const password = await showCustomModal('🛡️ Admin Access', 'Enter admin password:', true);
+                if (password === ADMIN_PASSWORD) {
+                    sessionStorage.setItem('streamx-admin-auth', ADMIN_PASSWORD);
+                    navigateTo('admin');
+                    showAlert('✅ Admin access granted');
+                } else {
+                    showAlert('❌ Incorrect password', true);
+                }
+            } catch (error) {
+                console.log('Admin access cancelled');
+            }
+        };
+        
+        function renderAdminPanel() {
+            const list = document.getElementById('adminPostsList');
+            if (posts.length === 0) {
+                list.innerHTML = '<div style="text-align:center;padding:3rem;color:#6b7280;">No posts to manage</div>';
+                return;
+            }
+            
+            list.innerHTML = posts.map(post => {
+                const postUser = users[post.created_by?.replace(/[.#$[\]]/g, '_')] || { full_name: 'Unknown', email: post.created_by };
+                const thumbnail = (post.content_urls && post.content_urls[0]) || 'https://via.placeholder.com/64';
+                
                 return `
-                    <div data-filename="pages/Admin" data-linenumber="1469" data-visual-selector-id="pages/Admin1469" class="admin-post-item">
-                        <img data-filename="pages/Admin" data-linenumber="1470" data-visual-selector-id="pages/Admin1470" class="admin-post-thumbnail" src="${post.content_urls[0] || 'https://via.placeholder.com/64'}" alt="Post">
-                        <div data-filename="pages/Admin" data-linenumber="1471" data-visual-selector-id="pages/Admin1471" class="admin-post-info">
-                            <div data-filename="pages/Admin" data-linenumber="1472" data-visual-selector-id="pages/Admin1472" class="admin-post-caption">${post.caption || 'No caption'}</div>
-                            <div data-filename="pages/Admin" data-linenumber="1473" data-visual-selector-id="pages/Admin1473" class="admin-post-stats">${(post.views_count || 0).toLocaleString()} views • ${postUser.full_name}</div>
-                        </div>
-                        <div data-filename="pages/Admin" data-linenumber="1475" data-visual-selector-id="pages/Admin1475" class="admin-actions">
-                            <button data-filename="pages/Admin" data-linenumber="1476" data-visual-selector-id="pages/Admin1476" class="btn-views" onclick="increaseViews(${post.id}, 1050)">+1050 Views</button>
-                            <button data-filename="pages/Admin" data-linenumber="1477" data-visual-selector-id="pages/Admin1477" class="btn-custom-views" onclick="customViews(${post.id})">Custom</button>
-                            <button data-filename="pages/Admin" data-linenumber="1478" data-visual-selector-id="pages/Admin1478" class="btn-delete" onclick="deletePost(${post.id})">Delete</button>
+                    <div class="admin-post-item">
+                        <img class="admin-post-thumbnail" src="${thumbnail}" alt="Post">
+                        <div class="admin-post-info">
+                            <div class="admin-post-caption">${post.caption || 'No caption'}</div>
+                            <div class="admin-post-stats">${(post.views_count || 0).toLocaleString()} views • ${postUser.full_name}</div>
+                            <div class="admin-actions">
+                                <button onclick="increaseViews('${post.id}', 10000)" class="btn btn-blue">👁️ +10000</button>
+                                <button onclick="customViews('${post.id}')" class="btn btn-green">Custom</button>
+                                <button onclick="deletePost('${post.id}')" class="btn btn-red">🗑️ Delete</button>
+                            </div>
                         </div>
                     </div>
                 `;
             }).join('');
         }
-
-
-window.increaseViews = async function(postId, amount) {
-  try { // Added try-catch for error handling
-    const postDoc = doc(db, "posts", postId);
-    const post = allPosts.find(p => p.id === postId);
-    if (post) {
-      await updateDoc(postDoc, {
-        views_count: (post.views_count || 0) + amount
-      });
-      // renderAdminPanel(); // Removed as onSnapshot in loadPosts handles updates
-    }
-  } catch (error) {
-    console.error('Error updating views:', error);
-  }
-};
-
-window.customViews = async function(postId) {
-  const amount = await customPrompt('Enter number of views to add:', false);
-  if (amount && !isNaN(amount)) {
-    try { // Added try-catch for error handling
-      const postDoc = doc(db, "posts", postId);
-      const post = allPosts.find(p => p.id === postId);
-      if (post) {
-        await updateDoc(postDoc, {
-          views_count: (post.views_count || 0) + parseInt(amount)
+        
+        window.increaseViews = async (postId, amount) => {
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                const newViews = (post.views_count || 0) + amount;
+                await database.ref('posts/' + postId + '/views_count').set(newViews);
+                showAlert(`✅ Added ${amount.toLocaleString()} views!`);
+            }
+        };
+        
+        window.customViews = async (postId) => {
+            try {
+                const amount = await showCustomModal('Custom Views', 'Enter number of views to add:');
+                const viewsToAdd = parseInt(amount);
+                
+                if (isNaN(viewsToAdd)) {
+                    showAlert('❌ Please enter a valid number', true);
+                    return;
+                }
+                
+                const post = posts.find(p => p.id === postId);
+                if (post) {
+                    const newViews = (post.views_count || 0) + viewsToAdd;
+                    await database.ref('posts/' + postId + '/views_count').set(newViews);
+                    showAlert(`✅ Added ${viewsToAdd.toLocaleString()} views!`);
+                }
+            } catch (error) {
+                console.log('Custom views cancelled');
+            }
+        };
+        
+        window.deletePost = async (postId) => {
+            if (confirm('⚠️ Are you sure you want to delete this post?')) {
+                await database.ref('posts/' + postId).remove();
+                showAlert('✅ Post deleted');
+            }
+        };
+        
+        // ========== START APP ==========
+        window.addEventListener('load', () => {
+            initializeUser();
         });
-        // renderAdminPanel(); // Removed as onSnapshot in loadPosts handles updates
-      }
-    } catch (error) {
-      console.error('Error updating views:', error);
-    }
-  }
-};
-
-window.deletePost = async function(postId) {
-  const confirmed = await customConfirm('Are you sure you want to delete this post?');
-  if (confirmed) {
-    try { // Added try-catch for error handling
-      await deleteDoc(doc(db, "posts", postId));
-      // renderAdminPanel(); // Removed as onSnapshot in loadPosts handles updates
-    } catch (error) {
-      console.error('Error deleting post:', error);
-    }
-  }
-};
-
-const lightbox = document.getElementById('lightbox');
-const lightboxImage = document.getElementById('lightboxImage');
-const lightboxClose = document.getElementById('lightboxClose');
-
-if (lightbox && lightboxImage && lightboxClose) { // Added null checks
-  lightboxClose.addEventListener('click', () => lightbox.classList.remove('active'));
-  lightbox.addEventListener('click', (e) => {
-    if (e.target === lightbox) lightbox.classList.remove('active');
-  });
-}
-
-window.openLightbox = function(imageSrc) {
-  if (lightbox && lightboxImage) { // Added null check
-    lightboxImage.src = imageSrc;
-    lightbox.classList.add('active');
-  }
-};
-
-async function init() {
-  await initializeUser();
-  loadPosts();
-  updateHeaderProfileIcon();
-}
-
-init();
-</script>
+    </script>
 </body>
 </html>

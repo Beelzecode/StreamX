@@ -5,10 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StreamX - Social Feed</title>
     
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -21,7 +18,6 @@
             min-height: 100vh;
         }
         
-        /* Loading Spinner */
         .loading {
             display: inline-block;
             width: 20px;
@@ -37,7 +33,6 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* Header */
         .header {
             background: #ffffff;
             border-bottom: 1px solid #e5e7eb;
@@ -77,7 +72,6 @@
         .logo h1 {
             font-size: 1.25rem;
             font-weight: bold;
-            color: #000000;
         }
         
         .nav {
@@ -127,7 +121,6 @@
             margin-left: 0.5rem;
         }
         
-        /* Main Content */
         .main-content {
             max-width: 600px;
             margin: 0 auto;
@@ -142,7 +135,6 @@
         .page-header h1 {
             font-size: 2rem;
             font-weight: bold;
-            color: #000000;
             margin-bottom: 0.5rem;
         }
         
@@ -150,14 +142,12 @@
             color: #6b7280;
         }
         
-        /* Partner Banner */
         .partner-banner {
             background: #000000;
             color: #ffffff;
             padding: 1.5rem;
             border-radius: 0.5rem;
             margin-bottom: 2rem;
-            border: 1px solid #000000;
         }
         
         .partner-title {
@@ -185,10 +175,8 @@
             color: #d1d5db;
             padding: 0.25rem 0.75rem;
             border-radius: 0.25rem;
-            font-size: 0.75rem;
         }
         
-        /* Search */
         .search-input {
             width: 100%;
             padding: 0.75rem 1rem;
@@ -198,7 +186,6 @@
             margin-bottom: 2rem;
         }
         
-        /* Posts */
         .post-card {
             background: #ffffff;
             border: 1px solid #e5e7eb;
@@ -226,7 +213,6 @@
         
         .post-caption {
             padding: 0 1rem 1rem 1rem;
-            color: #000000;
         }
         
         .post-image {
@@ -264,7 +250,6 @@
         
         .user-name {
             font-weight: 600;
-            color: #000000;
         }
         
         .user-email {
@@ -272,7 +257,6 @@
             color: #6b7280;
         }
         
-        /* Forms */
         .form-input,
         .form-textarea {
             width: 100%;
@@ -344,7 +328,6 @@
             color: white;
         }
         
-        /* Admin Panel */
         .admin-post-item {
             display: flex;
             align-items: start;
@@ -370,7 +353,6 @@
         
         .admin-post-caption {
             font-weight: 600;
-            color: #000000;
             margin-bottom: 0.25rem;
         }
         
@@ -386,7 +368,6 @@
             margin-top: 0.5rem;
         }
         
-        /* Modal */
         .custom-modal-overlay {
             position: fixed;
             top: 0;
@@ -419,7 +400,6 @@
         
         .custom-modal h2 {
             margin-bottom: 0.5rem;
-            font-size: 1.5rem;
         }
         
         .custom-modal p {
@@ -433,7 +413,6 @@
             border: 2px solid #e5e7eb;
             border-radius: 0.5rem;
             margin-bottom: 1rem;
-            font-size: 1rem;
         }
         
         .custom-modal-buttons {
@@ -445,7 +424,6 @@
             flex: 1;
         }
         
-        /* Utility */
         .hidden { display: none !important; }
         
         .preview-grid {
@@ -460,7 +438,6 @@
             aspect-ratio: 1;
             object-fit: cover;
             border-radius: 0.5rem;
-            border: 1px solid #e5e7eb;
         }
         
         .hashtag-tag {
@@ -480,11 +457,8 @@
             cursor: pointer;
             font-size: 1.25rem;
             color: #6b7280;
-            padding: 0;
-            line-height: 1;
         }
         
-        /* Alert */
         .alert {
             position: fixed;
             top: 5rem;
@@ -516,14 +490,12 @@
 </head>
 <body>
     <div id="app">
-        <!-- Header -->
         <header class="header">
             <div class="header-content">
                 <div class="logo">
                     <div class="logo-icon">S</div>
                     <h1>StreamX</h1>
                 </div>
-                
                 <nav class="nav">
                     <button class="nav-btn active" data-page="feed">Feed</button>
                     <button class="nav-btn" data-page="create">Create</button>
@@ -533,52 +505,42 @@
             </div>
         </header>
 
-        <!-- Feed Page -->
         <div id="feedPage" class="main-content">
             <div class="page-header">
                 <h1>Feed</h1>
                 <p>Explore content from the community</p>
             </div>
             
-            <!-- Partner Banner -->
             <div class="partner-banner">
-                <div class="partner-title">
-                    ⭐ Become a StreamX Partner!
-                </div>
+                <div class="partner-title">⭐ Become a StreamX Partner!</div>
                 <p>Get <span class="partner-amount">R15,000 monthly</span> for being a top creator. Reach 300 posts in a year to qualify.</p>
                 <div class="partner-footer">
-                    <span>ℹ️ Future updates will track signed-in users for eligibility.</span>
-                    <span class="partner-badge">Unavailable for now</span>
+                    <span>ℹ️ Future updates will track users for eligibility</span>
+                    <span class="partner-badge">Coming Soon</span>
                 </div>
             </div>
             
-            <input type="text" id="searchInput" class="search-input" placeholder="Search posts by caption, hashtag, or location...">
-            
+            <input type="text" id="searchInput" class="search-input" placeholder="Search posts...">
             <div id="postsFeed"></div>
         </div>
 
-        <!-- Create Page -->
         <div id="createPage" class="main-content hidden">
             <div class="page-header">
                 <h1>Create Post</h1>
-                <p>Share your moment with the community</p>
+                <p>Share your moment</p>
             </div>
             
             <form id="createForm">
                 <textarea id="createCaption" class="form-textarea" placeholder="What's on your mind?" required></textarea>
-                
-                <input type="text" id="createLocation" class="form-input" placeholder="📍 Location (optional)">
-                
-                <input type="text" id="createHashtag" class="form-input" placeholder="# Add hashtag (press Enter)">
-                
+                <input type="text" id="createLocation" class="form-input" placeholder="Location (optional)">
+                <input type="text" id="createHashtag" class="form-input" placeholder="Add hashtag (press Enter)">
                 <div id="hashtagsList"></div>
-                
                 <div id="previewContainer" class="preview-grid hidden"></div>
                 
                 <div class="file-upload-area" id="fileUploadArea">
                     <input type="file" id="fileInput" accept="image/*,video/*" multiple style="display:none;">
-                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">📷</div>
-                    <p style="color: #6b7280;">Click to upload photos or videos</p>
+                    <div style="font-size: 3rem;">📷</div>
+                    <p style="color: #6b7280;">Click to upload</p>
                 </div>
                 
                 <button type="submit" class="btn btn-primary" id="submitBtn">
@@ -588,20 +550,19 @@
             </form>
         </div>
 
-        <!-- Profile Page -->
         <div id="profilePage" class="main-content hidden">
             <div class="page-header">
-                <img id="profileAvatar" src="" alt="Profile" style="width: 8rem; height: 8rem; border-radius: 50%; object-fit: cover; margin: 0 auto 1rem; display: block; border: 4px solid #e5e7eb;">
+                <img id="profileAvatar" src="" alt="Profile" style="width: 8rem; height: 8rem; border-radius: 50%; margin: 0 auto 1rem; display: block;">
                 <h1 id="profileName">User</h1>
-                <p id="profileEmail" style="margin-bottom: 1rem;">user@example.com</p>
-                <div style="display: flex; justify-content: center; gap: 2rem; font-size: 0.875rem; color: #6b7280; margin-bottom: 2rem;">
+                <p id="profileEmail">user@example.com</p>
+                <div style="display: flex; justify-content: center; gap: 2rem; margin: 1rem 0;">
                     <div style="text-align: center;">
-                        <div id="profilePostCount" style="font-weight: bold; font-size: 1.5rem; color: #000000;">0</div>
-                        <div>Posts</div>
+                        <div id="profilePostCount" style="font-size: 1.5rem; font-weight: bold;">0</div>
+                        <div style="color: #6b7280;">Posts</div>
                     </div>
                     <div style="text-align: center;">
-                        <div id="profileViewCount" style="font-weight: bold; font-size: 1.5rem; color: #000000;">0</div>
-                        <div>Total Views</div>
+                        <div id="profileViewCount" style="font-size: 1.5rem; font-weight: bold;">0</div>
+                        <div style="color: #6b7280;">Views</div>
                     </div>
                 </div>
             </div>
@@ -609,17 +570,13 @@
             <div style="background: #f9fafb; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 2rem;">
                 <h3 style="margin-bottom: 1rem;">Update Profile Picture</h3>
                 <input type="file" id="profilePictureFile" accept="image/*" class="form-input">
-                <button onclick="saveProfilePicture()" class="btn btn-primary" id="profileBtn">
-                    <span id="profileText">Save Profile Picture</span>
-                    <span id="profileLoading" class="loading hidden"></span>
-                </button>
+                <button onclick="saveProfilePicture()" class="btn btn-primary">Save</button>
             </div>
             
-            <h2 style="margin-bottom: 1rem; font-size: 1.5rem;">My Posts</h2>
+            <h2 style="margin-bottom: 1rem;">My Posts</h2>
             <div id="profilePosts"></div>
         </div>
 
-        <!-- Admin Panel -->
         <div id="adminPanel" class="main-content hidden">
             <div class="page-header">
                 <h1>🛡️ Admin Panel</h1>
@@ -628,12 +585,11 @@
             <div id="adminPostsList"></div>
         </div>
 
-        <!-- Modal -->
         <div id="customModal" class="custom-modal-overlay">
             <div class="custom-modal">
                 <h2 id="modalTitle">Title</h2>
                 <p id="modalMessage">Message</p>
-                <input type="text" id="modalInput" class="custom-modal-input" placeholder="Enter value...">
+                <input type="text" id="modalInput" class="custom-modal-input">
                 <div class="custom-modal-buttons">
                     <button id="modalCancel" class="btn" style="background: #f3f4f6; color: #374151;">Cancel</button>
                     <button id="modalConfirm" class="btn btn-primary">OK</button>
@@ -642,27 +598,28 @@
         </div>
     </div>
 
+
+
+
+    <!-- Firebase SDKs - ONLY Database, NO Storage needed! -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
     <script>
-      // ✅ Correct Firebase Configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyDO2EKbZYfy6ah_95xDo9m8MRfXtd9BExs",
-    authDomain: "streamx-a4099.firebaseapp.com",
-    databaseURL: "https://streamx-a4099-default-rtdb.firebaseio.com",
-    projectId: "streamx-a4099",
-    storageBucket: "streamx-a4099.appspot.com", // ✅ FIXED HERE
-    messagingSenderId: "1073155867607",
-    appId: "1:1073155867607:web:f4e0496523d360626a0192",
-    measurementId: "G-7DX6HDZ3S6"
-  };
-
-  // ✅ Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-
-  // ✅ Initialize Database and Storage
-  const database = firebase.database();
-  const storage = firebase.storage();
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyDO2EKbZYfy6ah_95xDo9m8MRfXtd9BExs",
+            authDomain: "streamx-a4099.firebaseapp.com",
+            databaseURL: "https://streamx-a4099-default-rtdb.firebaseio.com",
+            projectId: "streamx-a4099",
+            storageBucket: "streamx-a4099.firebasestorage.app",
+            messagingSenderId: "1073155867607",
+            appId: "1:1073155867607:web:f4e0496523d360626a0192"
+        };
         
-        // ========== GLOBALS ==========
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
         const ADMIN_PASSWORD = 'VNAXXTTM';
         let posts = [];
         let users = {};
@@ -671,90 +628,57 @@
         let uploadedFiles = [];
         let currentHashtags = [];
         
-        // ========== ALERT SYSTEM ==========
         function showAlert(message, isError = false) {
             const alert = document.createElement('div');
             alert.className = 'alert' + (isError ? ' error' : '');
             alert.textContent = message;
             document.body.appendChild(alert);
-            
-            setTimeout(() => {
-                alert.style.animation = 'slideIn 0.3s ease reverse';
-                setTimeout(() => alert.remove(), 300);
-            }, 3000);
+            setTimeout(() => alert.remove(), 3000);
         }
         
-        // ========== MODAL ==========
         function showCustomModal(title, message, isPassword = false) {
             return new Promise((resolve, reject) => {
                 const modal = document.getElementById('customModal');
-                const modalTitle = document.getElementById('modalTitle');
-                const modalMessage = document.getElementById('modalMessage');
-                const modalInput = document.getElementById('modalInput');
-                const modalConfirm = document.getElementById('modalConfirm');
-                const modalCancel = document.getElementById('modalCancel');
-                
-                modalTitle.textContent = title;
-                modalMessage.textContent = message;
-                modalInput.value = '';
-                modalInput.type = isPassword ? 'password' : 'text';
-                
+                document.getElementById('modalTitle').textContent = title;
+                document.getElementById('modalMessage').textContent = message;
+                const input = document.getElementById('modalInput');
+                input.value = '';
+                input.type = isPassword ? 'password' : 'text';
                 modal.classList.add('active');
-                modalInput.focus();
+                input.focus();
                 
-                const handleConfirm = () => {
-                    const value = modalInput.value.trim();
-                    if (!value) {
-                        showAlert('Please enter a value', true);
-                        return;
-                    }
+                const confirm = () => {
+                    const value = input.value.trim();
+                    if (!value) return showAlert('Please enter a value', true);
                     cleanup();
                     resolve(value);
                 };
-                
-                const handleCancel = () => {
-                    cleanup();
-                    reject(null);
-                };
-                
-                const handleEnter = (e) => {
-                    if (e.key === 'Enter') handleConfirm();
-                };
-                
+                const cancel = () => { cleanup(); reject(null); };
                 const cleanup = () => {
                     modal.classList.remove('active');
-                    modalConfirm.removeEventListener('click', handleConfirm);
-                    modalCancel.removeEventListener('click', handleCancel);
-                    modalInput.removeEventListener('keypress', handleEnter);
+                    document.getElementById('modalConfirm').removeEventListener('click', confirm);
+                    document.getElementById('modalCancel').removeEventListener('click', cancel);
                 };
                 
-                modalConfirm.addEventListener('click', handleConfirm);
-                modalCancel.addEventListener('click', handleCancel);
-                modalInput.addEventListener('keypress', handleEnter);
+                document.getElementById('modalConfirm').addEventListener('click', confirm);
+                document.getElementById('modalCancel').addEventListener('click', cancel);
             });
         }
         
-        // ========== USER INITIALIZATION ==========
         async function initializeUser() {
             if (!currentUser) {
                 try {
-                    const userEmail = await showCustomModal('Welcome to StreamX', 'Enter your email:');
-                    const userName = await showCustomModal('Welcome to StreamX', 'Enter your name:');
-                    
+                    const email = await showCustomModal('Welcome', 'Enter your email:');
+                    const name = await showCustomModal('Welcome', 'Enter your name:');
                     currentUser = {
-                        email: userEmail,
-                        full_name: userName,
-                        profile_picture: `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&size=128&background=000000&color=ffffff`
+                        email,
+                        full_name: name,
+                        profile_picture: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=128`
                     };
-                    
                     localStorage.setItem('streamx-current-user', JSON.stringify(currentUser));
-                    await database.ref('users/' + userEmail.replace(/[.#$[\]]/g, '_')).set(currentUser);
-                    
+                    await database.ref('users/' + email.replace(/[.#$[\]]/g, '_')).set(currentUser);
                     updateHeaderProfileIcon();
-                    showAlert('✅ Welcome to StreamX!');
-                } catch (error) {
-                    console.log('User cancelled registration');
-                }
+                } catch {}
             } else {
                 updateHeaderProfileIcon();
             }
@@ -762,26 +686,17 @@
         
         function updateHeaderProfileIcon() {
             const icon = document.getElementById('headerProfileIcon');
-            if (currentUser && currentUser.profile_picture) {
+            if (currentUser?.profile_picture) {
                 icon.src = currentUser.profile_picture;
                 icon.classList.remove('hidden');
                 icon.onclick = () => navigateTo('profile');
             }
         }
         
-        // ========== LOAD DATA FROM FIREBASE ==========
         database.ref('posts').on('value', (snapshot) => {
             const data = snapshot.val();
-            if (data) {
-                posts = Object.keys(data).map(key => ({
-                    id: key,
-                    ...data[key]
-                }));
-                posts.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
-            } else {
-                posts = [];
-            }
-            
+            posts = data ? Object.keys(data).map(key => ({ id: key, ...data[key] })) : [];
+            posts.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
             if (currentPage === 'feed') renderPosts();
             if (currentPage === 'profile') renderProfile();
             if (currentPage === 'admin') renderAdminPanel();
@@ -791,95 +706,66 @@
             users = snapshot.val() || {};
         });
         
-        // ========== NAVIGATION ==========
         function navigateTo(page) {
             currentPage = page;
-            
-            document.getElementById('feedPage').classList.add('hidden');
-            document.getElementById('createPage').classList.add('hidden');
-            document.getElementById('profilePage').classList.add('hidden');
-            document.getElementById('adminPanel').classList.add('hidden');
-            
+            ['feedPage', 'createPage', 'profilePage', 'adminPanel'].forEach(id => 
+                document.getElementById(id).classList.add('hidden')
+            );
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.getAttribute('data-page') === page) {
-                    btn.classList.add('active');
-                }
+                btn.classList.toggle('active', btn.getAttribute('data-page') === page);
             });
+            document.getElementById(page + 'Page' || 'adminPanel').classList.remove('hidden');
             
-            if (page === 'feed') {
-                document.getElementById('feedPage').classList.remove('hidden');
-                renderPosts();
-            } else if (page === 'create') {
-                document.getElementById('createPage').classList.remove('hidden');
-            } else if (page === 'profile') {
-                document.getElementById('profilePage').classList.remove('hidden');
-                renderProfile();
-            } else if (page === 'admin') {
-                document.getElementById('adminPanel').classList.remove('hidden');
-                renderAdminPanel();
-            }
+            if (page === 'feed') renderPosts();
+            if (page === 'profile') renderProfile();
+            if (page === 'admin') renderAdminPanel();
         }
         
         document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                navigateTo(btn.getAttribute('data-page'));
-            });
+            btn.addEventListener('click', () => navigateTo(btn.getAttribute('data-page')));
         });
         
-        // ========== RENDER POSTS ==========
         function renderPosts() {
             const feed = document.getElementById('postsFeed');
-            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-            
+            const query = document.getElementById('searchInput').value.toLowerCase();
             let filtered = posts;
-            if (searchQuery) {
-                filtered = posts.filter(post => 
-                    post.caption?.toLowerCase().includes(searchQuery) ||
-                    post.location?.toLowerCase().includes(searchQuery) ||
-                    post.hashtags?.some(tag => tag.toLowerCase().includes(searchQuery))
+            if (query) {
+                filtered = posts.filter(p => 
+                    p.caption?.toLowerCase().includes(query) ||
+                    p.location?.toLowerCase().includes(query) ||
+                    p.hashtags?.some(t => t.toLowerCase().includes(query))
                 );
             }
-            
             if (filtered.length === 0) {
                 feed.innerHTML = '<div style="text-align:center;padding:3rem;color:#6b7280;">No posts found</div>';
                 return;
             }
-            
-            feed.innerHTML = filtered.map(post => createPostHTML(post)).join('');
+            feed.innerHTML = filtered.map(createPostHTML).join('');
         }
         
         function createPostHTML(post) {
-            const postUser = users[post.created_by?.replace(/[.#$[\]]/g, '_')] || { 
-                full_name: 'Unknown User', 
+            const user = users[post.created_by?.replace(/[.#$[\]]/g, '_')] || { 
+                full_name: 'Unknown', 
                 email: post.created_by,
-                profile_picture: 'https://ui-avatars.com/api/?name=Unknown&size=32&background=6b7280&color=ffffff'
+                profile_picture: 'https://ui-avatars.com/api/?name=Unknown&size=32'
             };
-            
-            const imageHTML = (post.content_urls && post.content_urls.length > 0) 
-                ? `<img class="post-image" src="${post.content_urls[0]}" alt="Post content">` 
-                : '';
-            
-            const hashtagsHTML = post.hashtags?.length > 0 
-                ? '<div class="post-hashtags">' + post.hashtags.map(tag => `<span class="hashtag">#${tag}</span>`).join('') + '</div>'
-                : '';
-            
-            const locationHTML = post.location ? ` • ${post.location}` : '';
-            
+            const img = post.content_urls?.[0] ? `<img class="post-image" src="${post.content_urls[0]}">` : '';
+            const tags = post.hashtags?.length ? '<div class="post-hashtags">' + post.hashtags.map(t => `<span class="hashtag">#${t}</span>`).join('') + '</div>' : '';
+            const loc = post.location ? ` • ${post.location}` : '';
             return `
                 <div class="post-card">
                     <div class="post-header">
-                        <div class="post-date">${new Date(post.created_date).toLocaleDateString()}${locationHTML}</div>
+                        <div class="post-date">${new Date(post.created_date).toLocaleDateString()}${loc}</div>
                         <div class="post-views">👁️ ${(post.views_count || 0).toLocaleString()} views</div>
                     </div>
                     ${post.caption ? `<div class="post-caption">${post.caption}</div>` : ''}
-                    ${imageHTML}
-                    ${hashtagsHTML}
+                    ${img}
+                    ${tags}
                     <div class="post-user">
-                        <img class="user-avatar" src="${postUser.profile_picture}" alt="${postUser.full_name}">
+                        <img class="user-avatar" src="${user.profile_picture}">
                         <div>
-                            <div class="user-name">${postUser.full_name}</div>
-                            <div class="user-email">${postUser.email}</div>
+                            <div class="user-name">${user.full_name}</div>
+                            <div class="user-email">${user.email}</div>
                         </div>
                     </div>
                 </div>
@@ -890,12 +776,9 @@
             if (currentPage === 'feed') renderPosts();
         });
         
-        // ========== CREATE POST ==========
         const fileInput = document.getElementById('fileInput');
         const fileUploadArea = document.getElementById('fileUploadArea');
         const previewContainer = document.getElementById('previewContainer');
-        const createForm = document.getElementById('createForm');
-        const createHashtag = document.getElementById('createHashtag');
         
         fileUploadArea.addEventListener('click', () => fileInput.click());
         
@@ -903,29 +786,28 @@
             uploadedFiles = Array.from(e.target.files);
             if (uploadedFiles.length > 0) {
                 previewContainer.classList.remove('hidden');
-                previewContainer.innerHTML = uploadedFiles.map((file, i) => {
-                    const url = URL.createObjectURL(file);
-                    return `<img class="preview-image" src="${url}" alt="Preview ${i + 1}">`;
+                previewContainer.innerHTML = uploadedFiles.map((f, i) => {
+                    const url = URL.createObjectURL(f);
+                    return `<img class="preview-image" src="${url}">`;
                 }).join('');
             }
         });
         
-        createHashtag.addEventListener('keypress', (e) => {
+        document.getElementById('createHashtag').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                const tag = createHashtag.value.trim().replace('#', '');
+                const tag = e.target.value.trim().replace('#', '');
                 if (tag && !currentHashtags.includes(tag)) {
                     currentHashtags.push(tag);
                     renderHashtags();
-                    createHashtag.value = '';
+                    e.target.value = '';
                 }
             }
         });
         
         function renderHashtags() {
-            const list = document.getElementById('hashtagsList');
-            list.innerHTML = currentHashtags.map(tag => 
-                `<div class="hashtag-tag">#${tag}<button onclick="removeHashtag('${tag}')" type="button">×</button></div>`
+            document.getElementById('hashtagsList').innerHTML = currentHashtags.map(t => 
+                `<div class="hashtag-tag">#${t}<button onclick="removeHashtag('${t}')" type="button">×</button></div>`
             ).join('');
         }
         
@@ -934,18 +816,15 @@
             renderHashtags();
         };
         
-        createForm.addEventListener('submit', async (e) => {
+        document.getElementById('createForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const caption = document.getElementById('createCaption').value.trim();
             const location = document.getElementById('createLocation').value.trim();
             
             if (!caption && uploadedFiles.length === 0) {
-                showAlert('❌ Please add a caption or upload media', true);
-                return;
+                return showAlert('Please add caption or media', true);
             }
             
-            // Show loading
             document.getElementById('submitBtn').disabled = true;
             document.getElementById('submitText').classList.add('hidden');
             document.getElementById('submitLoading').classList.remove('hidden');
@@ -953,38 +832,31 @@
             try {
                 let contentUrls = [];
                 
-                // Upload files to Firebase Storage
+                // Convert images to Base64 (NO FIREBASE STORAGE NEEDED!)
                 if (uploadedFiles.length > 0) {
-                    showAlert('📤 Uploading media...');
-                    
                     for (const file of uploadedFiles) {
-                        const timestamp = Date.now();
-                        const fileName = `${timestamp}_${file.name}`;
-                        const storageRef = storage.ref('posts/' + fileName);
-                        
-                        const snapshot = await storageRef.put(file);
-                        const downloadURL = await snapshot.ref.getDownloadURL();
-                        contentUrls.push(downloadURL);
+                        const base64 = await new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onload = (e) => resolve(e.target.result);
+                            reader.readAsDataURL(file);
+                        });
+                        contentUrls.push(base64);
                     }
                 }
                 
-                const initialViews = Math.floor(Math.random() * (10000 - 3400)) + 3400;
-                
                 const newPost = {
-                    caption: caption,
-                    location: location,
+                    caption,
+                    location,
                     hashtags: currentHashtags.slice(),
                     content_urls: contentUrls,
-                    content_type: uploadedFiles[0]?.type.startsWith('video/') ? 'video' : 'image',
-                    views_count: initialViews,
+                    content_type: 'image',
+                    views_count: Math.floor(Math.random() * 6600) + 3400,
                     created_date: new Date().toISOString(),
                     created_by: currentUser.email
                 };
                 
-                // Save to Firebase Database
                 await database.ref('posts').push(newPost);
                 
-                // Reset form
                 document.getElementById('createCaption').value = '';
                 document.getElementById('createLocation').value = '';
                 document.getElementById('createHashtag').value = '';
@@ -994,12 +866,11 @@
                 previewContainer.classList.add('hidden');
                 document.getElementById('hashtagsList').innerHTML = '';
                 
-                showAlert('✅ Post created successfully!');
+                showAlert('✅ Post created!');
                 navigateTo('feed');
                 
             } catch (error) {
-                console.error('Error creating post:', error);
-                showAlert('❌ Failed to create post: ' + error.message, true);
+                showAlert('❌ Error: ' + error.message, true);
             } finally {
                 document.getElementById('submitBtn').disabled = false;
                 document.getElementById('submitText').classList.remove('hidden');
@@ -1007,107 +878,75 @@
             }
         });
         
-        // ========== PROFILE ==========
         function renderProfile() {
             document.getElementById('profileAvatar').src = currentUser.profile_picture;
             document.getElementById('profileName').textContent = currentUser.full_name;
             document.getElementById('profileEmail').textContent = currentUser.email;
-            
             const userPosts = posts.filter(p => p.created_by === currentUser.email);
             document.getElementById('profilePostCount').textContent = userPosts.length;
-            document.getElementById('profileViewCount').textContent = userPosts.reduce((sum, p) => sum + (p.views_count || 0), 0);
-            
+            document.getElementById('profileViewCount').textContent = userPosts.reduce((s, p) => s + (p.views_count || 0), 0);
             const profilePosts = document.getElementById('profilePosts');
-            if (userPosts.length === 0) {
-                profilePosts.innerHTML = '<div style="text-align:center;padding:3rem;color:#6b7280;">No posts yet</div>';
-            } else {
-                profilePosts.innerHTML = userPosts.map(post => createPostHTML(post)).join('');
-            }
+            profilePosts.innerHTML = userPosts.length === 0 
+                ? '<div style="text-align:center;padding:3rem;color:#6b7280;">No posts yet</div>'
+                : userPosts.map(createPostHTML).join('');
         }
         
         window.saveProfilePicture = async () => {
             const file = document.getElementById('profilePictureFile').files[0];
-            if (!file) {
-                showAlert('❌ Please select a profile picture', true);
-                return;
-            }
-            
-            document.getElementById('profileBtn').disabled = true;
-            document.getElementById('profileText').classList.add('hidden');
-            document.getElementById('profileLoading').classList.remove('hidden');
+            if (!file) return showAlert('Select a picture', true);
             
             try {
-                const timestamp = Date.now();
-                const storageRef = storage.ref('profiles/' + currentUser.email.replace(/[.#$[\]]/g, '_') + '_' + timestamp);
-                
-                const snapshot = await storageRef.put(file);
-                const downloadURL = await snapshot.ref.getDownloadURL();
-                
-                currentUser.profile_picture = downloadURL;
-                
-                await database.ref('users/' + currentUser.email.replace(/[.#$[\]]/g, '_')).update({
-                    profile_picture: downloadURL
+                const base64 = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.readAsDataURL(file);
                 });
                 
+                currentUser.profile_picture = base64;
+                await database.ref('users/' + currentUser.email.replace(/[.#$[\]]/g, '_')).update({ profile_picture: base64 });
                 localStorage.setItem('streamx-current-user', JSON.stringify(currentUser));
-                
                 updateHeaderProfileIcon();
                 renderProfile();
-                showAlert('✅ Profile picture updated!');
-                
+                showAlert('✅ Profile updated!');
             } catch (error) {
-                console.error('Error updating profile:', error);
-                showAlert('❌ Failed to update profile picture: ' + error.message, true);
-            } finally {
-                document.getElementById('profileBtn').disabled = false;
-                document.getElementById('profileText').classList.remove('hidden');
-                document.getElementById('profileLoading').classList.add('hidden');
+                showAlert('❌ Error: ' + error.message, true);
             }
         };
         
-        // ========== ADMIN ==========
         window.promptAdminPassword = async () => {
-            const savedAuth = sessionStorage.getItem('streamx-admin-auth');
-            if (savedAuth === ADMIN_PASSWORD) {
-                navigateTo('admin');
-                return;
+            if (sessionStorage.getItem('streamx-admin') === ADMIN_PASSWORD) {
+                return navigateTo('admin');
             }
-            
             try {
-                const password = await showCustomModal('🛡️ Admin Access', 'Enter admin password:', true);
-                if (password === ADMIN_PASSWORD) {
-                    sessionStorage.setItem('streamx-admin-auth', ADMIN_PASSWORD);
+                const pw = await showCustomModal('Admin', 'Enter password:', true);
+                if (pw === ADMIN_PASSWORD) {
+                    sessionStorage.setItem('streamx-admin', ADMIN_PASSWORD);
                     navigateTo('admin');
-                    showAlert('✅ Admin access granted');
                 } else {
-                    showAlert('❌ Incorrect password', true);
+                    showAlert('❌ Wrong password', true);
                 }
-            } catch (error) {
-                console.log('Admin access cancelled');
-            }
+            } catch {}
         };
         
         function renderAdminPanel() {
             const list = document.getElementById('adminPostsList');
             if (posts.length === 0) {
-                list.innerHTML = '<div style="text-align:center;padding:3rem;color:#6b7280;">No posts to manage</div>';
+                list.innerHTML = '<div style="text-align:center;padding:3rem;color:#6b7280;">No posts</div>';
                 return;
             }
-            
-            list.innerHTML = posts.map(post => {
-                const postUser = users[post.created_by?.replace(/[.#$[\]]/g, '_')] || { full_name: 'Unknown', email: post.created_by };
-                const thumbnail = (post.content_urls && post.content_urls[0]) || 'https://via.placeholder.com/64';
-                
+            list.innerHTML = posts.map(p => {
+                const user = users[p.created_by?.replace(/[.#$[\]]/g, '_')] || { full_name: 'Unknown', email: p.created_by };
+                const thumb = p.content_urls?.[0] || 'https://via.placeholder.com/64';
                 return `
                     <div class="admin-post-item">
-                        <img class="admin-post-thumbnail" src="${thumbnail}" alt="Post">
+                        <img class="admin-post-thumbnail" src="${thumb}">
                         <div class="admin-post-info">
-                            <div class="admin-post-caption">${post.caption || 'No caption'}</div>
-                            <div class="admin-post-stats">${(post.views_count || 0).toLocaleString()} views • ${postUser.full_name}</div>
+                            <div class="admin-post-caption">${p.caption || 'No caption'}</div>
+                            <div class="admin-post-stats">${(p.views_count || 0).toLocaleString()} views • ${user.full_name}</div>
                             <div class="admin-actions">
-                                <button onclick="increaseViews('${post.id}', 10000)" class="btn btn-blue">👁️ +10000</button>
-                                <button onclick="customViews('${post.id}')" class="btn btn-green">Custom</button>
-                                <button onclick="deletePost('${post.id}')" class="btn btn-red">🗑️ Delete</button>
+                                <button onclick="increaseViews('${p.id}', 10000)" class="btn btn-blue">👁️ +10K</button>
+                                <button onclick="customViews('${p.id}')" class="btn btn-green">Custom</button>
+                                <button onclick="deletePost('${p.id}')" class="btn btn-red">🗑️ Delete</button>
                             </div>
                         </div>
                     </div>
@@ -1115,47 +954,34 @@
             }).join('');
         }
         
-        window.increaseViews = async (postId, amount) => {
-            const post = posts.find(p => p.id === postId);
+        window.increaseViews = async (id, amt) => {
+            const post = posts.find(p => p.id === id);
             if (post) {
-                const newViews = (post.views_count || 0) + amount;
-                await database.ref('posts/' + postId + '/views_count').set(newViews);
-                showAlert(`✅ Added ${amount.toLocaleString()} views!`);
+                await database.ref('posts/' + id + '/views_count').set((post.views_count || 0) + amt);
+                showAlert(`✅ +${amt.toLocaleString()} views`);
             }
         };
         
-        window.customViews = async (postId) => {
+        window.customViews = async (id) => {
             try {
-                const amount = await showCustomModal('Custom Views', 'Enter number of views to add:');
-                const viewsToAdd = parseInt(amount);
-                
-                if (isNaN(viewsToAdd)) {
-                    showAlert('❌ Please enter a valid number', true);
-                    return;
-                }
-                
-                const post = posts.find(p => p.id === postId);
+                const amt = parseInt(await showCustomModal('Custom Views', 'Enter amount:'));
+                if (isNaN(amt)) return showAlert('Invalid number', true);
+                const post = posts.find(p => p.id === id);
                 if (post) {
-                    const newViews = (post.views_count || 0) + viewsToAdd;
-                    await database.ref('posts/' + postId + '/views_count').set(newViews);
-                    showAlert(`✅ Added ${viewsToAdd.toLocaleString()} views!`);
+                    await database.ref('posts/' + id + '/views_count').set((post.views_count || 0) + amt);
+                    showAlert(`✅ +${amt.toLocaleString()} views`);
                 }
-            } catch (error) {
-                console.log('Custom views cancelled');
+            } catch {}
+        };
+        
+        window.deletePost = async (id) => {
+            if (confirm('Delete this post?')) {
+                await database.ref('posts/' + id).remove();
+                showAlert('✅ Deleted');
             }
         };
         
-        window.deletePost = async (postId) => {
-            if (confirm('⚠️ Are you sure you want to delete this post?')) {
-                await database.ref('posts/' + postId).remove();
-                showAlert('✅ Post deleted');
-            }
-        };
-        
-        // ========== START APP ==========
-        window.addEventListener('load', () => {
-            initializeUser();
-        });
+        window.addEventListener('load', initializeUser);
     </script>
 </body>
 </html>

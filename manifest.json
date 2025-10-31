@@ -4,7 +4,7 @@
   "description": "Promote your business or your updates and reach more people in seconds without paying any boost ",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#54B0FF",
+  "background_color": "#000000",
   "theme_color": "#B4FF00",
   "icons": [
     {

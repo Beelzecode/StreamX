@@ -3,18 +3,20 @@
 <head>
 
 
+
+
     <link rel="manifest" href="manifest.json">
  <meta name="theme-color" content="#000000">
 
  <link rel="icon"  href="https://i.postimg.cc/xTHbY516/Stream-X-logo.png">
  <link rel="stylesheet" href="style.css">
 
+
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StreamX - Social Feed</title>
-    
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -677,6 +679,13 @@
             cursor: pointer;
         }
         
+        .post-video-single {
+            width: 100%;
+            max-height: 500px;
+            background: #000000;
+            border-radius: 0.5rem;
+        }
+        
         .post-image-grid {
             display: grid;
             gap: 2px;
@@ -693,6 +702,12 @@
         }
         
         .grid-image {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+        }
+        
+        .grid-video {
             width: 100%;
             aspect-ratio: 1;
             object-fit: cover;
@@ -839,6 +854,15 @@
             object-fit: cover;
             border-radius: 0.5rem;
             border: 1px solid #e5e7eb;
+        }
+        
+        .preview-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+            background: #000000;
         }
         
         .preview-remove {
@@ -1254,6 +1278,12 @@
             cursor: pointer;
         }
         
+        .message-video {
+            max-width: 250px;
+            border-radius: 0.5rem;
+            background: #000000;
+        }
+        
         .message-time {
             font-size: 0.6875rem;
             opacity: 0.7;
@@ -1641,9 +1671,8 @@
             
             <div id="postsFeed">
                 <div class="loading-state">
-                    <div class="loading"></div>
-                    <h3>StreamX still loading messages and posts and users</h3>
-                    <p>Wait 2-4 minutes if your internet is weak</p>
+                    <h3>Loading from cache...</h3>
+                    <p>Fast loading with local storage</p>
                 </div>
             </div>
         </div>
@@ -1673,9 +1702,9 @@
                 
                 <button type="button" class="file-upload-btn" id="fileUploadBtn">
                     <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                    <div>Click to upload photos</div>
+                    <div>Click to upload photos & videos</div>
                 </button>
-                <input type="file" id="fileInput" accept="image/*" multiple style="display:none;">
+                <input type="file" id="fileInput" accept="image/*,video/*" multiple style="display:none;">
                 
                 <button type="submit" class="submit-btn" id="createPostBtn">
                     <span id="submitText">Share Post</span>
@@ -1762,7 +1791,6 @@
             
             <div id="conversationsList">
                 <div class="loading-state">
-                    <div class="loading"></div>
                     <h3>Loading conversations...</h3>
                 </div>
             </div>
@@ -1793,7 +1821,7 @@
                         <button class="messenger-btn" id="imageMessageBtn" title="Photo">
                             <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                         </button>
-                        <input type="file" id="messageImageInput" accept="image/*" style="display:none;">
+                        <input type="file" id="messageImageInput" accept="image/*,video/*" style="display:none;">
                         <input type="text" class="messenger-input" id="messageInput" placeholder="Type a message...">
                         <button class="messenger-btn send" id="sendMessageBtn">
                             <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -1816,10 +1844,14 @@
         </div>
     </div>
 
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
 <script>
     const firebaseConfig = {
         apiKey: "AIzaSyDO2EKbZYfy6ah_95xDo9m8MRfXtd9BExs",
         authDomain: "streamx-a4099.firebaseapp.com",
+        databaseURL: "https://streamxnew-a932a-default-rtdb.firebaseio.com/",
         projectId: "streamx-a4099",
         storageBucket: "streamx-a4099.firebasestorage.app",
         messagingSenderId: "1073155867607",
@@ -1828,18 +1860,18 @@
     };
     
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    const db = firebase.database();
     
     const ADMIN_PASSWORD = 'VNAXXTTM';
     
     let savedAccounts = JSON.parse(localStorage.getItem('streamx-saved-accounts') || '[]');
     let currentUser = JSON.parse(localStorage.getItem('streamx-current-user') || 'null');
     let currentPage = 'feed';
-    let posts = [];
-    let users = [];
+    let posts = JSON.parse(localStorage.getItem('streamx-posts-cache') || '[]');
+    let users = JSON.parse(localStorage.getItem('streamx-users-cache') || '[]');
     let currentChatUser = null;
-    let messages = [];
-    let conversations = [];
+    let messages = JSON.parse(localStorage.getItem('streamx-messages-cache') || '[]');
+    let conversations = JSON.parse(localStorage.getItem('streamx-conversations-cache') || '[]');
     let uploadedFiles = [];
     let currentHashtags = [];
     let searchQuery = '';
@@ -1849,7 +1881,7 @@
     let isAdminAuthenticated = sessionStorage.getItem('streamx-admin') === 'true';
     let blockedUsers = [];
     let selectedMessages = [];
-    let dataLoaded = false;
+    let dataLoaded = posts.length > 0;
     
     function generateResetCode() {
         return 'r' + Math.floor(10000 + Math.random() * 90000);
@@ -1967,10 +1999,10 @@
         document.getElementById('registerLoading').style.display = 'inline-block';
         
         try {
-            const usersRef = db.collection('users');
-            const existing = await usersRef.where('email', '==', email).get();
+            const usersRef = db.ref('users');
+            const snapshot = await usersRef.orderByChild('email').equalTo(email).once('value');
             
-            if (!existing.empty) {
+            if (snapshot.exists()) {
                 errorDiv.textContent = 'This email is already in use!';
                 errorDiv.style.display = 'block';
                 document.getElementById('registerText').style.display = 'inline';
@@ -1981,7 +2013,9 @@
             const accessCode = Math.floor(100000 + Math.random() * 900000).toString();
             const resetCode = generateResetCode();
             
+            const newUserRef = usersRef.push();
             const newUser = {
+                id: newUserRef.key,
                 email,
                 full_name: name,
                 accessCode,
@@ -1995,8 +2029,7 @@
                 whatsapp: ''
             };
             
-            const docRef = await usersRef.add(newUser);
-            newUser.id = docRef.id;
+            await newUserRef.set(newUser);
             
             alert(`✅ Account created!\n\nYour Access Code: ${accessCode}\nYour Reset Code: ${resetCode}\n\nSave both codes to login and recover your account!`);
             
@@ -2033,10 +2066,10 @@
         document.getElementById('loginLoading').style.display = 'inline-block';
         
         try {
-            const usersRef = db.collection('users');
-            const snapshot = await usersRef.where('email', '==', email).where('accessCode', '==', code).get();
+            const usersRef = db.ref('users');
+            const snapshot = await usersRef.orderByChild('email').equalTo(email).once('value');
             
-            if (snapshot.empty) {
+            if (!snapshot.exists()) {
                 errorDiv.textContent = 'Incorrect email or access code!';
                 errorDiv.style.display = 'block';
                 document.getElementById('loginText').style.display = 'inline';
@@ -2044,8 +2077,21 @@
                 return;
             }
             
-            const existingUser = snapshot.docs[0].data();
-            existingUser.id = snapshot.docs[0].id;
+            let existingUser = null;
+            snapshot.forEach(child => {
+                const userData = child.val();
+                if (userData.accessCode === code) {
+                    existingUser = userData;
+                }
+            });
+            
+            if (!existingUser) {
+                errorDiv.textContent = 'Incorrect email or access code!';
+                errorDiv.style.display = 'block';
+                document.getElementById('loginText').style.display = 'inline';
+                document.getElementById('loginLoading').style.display = 'none';
+                return;
+            }
             
             currentUser = existingUser;
             localStorage.setItem('streamx-current-user', JSON.stringify(currentUser));
@@ -2080,10 +2126,10 @@
         document.getElementById('forgotLoading').style.display = 'inline-block';
         
         try {
-            const usersRef = db.collection('users');
-            const snapshot = await usersRef.where('email', '==', email).where('resetCode', '==', resetCode).get();
+            const usersRef = db.ref('users');
+            const snapshot = await usersRef.orderByChild('email').equalTo(email).once('value');
             
-            if (snapshot.empty) {
+            if (!snapshot.exists()) {
                 errorDiv.textContent = 'Incorrect email or reset code!';
                 errorDiv.style.display = 'block';
                 document.getElementById('forgotText').style.display = 'inline';
@@ -2091,7 +2137,22 @@
                 return;
             }
             
-            const userData = snapshot.docs[0].data();
+            let userData = null;
+            snapshot.forEach(child => {
+                const data = child.val();
+                if (data.resetCode === resetCode) {
+                    userData = data;
+                }
+            });
+            
+            if (!userData) {
+                errorDiv.textContent = 'Incorrect email or reset code!';
+                errorDiv.style.display = 'block';
+                document.getElementById('forgotText').style.display = 'inline';
+                document.getElementById('forgotLoading').style.display = 'none';
+                return;
+            }
+            
             alert(`✅ Your Permanent Access Code is: ${userData.accessCode}`);
             switchAuthTab('login');
         } catch (error) {
@@ -2112,7 +2173,7 @@
         }
         
         try {
-            await db.collection('users').doc(currentUser.id).update({
+            await db.ref('users/' + currentUser.id).update({
                 resetCode: newResetCode
             });
             currentUser.resetCode = newResetCode;
@@ -2130,7 +2191,7 @@
         if (!newName || newName.trim() === '') return;
         
         try {
-            await db.collection('users').doc(currentUser.id).update({
+            await db.ref('users/' + currentUser.id).update({
                 full_name: newName.trim()
             });
             currentUser.full_name = newName.trim();
@@ -2148,7 +2209,7 @@
         if (newBio === null) return;
         
         try {
-            await db.collection('users').doc(currentUser.id).update({
+            await db.ref('users/' + currentUser.id).update({
                 bio: newBio.trim()
             });
             currentUser.bio = newBio.trim();
@@ -2172,7 +2233,7 @@
         if (whatsapp === null) return;
         
         try {
-            await db.collection('users').doc(currentUser.id).update({
+            await db.ref('users/' + currentUser.id).update({
                 website: website.trim(),
                 phone: phone.trim(),
                 whatsapp: whatsapp.trim()
@@ -2219,12 +2280,14 @@
         if (!account) return;
         
         try {
-            const usersRef = db.collection('users');
-            const snapshot = await usersRef.where('email', '==', account.email).get();
+            const usersRef = db.ref('users');
+            const snapshot = await usersRef.orderByChild('email').equalTo(account.email).once('value');
             
-            if (!snapshot.empty) {
-                const userData = snapshot.docs[0].data();
-                userData.id = snapshot.docs[0].id;
+            if (snapshot.exists()) {
+                let userData = null;
+                snapshot.forEach(child => {
+                    userData = child.val();
+                });
                 
                 currentUser = userData;
                 localStorage.setItem('streamx-current-user', JSON.stringify(currentUser));
@@ -2256,40 +2319,21 @@
     });
     
     window.addEventListener('load', function() {
-        console.log('✅ Firebase initialized!');
+        console.log('✅ Firebase Realtime Database initialized!');
         if (!currentUser) {
             showAuthModal();
         } else {
             updateHeaderUI();
             updateNavButtons();
+            if (posts.length > 0) {
+                dataLoaded = true;
+                renderPosts();
+            }
             loadData();
         }
         
         setupEventListeners();
-        migrateExistingUsers();
     });
-    
-    async function migrateExistingUsers() {
-        try {
-            const usersRef = db.collection('users');
-            const snapshot = await usersRef.get();
-            
-            snapshot.forEach(async (doc) => {
-                const userData = doc.data();
-                if (!userData.resetCode) {
-                    await doc.ref.update({
-                        resetCode: generateResetCode(),
-                        bio: userData.bio || '',
-                        website: userData.website || '',
-                        phone: userData.phone || '',
-                        whatsapp: userData.whatsapp || ''
-                    });
-                }
-            });
-        } catch (error) {
-            console.error('Error migrating users:', error);
-        }
-    }
     
     function setupEventListeners() {
         document.getElementById('sButton').addEventListener('click', function(e) {
@@ -2368,23 +2412,31 @@
     
     async function loadData() {
         try {
-            console.log('🔄 Loading data...');
+            console.log('🔄 Loading data from Firebase Realtime Database...');
             
-            db.collection('posts').orderBy('created_date', 'desc').limit(50)
-                .onSnapshot(snapshot => {
-                    posts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    console.log(`✅ Loaded ${posts.length} posts`);
-                    dataLoaded = true;
-                    if (currentPage === 'feed') renderPosts();
-                    if (currentPage === 'admin') renderAdminPanel();
+            db.ref('posts').orderByChild('created_date').limitToLast(50).on('value', snapshot => {
+                const postsArray = [];
+                snapshot.forEach(child => {
+                    postsArray.push({ id: child.key, ...child.val() });
                 });
+                posts = postsArray.reverse();
+                localStorage.setItem('streamx-posts-cache', JSON.stringify(posts));
+                console.log(`✅ Loaded ${posts.length} posts`);
+                dataLoaded = true;
+                if (currentPage === 'feed') renderPosts();
+                if (currentPage === 'admin') renderAdminPanel();
+            });
             
-            db.collection('users')
-                .onSnapshot(snapshot => {
-                    users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    console.log(`✅ Loaded ${users.length} users`);
-                    if (currentPage === 'users') renderUsers();
+            db.ref('users').on('value', snapshot => {
+                const usersArray = [];
+                snapshot.forEach(child => {
+                    usersArray.push({ id: child.key, ...child.val() });
                 });
+                users = usersArray;
+                localStorage.setItem('streamx-users-cache', JSON.stringify(users));
+                console.log(`✅ Loaded ${users.length} users`);
+                if (currentPage === 'users') renderUsers();
+            });
             
             loadConversations();
             showToast('All data loaded!', 'success');
@@ -2398,20 +2450,25 @@
         if (!currentUser) return;
         
         try {
-            db.collection('conversations')
-                .where('participants', 'array-contains', currentUser.email)
-                .onSnapshot(snapshot => {
-                    conversations = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    updateMessengerBadge();
-                    if (currentPage === 'conversations') renderConversations();
+            const userKey = currentUser.email.replace(/\./g, '_');
+            db.ref('conversations').orderByChild('participants/' + userKey).equalTo(true).on('value', snapshot => {
+                const convsArray = [];
+                snapshot.forEach(child => {
+                    convsArray.push({ id: child.key, ...child.val() });
                 });
+                conversations = convsArray;
+                localStorage.setItem('streamx-conversations-cache', JSON.stringify(conversations));
+                updateMessengerBadge();
+                if (currentPage === 'conversations') renderConversations();
+            });
         } catch (error) {
             console.error('Error loading conversations:', error);
         }
     }
     
     function updateMessengerBadge() {
-        const unreadCount = conversations.filter(c => c.unreadBy && c.unreadBy.includes(currentUser.email)).length;
+        const userKey = currentUser.email.replace(/\./g, '_');
+        const unreadCount = conversations.filter(c => c.unreadBy && c.unreadBy[userKey]).length;
         const badge = document.getElementById('messengerBadge');
         if (unreadCount > 0) {
             badge.textContent = unreadCount > 10 ? '10+' : unreadCount;
@@ -2501,10 +2558,12 @@
         
         if (filtered.length === 0) {
             container.innerHTML = `
-                <div class="loading-state">
-                    <div class="loading"></div>
-                    <h3>StreamX still loading messages and posts and users</h3>
-                    <p>Wait 2-4 minutes if your internet is weak</p>
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    </div>
+                    <h3>No posts found</h3>
+                    <p>Try a different search or create your first post!</p>
                 </div>
             `;
             return;
@@ -2520,13 +2579,26 @@
             email: post.created_by 
         };
         const urls = post.content_urls || [];
+        const contentTypes = post.content_types || [];
+        const contentType = post.content_type || 'image';
         
         let mediaHTML = '';
         if (urls.length === 1) {
-            mediaHTML = `<div class="post-media"><img src="${urls[0]}" class="post-image-single" onclick="openLightbox('${urls[0]}')" loading="lazy"></div>`;
+            if (contentType === 'video' || (contentTypes[0] === 'video')) {
+                mediaHTML = `<div class="post-media"><video src="${urls[0]}" class="post-video-single" controls preload="metadata"></video></div>`;
+            } else {
+                mediaHTML = `<div class="post-media"><img src="${urls[0]}" class="post-image-single" onclick="openLightbox('${urls[0]}', 'image')" loading="lazy"></div>`;
+            }
         } else if (urls.length > 1) {
             const gridClass = urls.length === 2 ? 'grid-2' : 'grid-multi';
-            mediaHTML = `<div class="post-media"><div class="post-image-grid ${gridClass}">${urls.slice(0, 4).map(url => `<img src="${url}" class="grid-image" onclick="openLightbox('${url}')" loading="lazy">`).join('')}</div></div>`;
+            mediaHTML = `<div class="post-media"><div class="post-image-grid ${gridClass}">${urls.slice(0, 4).map((url, idx) => {
+                const type = contentTypes[idx] === 'video' ? 'video' : 'image';
+                if (type === 'video') {
+                    return `<video src="${url}" class="grid-video" onclick="openLightbox('${url}', 'video')" preload="metadata"></video>`;
+                } else {
+                    return `<img src="${url}" class="grid-image" onclick="openLightbox('${url}', 'image')" loading="lazy">`;
+                }
+            }).join('')}</div></div>`;
         }
         
         const hashtagsHTML = post.hashtags && post.hashtags.length > 0 ? 
@@ -2539,6 +2611,9 @@
         const viewsCount = post.views_count || 0;
         
         const linkedCaption = linkify(post.caption);
+        
+        const userKey = currentUser.email.replace(/\./g, '_');
+        const isLiked = post.likedBy && post.likedBy[userKey];
         
         return `
             <div class="post-card">
@@ -2556,7 +2631,7 @@
                 </div>
                 <div class="post-footer">
                     <div class="post-likes" onclick="likePost('${post.id}')">
-                        <svg class="heart-icon ${post.likedBy && post.likedBy.includes(currentUser.email) ? 'liked' : ''}" viewBox="0 0 24 24" stroke="black" stroke-width="2">
+                        <svg class="heart-icon ${isLiked ? 'liked' : ''}" viewBox="0 0 24 24" stroke="black" stroke-width="2">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                         </svg>
                         <span style="font-weight:600;">${likesCount.toLocaleString()} likes</span>
@@ -2578,19 +2653,20 @@
             const post = posts.find(p => p.id === postId);
             if (!post) return;
             
-            const likedBy = post.likedBy || [];
+            const likedBy = post.likedBy || {};
             const likesCount = post.likes_count || 0;
             const viewsCount = post.views_count || 0;
+            const userKey = currentUser.email.replace(/\./g, '_');
             
-            if (likedBy.includes(currentUser.email)) {
-                await db.collection('posts').doc(postId).update({
-                    likedBy: firebase.firestore.FieldValue.arrayRemove(currentUser.email),
+            if (likedBy[userKey]) {
+                await db.ref('posts/' + postId).update({
+                    ['likedBy/' + userKey]: null,
                     likes_count: Math.max(0, likesCount - 1)
                 });
             } else {
                 const newLikesCount = Math.min(likesCount + 1, Math.floor(viewsCount * 0.8));
-                await db.collection('posts').doc(postId).update({
-                    likedBy: firebase.firestore.FieldValue.arrayUnion(currentUser.email),
+                await db.ref('posts/' + postId).update({
+                    ['likedBy/' + userKey]: true,
                     likes_count: newLikesCount
                 });
             }
@@ -2604,16 +2680,27 @@
         renderPosts();
     }
     
-    function openLightbox(url) {
+    function openLightbox(url, type) {
         const lightbox = document.createElement('div');
         lightbox.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem;';
-        lightbox.innerHTML = `
-            <div style="position:relative;max-width:90%;max-height:90vh;">
-                <img src="${url}" style="max-width:100%;max-height:85vh;object-fit:contain;border-radius:0.5rem;">
-                <button onclick="this.closest('div').parentElement.remove()" style="position:absolute;top:-3rem;right:0;background:#000;color:white;border:none;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:1.5rem;">×</button>
-                <button onclick="downloadImage('${url}')" style="position:absolute;bottom:-3rem;right:0;background:#10b981;color:white;border:none;padding:0.75rem 1.5rem;border-radius:0.5rem;cursor:pointer;font-weight:600;">💾 Save</button>
-            </div>
-        `;
+        
+        if (type === 'video') {
+            lightbox.innerHTML = `
+                <div style="position:relative;max-width:90%;max-height:90vh;">
+                    <video src="${url}" style="max-width:100%;max-height:85vh;border-radius:0.5rem;" controls autoplay></video>
+                    <button onclick="this.closest('div').parentElement.remove()" style="position:absolute;top:-3rem;right:0;background:#000;color:white;border:none;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:1.5rem;">×</button>
+                </div>
+            `;
+        } else {
+            lightbox.innerHTML = `
+                <div style="position:relative;max-width:90%;max-height:90vh;">
+                    <img src="${url}" style="max-width:100%;max-height:85vh;object-fit:contain;border-radius:0.5rem;">
+                    <button onclick="this.closest('div').parentElement.remove()" style="position:absolute;top:-3rem;right:0;background:#000;color:white;border:none;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:1.5rem;">×</button>
+                    <button onclick="downloadImage('${url}')" style="position:absolute;bottom:-3rem;right:0;background:#10b981;color:white;border:none;padding:0.75rem 1.5rem;border-radius:0.5rem;cursor:pointer;font-weight:600;">💾 Save</button>
+                </div>
+            `;
+        }
+        
         lightbox.addEventListener('click', function(e) {
             if (e.target === lightbox) lightbox.remove();
         });
@@ -2644,12 +2731,23 @@
         
         container.innerHTML = uploadedFiles.map((file, index) => {
             const url = URL.createObjectURL(file);
-            return `
-                <div class="preview-item">
-                    <img src="${url}" class="preview-image">
-                    <button type="button" class="preview-remove" onclick="removePreview(${index})">×</button>
-                </div>
-            `;
+            const isVideo = file.type.startsWith('video/');
+            
+            if (isVideo) {
+                return `
+                    <div class="preview-item">
+                        <video src="${url}" class="preview-video" muted></video>
+                        <button type="button" class="preview-remove" onclick="removePreview(${index})">×</button>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="preview-item">
+                        <img src="${url}" class="preview-image">
+                        <button type="button" class="preview-remove" onclick="removePreview(${index})">×</button>
+                    </div>
+                `;
+            }
         }).join('');
     }
     
@@ -2687,7 +2785,7 @@
         const location = document.getElementById('createLocation').value.trim();
         
         if (!caption && uploadedFiles.length === 0) {
-            showToast('Please add a caption or upload images!', 'error');
+            showToast('Please add a caption or upload media!', 'error');
             return;
         }
         
@@ -2698,20 +2796,36 @@
         try {
             showToast('Uploading post...', 'success');
             
-            const contentUrls = await Promise.all(uploadedFiles.map(file => compressImage(file)));
+            const contentUrls = [];
+            const contentTypes = [];
+            
+            for (const file of uploadedFiles) {
+                if (file.type.startsWith('video/')) {
+                    const compressed = await compressVideo(file);
+                    contentUrls.push(compressed);
+                    contentTypes.push('video');
+                } else {
+                    const compressed = await compressImage(file);
+                    contentUrls.push(compressed);
+                    contentTypes.push('image');
+                }
+            }
             
             const initialViews = Math.floor(Math.random() * (243544 - 2399 + 1)) + 2399;
             const initialLikes = Math.floor(initialViews * (Math.random() * 0.3 + 0.1));
             
-            await db.collection('posts').add({
+            const mainType = contentTypes[0] || 'image';
+            
+            await db.ref('posts').push({
                 caption,
                 location,
                 hashtags: currentHashtags,
                 content_urls: contentUrls,
-                content_type: 'image',
+                content_types: contentTypes,
+                content_type: mainType,
                 views_count: initialViews,
                 likes_count: initialLikes,
-                likedBy: [],
+                likedBy: {},
                 created_date: new Date().toISOString(),
                 created_by: currentUser.email
             });
@@ -2763,6 +2877,16 @@
                     resolve(canvas.toDataURL('image/jpeg', 0.7));
                 };
                 img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+    
+    function compressVideo(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                resolve(e.target.result);
             };
             reader.readAsDataURL(file);
         });
@@ -2895,7 +3019,7 @@
             
             const compressed = await compressImage(file);
             
-            await db.collection('users').doc(currentUser.id).update({
+            await db.ref('users/' + currentUser.id).update({
                 profile_picture: compressed
             });
             
@@ -2980,20 +3104,22 @@
         }
         
         container.innerHTML = conversations.map(conv => {
-            const otherEmail = conv.participants.find(p => p !== currentUser.email);
+            const participants = conv.participants || {};
+            const otherEmail = Object.keys(participants).map(k => k.replace(/_/g, '.')).find(p => p !== currentUser.email);
             const otherUser = users.find(u => u.email === otherEmail) || { 
                 full_name: 'User', 
                 profile_picture: `https://ui-avatars.com/api/?name=User&size=48&background=6b7280&color=ffffff`,
                 email: otherEmail 
             };
-            const isUnread = conv.unreadBy && conv.unreadBy.includes(currentUser.email);
+            const userKey = currentUser.email.replace(/\./g, '_');
+            const isUnread = conv.unreadBy && conv.unreadBy[userKey];
             
             return `
                 <div class="conversation-card ${isUnread ? 'unread' : ''}" onclick="openConversation('${otherUser.email}')">
                     <img src="${otherUser.profile_picture}" class="conversation-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(otherUser.full_name)}&size=48&background=6b7280&color=ffffff'">
                     <div class="conversation-info">
                         <div class="conversation-name">${otherUser.full_name}</div>
-                        <div class="conversation-last-message">${linkify(conv.lastMessage || 'No messages yet')}</div>
+                        <div class="conversation-last-message">${conv.lastMessage || 'No messages yet'}</div>
                     </div>
                     ${isUnread ? '<span class="conversation-badge">New</span>' : ''}
                 </div>
@@ -3016,35 +3142,43 @@
         document.getElementById('messengerName').textContent = currentChatUser.full_name;
         
         try {
-            const participants = [currentUser.email, currentChatUser.email].sort();
-            let convRef = await db.collection('conversations')
-                .where('participants', '==', participants)
-                .get();
+            const participantsKey = [currentUser.email, currentChatUser.email].map(e => e.replace(/\./g, '_')).sort().join('_');
+            
+            const convSnapshot = await db.ref('conversations').orderByChild('participantsKey').equalTo(participantsKey).once('value');
             
             let conversationId;
-            if (convRef.empty) {
-                const newConv = await db.collection('conversations').add({
+            if (!convSnapshot.exists()) {
+                const newConvRef = db.ref('conversations').push();
+                conversationId = newConvRef.key;
+                const participants = {};
+                participants[currentUser.email.replace(/\./g, '_')] = true;
+                participants[currentChatUser.email.replace(/\./g, '_')] = true;
+                await newConvRef.set({
                     participants,
+                    participantsKey,
                     created_date: new Date().toISOString(),
                     lastMessage: '',
-                    unreadBy: []
+                    unreadBy: {}
                 });
-                conversationId = newConv.id;
             } else {
-                conversationId = convRef.docs[0].id;
-                await db.collection('conversations').doc(conversationId).update({
-                    unreadBy: firebase.firestore.FieldValue.arrayRemove(currentUser.email)
+                convSnapshot.forEach(child => {
+                    conversationId = child.key;
+                    const userKey = currentUser.email.replace(/\./g, '_');
+                    db.ref('conversations/' + conversationId + '/unreadBy/' + userKey).remove();
                 });
             }
             
             if (messageUnsubscribe) messageUnsubscribe();
             
-            messageUnsubscribe = db.collection('conversations').doc(conversationId).collection('messages')
-                .orderBy('timestamp', 'asc')
-                .onSnapshot(snapshot => {
-                    messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    renderMessages();
+            db.ref('conversations/' + conversationId + '/messages').orderByChild('timestamp').on('value', snapshot => {
+                const messagesArray = [];
+                snapshot.forEach(child => {
+                    messagesArray.push({ id: child.key, ...child.val() });
                 });
+                messages = messagesArray;
+                localStorage.setItem('streamx-messages-cache', JSON.stringify(messages));
+                renderMessages();
+            });
         } catch (error) {
             console.error('Error loading messages:', error);
         }
@@ -3072,7 +3206,19 @@
             if (msg.type === 'image') {
                 return `
                     <div class="message-bubble ${isSent ? 'sent' : 'received'}" data-message-id="${msg.id}">
-                        <img src="${msg.imageUrl}" class="message-image" onclick="openLightbox('${msg.imageUrl}')">
+                        <img src="${msg.imageUrl}" class="message-image" onclick="openLightbox('${msg.imageUrl}', 'image')">
+                        <div class="message-time">${time}</div>
+                        <div class="message-actions">
+                            <button class="message-action-btn-small" onclick="deleteMessage('${msg.id}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (msg.type === 'video') {
+                return `
+                    <div class="message-bubble ${isSent ? 'sent' : 'received'}" data-message-id="${msg.id}">
+                        <video src="${msg.videoUrl}" class="message-video" controls preload="metadata"></video>
                         <div class="message-time">${time}</div>
                         <div class="message-actions">
                             <button class="message-action-btn-small" onclick="deleteMessage('${msg.id}')">Delete</button>
@@ -3103,24 +3249,25 @@
         input.value = '';
         
         try {
-            const participants = [currentUser.email, currentChatUser.email].sort();
-            const convSnapshot = await db.collection('conversations')
-                .where('participants', '==', participants)
-                .get();
+            const participantsKey = [currentUser.email, currentChatUser.email].map(e => e.replace(/\./g, '_')).sort().join('_');
+            const convSnapshot = await db.ref('conversations').orderByChild('participantsKey').equalTo(participantsKey).once('value');
             
-            const conversationId = convSnapshot.docs[0].id;
+            let conversationId;
+            convSnapshot.forEach(child => {
+                conversationId = child.key;
+            });
             
-            await db.collection('conversations').doc(conversationId).collection('messages').add({
+            await db.ref('conversations/' + conversationId + '/messages').push({
                 text,
                 type: 'text',
                 sender: currentUser.email,
                 timestamp: new Date().toISOString()
             });
             
-            await db.collection('conversations').doc(conversationId).update({
-                lastMessage: text,
-                unreadBy: [currentChatUser.email]
-            });
+            const updates = {};
+            updates['lastMessage'] = text;
+            updates['unreadBy/' + currentChatUser.email.replace(/\./g, '_')] = true;
+            await db.ref('conversations/' + conversationId).update(updates);
         } catch (error) {
             console.error('Error sending message:', error);
             showToast('Error sending message', 'error');
@@ -3132,33 +3279,47 @@
         if (!file || !currentChatUser) return;
         
         try {
-            showToast('Sending image...', 'success');
+            showToast('Sending media...', 'success');
             
-            const compressed = await compressImage(file);
-            
-            const participants = [currentUser.email, currentChatUser.email].sort();
-            const convSnapshot = await db.collection('conversations')
-                .where('participants', '==', participants)
-                .get();
-            
-            const conversationId = convSnapshot.docs[0].id;
-            
-            await db.collection('conversations').doc(conversationId).collection('messages').add({
-                imageUrl: compressed,
-                type: 'image',
+            const isVideo = file.type.startsWith('video/');
+            let compressed;
+            let messageType;
+            let messageData = {
                 sender: currentUser.email,
                 timestamp: new Date().toISOString()
+            };
+            
+            if (isVideo) {
+                compressed = await compressVideo(file);
+                messageType = 'video';
+                messageData.videoUrl = compressed;
+                messageData.type = 'video';
+            } else {
+                compressed = await compressImage(file);
+                messageType = 'image';
+                messageData.imageUrl = compressed;
+                messageData.type = 'image';
+            }
+            
+            const participantsKey = [currentUser.email, currentChatUser.email].map(e => e.replace(/\./g, '_')).sort().join('_');
+            const convSnapshot = await db.ref('conversations').orderByChild('participantsKey').equalTo(participantsKey).once('value');
+            
+            let conversationId;
+            convSnapshot.forEach(child => {
+                conversationId = child.key;
             });
             
-            await db.collection('conversations').doc(conversationId).update({
-                lastMessage: '📷 Photo',
-                unreadBy: [currentChatUser.email]
-            });
+            await db.ref('conversations/' + conversationId + '/messages').push(messageData);
             
-            showToast('Image sent!', 'success');
+            const updates = {};
+            updates['lastMessage'] = isVideo ? '🎥 Video' : '📷 Photo';
+            updates['unreadBy/' + currentChatUser.email.replace(/\./g, '_')] = true;
+            await db.ref('conversations/' + conversationId).update(updates);
+            
+            showToast('Media sent!', 'success');
         } catch (error) {
-            console.error('Error sending image:', error);
-            showToast('Error sending image', 'error');
+            console.error('Error sending media:', error);
+            showToast('Error sending media', 'error');
         }
     }
     
@@ -3166,13 +3327,15 @@
         if (!confirm('Delete this message?')) return;
         
         try {
-            const participants = [currentUser.email, currentChatUser.email].sort();
-            const convSnapshot = await db.collection('conversations')
-                .where('participants', '==', participants)
-                .get();
+            const participantsKey = [currentUser.email, currentChatUser.email].map(e => e.replace(/\./g, '_')).sort().join('_');
+            const convSnapshot = await db.ref('conversations').orderByChild('participantsKey').equalTo(participantsKey).once('value');
             
-            const conversationId = convSnapshot.docs[0].id;
-            await db.collection('conversations').doc(conversationId).collection('messages').doc(messageId).delete();
+            let conversationId;
+            convSnapshot.forEach(child => {
+                conversationId = child.key;
+            });
+            
+            await db.ref('conversations/' + conversationId + '/messages/' + messageId).remove();
             
             showToast('Message deleted!', 'success');
         } catch (error) {
@@ -3185,9 +3348,8 @@
         if (!confirm(`Block ${currentChatUser.full_name}? They won't be able to message you.`)) return;
         
         try {
-            await db.collection('users').doc(currentUser.id).update({
-                blockedUsers: firebase.firestore.FieldValue.arrayUnion(currentChatUser.email)
-            });
+            const blockedKey = currentChatUser.email.replace(/\./g, '_');
+            await db.ref('users/' + currentUser.id + '/blockedUsers/' + blockedKey).set(true);
             currentUser.blockedUsers = currentUser.blockedUsers || [];
             currentUser.blockedUsers.push(currentChatUser.email);
             localStorage.setItem('streamx-current-user', JSON.stringify(currentUser));
@@ -3204,20 +3366,13 @@
         if (!confirm('Delete this conversation? This cannot be undone.')) return;
         
         try {
-            const participants = [currentUser.email, currentChatUser.email].sort();
-            const convSnapshot = await db.collection('conversations')
-                .where('participants', '==', participants)
-                .get();
+            const participantsKey = [currentUser.email, currentChatUser.email].map(e => e.replace(/\./g, '_')).sort().join('_');
+            const convSnapshot = await db.ref('conversations').orderByChild('participantsKey').equalTo(participantsKey).once('value');
             
-            if (!convSnapshot.empty) {
-                const conversationId = convSnapshot.docs[0].id;
-                
-                const messagesSnapshot = await db.collection('conversations').doc(conversationId).collection('messages').get();
-                const batch = db.batch();
-                messagesSnapshot.docs.forEach(doc => batch.delete(doc.ref));
-                await batch.commit();
-                
-                await db.collection('conversations').doc(conversationId).delete();
+            if (convSnapshot.exists()) {
+                convSnapshot.forEach(child => {
+                    db.ref('conversations/' + child.key).remove();
+                });
                 
                 showToast('Conversation deleted!', 'success');
                 navigateTo('conversations');
@@ -3245,10 +3400,14 @@
         container.innerHTML = posts.map(post => {
             const user = users.find(u => u.email === post.created_by) || { full_name: 'User', email: post.created_by };
             const thumbnail = (post.content_urls && post.content_urls[0]) || 'https://via.placeholder.com/64';
+            const isVideo = post.content_type === 'video' || (post.content_types && post.content_types[0] === 'video');
             
             return `
                 <div class="admin-post-item">
-                    <img src="${thumbnail}" class="admin-post-thumbnail" alt="Post">
+                    ${isVideo ? 
+                        `<video src="${thumbnail}" class="admin-post-thumbnail" muted></video>` :
+                        `<img src="${thumbnail}" class="admin-post-thumbnail" alt="Post">`
+                    }
                     <div class="admin-post-info">
                         <div class="admin-post-caption">${post.caption || 'No caption'}</div>
                         <div class="admin-post-stats">${(post.views_count || 0).toLocaleString()} views • ${user.full_name}</div>
@@ -3268,7 +3427,7 @@
             const post = posts.find(p => p.id === postId);
             if (post) {
                 const newViews = (post.views_count || 0) + amount;
-                await db.collection('posts').doc(postId).update({
+                await db.ref('posts/' + postId).update({
                     views_count: newViews
                 });
                 showToast(`Views increased to ${newViews.toLocaleString()}!`, 'success');
@@ -3288,7 +3447,7 @@
     async function deletePost(postId) {
         if (confirm('Are you sure you want to delete this post?')) {
             try {
-                await db.collection('posts').doc(postId).delete();
+                await db.ref('posts/' + postId).remove();
                 showToast('Post deleted!', 'success');
             } catch (error) {
                 console.error('Error deleting post:', error);
@@ -3299,4 +3458,3 @@
 </script>
 </body>
 </html>
-

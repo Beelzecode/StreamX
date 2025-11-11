@@ -1864,25 +1864,7 @@
     
     const ADMIN_PASSWORD = 'VNAXXTTM';
     
-    let savedAccounts = JSON.parse(localStorage.getItem('streamx-saved-accounts') || '[]');
-    let currentUser = JSON.parse(localStorage.getItem('streamx-current-user') || 'null');
-    let currentPage = 'feed';
-    let posts = JSON.parse(localStorage.getItem('streamx-posts-cache') || '[]');
-    let users = JSON.parse(localStorage.getItem('streamx-users-cache') || '[]');
-    let currentChatUser = null;
-    let messages = JSON.parse(localStorage.getItem('streamx-messages-cache') || '[]');
-    let conversations = JSON.parse(localStorage.getItem('streamx-conversations-cache') || '[]');
-    let uploadedFiles = [];
-    let currentHashtags = [];
-    let searchQuery = '';
-    let activeHashtag = null;
-    let messageUnsubscribe = null;
-    let currentAuthTab = 'register';
-    let isAdminAuthenticated = sessionStorage.getItem('streamx-admin') === 'true';
-    let blockedUsers = [];
-    let selectedMessages = [];
-    let dataLoaded = posts.length > 0;
-    
+   
     function generateResetCode() {
         return 'r' + Math.floor(10000 + Math.random() * 90000);
     }
@@ -3458,3 +3440,4 @@
 </script>
 </body>
 </html>
+

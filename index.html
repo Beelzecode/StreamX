@@ -1858,6 +1858,34 @@
         appId: "1:1073155867607:web:f4e0496523d360626a0192",
         measurementId: "G-7DX6HDZ3S6"
     };
+
+
+
+ let savedAccounts = JSON.parse(localStorage.getItem('streamx-saved-accounts') || '[]');
+    let currentUser = JSON.parse(localStorage.getItem('streamx-current-user') || 'null');
+    let currentPage = 'feed';
+    let posts = JSON.parse(localStorage.getItem('streamx-posts-cache') || '[]');
+    let users = JSON.parse(localStorage.getItem('streamx-users-cache') || '[]');
+    let currentChatUser = null;
+    let messages = JSON.parse(localStorage.getItem('streamx-messages-cache') || '[]');
+    let conversations = JSON.parse(localStorage.getItem('streamx-conversations-cache') || '[]');
+    let uploadedFiles = [];
+    let currentHashtags = [];
+    let searchQuery = '';
+    let activeHashtag = null;
+    let messageUnsubscribe = null;
+    let currentAuthTab = 'register';
+    let isAdminAuthenticated = sessionStorage.getItem('streamx-admin') === 'true';
+    let blockedUsers = [];
+    let selectedMessages = [];
+    let dataLoaded = posts.length > 0;
+    
+
+
+
+
+
+
     
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
@@ -3440,4 +3468,5 @@
 </script>
 </body>
 </html>
+
 

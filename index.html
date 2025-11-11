@@ -3463,6 +3463,1599 @@
 </script>
 </body>
 </html>
+an hour ago
+this is crazy remve that loading nonsese because it keeps loading for too long uit dont even open you bloody idiot i dont think realtime databasse camn tae 2 minutes loading
+
+39 minutes ago
+Revert this
+Base44 AI
+Base44
+
+Thought for 4s
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyDO2EKbZYfy6ah_95xDo9m8MRfXtd9BExs",
+        authDomain: "streamx-a4099.firebaseapp.com",
+        databaseURL: "https://streamxnew-a932a-default-rtdb.firebaseio.com/",
+        projectId: "streamx-a4099",
+        storageBucket: "streamx-a4099.firebasestorage.app",
+        messagingSenderId: "1073155867607",
+        appId: "1:1073155867607:web:f4e0496523d360626a0192",
+        measurementId: "G-7DX6HDZ3S6"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    
+    const ADMIN_PASSWORD = 'VNAXXTTM';
+    
+    let savedAccounts = [];
+    let currentUser = null;
+    let currentPage = 'feed';
+    let posts = [];
+    let users = [];
+    let currentChatUser = null;
+    let messages = [];
+    let conversations = [];
+    let uploadedFiles = [];
+    let currentHashtags = [];
+    let searchQuery = '';
+    let activeHashtag = null;
+    let messageUnsubscribe = null;
+    let currentAuthTab = 'register';
+    let isAdminAuthenticated = sessionStorage.getItem('streamx-admin') === 'true';
+    let dataLoaded = false;
+    
+    function generateResetCode() {
+        return 'r' + Math.floor(10000 + Math.random() * 90000);
+    }
+    
+    function saveAccountToList(account) {
+        const exists = savedAccounts.find(a => a.email === account.email);
+        if (!exists) {
+            savedAccounts.push({
+                email: account.email,
+                full_name: account.full_name,
+                profile_picture: account.profile_picture,
+                accessCode: account.accessCode
+            });
+        }
+    }
+    
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.animation = 'slideIn 0.3s ease reverse';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+    
+    function openAdminModal() {
+        if (isAdminAuthenticated) {
+            navigateTo('admin');
+        } else {
+            document.getElementById('adminModalOverlay').classList.add('active');
+            document.getElementById('adminPasswordInput').value = '';
+            document.getElementById('adminModalError').style.display = 'none';
+        }
+    }
+    
+    function closeAdminModal() {
+        document.getElementById('adminModalOverlay').classList.remove('active');
+    }
+    
+    function submitAdminPassword() {
+        const password = document.getElementById('adminPasswordInput').value;
+        if (password === ADMIN_PASSWORD) {
+            sessionStorage.setItem('streamx-admin', 'true');
+            isAdminAuthenticated = true;
+            closeAdminModal();
+            navigateTo('admin');
+        } else {
+            document.getElementById('adminModalError').textContent = 'Incorrect password!';
+            document.getElementById('adminModalError').style.display = 'block';
+        }
+    }
+    
+    function switchAuthTab(tab) {
+        currentAuthTab = tab;
+        const loginTab = document.getElementById('loginTab');
+        const registerTab = document.getElementById('registerTab');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const forgotForm = document.getElementById('forgotForm');
+        
+        loginTab.classList.remove('active');
+        registerTab.classList.remove('active');
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'none';
+        forgotForm.style.display = 'none';
+        
+        if (tab === 'login') {
+            loginTab.classList.add('active');
+            loginForm.style.display = 'block';
+        } else if (tab === 'register') {
+            registerTab.classList.add('active');
+            registerForm.style.display = 'block';
+        } else if (tab === 'forgot') {
+            forgotForm.style.display = 'block';
+        }
+        
+        document.getElementById('authError').style.display = 'none';
+    }
+    
+    function showAuthModal() {
+        document.getElementById('authModal').style.display = 'flex';
+        document.getElementById('loadingOverlay').style.display = 'none';
+    }
+    
+    function hideAuthModal() {
+        document.getElementById('authModal').style.display = 'none';
+    }
+    
+    function handleLogout() {
+        if (confirm('Are you sure you want to logout?')) {
+            currentUser = null;
+            sessionStorage.removeItem('streamx-admin');
+            savedAccounts = [];
+            showAuthModal();
+            updateHeaderUI();
+        }
+    }
+    
+    async function handleRegister() {
+        const name = document.getElementById('registerName').value.trim();
+        const email = document.getElementById('registerEmail').value.trim();
+        const errorDiv = document.getElementById('authError');
+        
+        if (!name || !email) {
+            errorDiv.textContent = 'Please fill in all fields';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        
+        document.getElementById('registerText').style.display = 'none';
+        document.getElementById('registerLoading').style.display = 'inline-block';
+        
+        try {
+            const usersRef = db.ref('users');
+            const snapshot = await usersRef.orderByChild('email').equalTo(email).once('value');
+            
+            if (snapshot.exists()) {
+                errorDiv.textContent = 'This email is already in use!';
+                errorDiv.style.display = 'block';
+                document.getElementById('registerText').style.display = 'inline';
+                document.getElementById('registerLoading').style.display = 'none';
+                return;
+            }
+            
+            const accessCode = Math.floor(100000 + Math.random() * 900000).toString();
+            const resetCode = generateResetCode();
+            
+            const newUserRef = usersRef.push();
+            const newUser = {
+                id: newUserRef.key,
+                email,
+                full_name: name,
+                accessCode,
+                resetCode,
+                profile_picture: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=128&background=000000&color=ffffff`,
+                created_date: new Date().toISOString(),
+                blockedUsers: [],
+                bio: '',
+                website: '',
+                phone: '',
+                whatsapp: ''
+            };
+            
+            await newUserRef.set(newUser);
+            
+            alert(`✅ Account created!\n\nYour Access Code: ${accessCode}\nYour Reset Code: ${resetCode}\n\nSave both codes to login and recover your account!`);
+            
+            currentUser = newUser;
+            saveAccountToList(currentUser);
+            hideAuthModal();
+            updateHeaderUI();
+            updateNavButtons();
+            loadData();
+            showToast('Welcome to StreamX! 🎉');
+        } catch (error) {
+            console.error('Error creating account:', error);
+            errorDiv.textContent = 'Error creating account. Please try again.';
+            errorDiv.style.display = 'block';
+        }
+        
+        document.getElementById('registerText').style.display = 'inline';
+        document.getElementById('registerLoading').style.display = 'none';
+    }
+    
+    async function handleLogin() {
+        const email = document.getElementById('loginEmail').value.trim();
+        const code = document.getElementById('loginCode').value.trim();
+        const errorDiv = document.getElementById('authError');
+        
+        if (!email || !code) {
+            errorDiv.textContent = 'Please fill in all fields';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        
+        document.getElementById('loginText').style.display = 'none';
+        document.getElementById('loginLoading').style.display = 'inline-block';
+        
+        try {
+            const usersRef = db.ref('users');
+            const snapshot = await usersRef.orderByChild('email').equalTo(email).once('value');
+            
+            if (!snapshot.exists()) {
+                errorDiv.textContent = 'Incorrect email or access code!';
+                errorDiv.style.display = 'block';
+                document.getElementById('loginText').style.display = 'inline';
+                document.getElementById('loginLoading').style.display = 'none';
+                return;
+            }
+            
+            let existingUser = null;
+            snapshot.forEach(child => {
+                const userData = child.val();
+                if (userData.accessCode === code) {
+                    existingUser = userData;
+                }
+            });
+            
+            if (!existingUser) {
+                errorDiv.textContent = 'Incorrect email or access code!';
+                errorDiv.style.display = 'block';
+                document.getElementById('loginText').style.display = 'inline';
+                document.getElementById('loginLoading').style.display = 'none';
+                return;
+            }
+            
+            currentUser = existingUser;
+            saveAccountToList(currentUser);
+            hideAuthModal();
+            updateHeaderUI();
+            updateNavButtons();
+            loadData();
+            showToast('Welcome back to StreamX! 🎉');
+        } catch (error) {
+            console.error('Error logging in:', error);
+            errorDiv.textContent = 'Error logging in. Please try again.';
+            errorDiv.style.display = 'block';
+        }
+        
+        document.getElementById('loginText').style.display = 'inline';
+        document.getElementById('loginLoading').style.display = 'none';
+    }
+    
+    async function handleForgotCode() {
+        const email = document.getElementById('forgotEmail').value.trim();
+        const resetCode = document.getElementById('resetCodeInput').value.trim();
+        const errorDiv = document.getElementById('authError');
+        
+        if (!email || !resetCode) {
+            errorDiv.textContent = 'Please fill in all fields';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        
+        document.getElementById('forgotText').style.display = 'none';
+        document.getElementById('forgotLoading').style.display = 'inline-block';
+        
+        try {
+            const usersRef = db.ref('users');
+            const snapshot = await usersRef.orderByChild('email').equalTo(email).once('value');
+            
+            if (!snapshot.exists()) {
+                errorDiv.textContent = 'Incorrect email or reset code!';
+                errorDiv.style.display = 'block';
+                document.getElementById('forgotText').style.display = 'inline';
+                document.getElementById('forgotLoading').style.display = 'none';
+                return;
+            }
+            
+            let userData = null;
+            snapshot.forEach(child => {
+                const data = child.val();
+                if (data.resetCode === resetCode) {
+                    userData = data;
+                }
+            });
+            
+            if (!userData) {
+                errorDiv.textContent = 'Incorrect email or reset code!';
+                errorDiv.style.display = 'block';
+                document.getElementById('forgotText').style.display = 'inline';
+                document.getElementById('forgotLoading').style.display = 'none';
+                return;
+            }
+            
+            alert(`✅ Your Permanent Access Code is: ${userData.accessCode}`);
+            switchAuthTab('login');
+        } catch (error) {
+            console.error('Error recovering code:', error);
+            errorDiv.textContent = 'Error recovering code. Please try again.';
+            errorDiv.style.display = 'block';
+        }
+        
+        document.getElementById('forgotText').style.display = 'inline';
+        document.getElementById('forgotLoading').style.display = 'none';
+    }
+    
+    async function changeResetCode() {
+        const newResetCode = prompt('Enter new reset code (must start with r, e.g., r12345):');
+        if (!newResetCode || !newResetCode.startsWith('r') || newResetCode.length < 6) {
+            showToast('Invalid reset code format!', 'error');
+            return;
+        }
+        
+        try {
+            await db.ref('users/' + currentUser.id).update({
+                resetCode: newResetCode
+            });
+            currentUser.resetCode = newResetCode;
+            document.getElementById('profileResetCode').textContent = newResetCode;
+            showToast('✅ Reset code updated!');
+        } catch (error) {
+            console.error('Error updating reset code:', error);
+            showToast('Error updating reset code', 'error');
+        }
+    }
+    
+    async function editProfileName() {
+        const newName = prompt('Enter new name:', currentUser.full_name);
+        if (!newName || newName.trim() === '') return;
+        
+        try {
+            await db.ref('users/' + currentUser.id).update({
+                full_name: newName.trim()
+            });
+            currentUser.full_name = newName.trim();
+            document.getElementById('profileName').textContent = newName.trim();
+            showToast('✅ Name updated!');
+        } catch (error) {
+            console.error('Error updating name:', error);
+            showToast('Error updating name', 'error');
+        }
+    }
+    
+    async function editBio() {
+        const newBio = prompt('Enter your bio:', currentUser.bio || '');
+        if (newBio === null) return;
+        
+        try {
+            await db.ref('users/' + currentUser.id).update({
+                bio: newBio.trim()
+            });
+            currentUser.bio = newBio.trim();
+            renderProfile(currentUser);
+            showToast('✅ Bio updated!');
+        } catch (error) {
+            console.error('Error updating bio:', error);
+            showToast('Error updating bio', 'error');
+        }
+    }
+    
+    async function editContacts() {
+        const website = prompt('Website URL (e.g., https://example.com):', currentUser.website || '');
+        if (website === null) return;
+        
+        const phone = prompt('Phone Number (e.g., +27123456789):', currentUser.phone || '');
+        if (phone === null) return;
+        
+        const whatsapp = prompt('WhatsApp Number (e.g., +27123456789):', currentUser.whatsapp || '');
+        if (whatsapp === null) return;
+        
+        try {
+            await db.ref('users/' + currentUser.id).update({
+                website: website.trim(),
+                phone: phone.trim(),
+                whatsapp: whatsapp.trim()
+            });
+            currentUser.website = website.trim();
+            currentUser.phone = phone.trim();
+            currentUser.whatsapp = whatsapp.trim();
+            renderProfile(currentUser);
+            showToast('✅ Contact info updated!');
+        } catch (error) {
+            console.error('Error updating contacts:', error);
+            showToast('Error updating contacts', 'error');
+        }
+    }
+    
+    function showAccountsModal() {
+        const modal = document.getElementById('accountsModal');
+        const list = document.getElementById('savedAccountsList');
+        
+        if (savedAccounts.length === 0) {
+            list.innerHTML = '<p style="text-align:center;color:#6b7280;padding:2rem;">No saved accounts yet.</p>';
+        } else {
+            list.innerHTML = savedAccounts.map(account => {
+                const isCurrent = currentUser && account.email === currentUser.email;
+                return `
+                    <div class="account-item ${isCurrent ? 'current' : ''}" onclick="${isCurrent ? '' : `switchToAccount('${account.email}')`}">
+                        <img src="${account.profile_picture}" class="account-avatar-small" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(account.full_name)}&size=48&background=6b7280&color=ffffff'">
+                        <div class="account-details">
+                            <div class="account-name">${account.full_name}</div>
+                            <div class="account-email">${account.email}</div>
+                        </div>
+                        ${isCurrent ? '<span class="current-badge">Current</span>' : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        modal.classList.add('active');
+    }
+    
+    async function switchToAccount(email) {
+        const account = savedAccounts.find(a => a.email === email);
+        if (!account) return;
+        
+        try {
+            const usersRef = db.ref('users');
+            const snapshot = await usersRef.orderByChild('email').equalTo(account.email).once('value');
+            
+            if (snapshot.exists()) {
+                let userData = null;
+                snapshot.forEach(child => {
+                    userData = child.val();
+                });
+                
+                currentUser = userData;
+                document.getElementById('accountsModal').classList.remove('active');
+                
+                updateHeaderUI();
+                loadData();
+                navigateTo('feed');
+                
+                showToast(`Switched to ${currentUser.full_name}!`, 'success');
+            }
+        } catch (error) {
+            console.error('Error switching account:', error);
+            showToast('Error switching account', 'error');
+        }
+    }
+    
+    function addNewAccount() {
+        document.getElementById('accountsModal').classList.remove('active');
+        showAuthModal();
+    }
+    
+    document.addEventListener('click', function(e) {
+        const modal = document.getElementById('accountsModal');
+        if (e.target === modal) {
+            modal.classList.remove('active');
+        }
+    });
+    
+    window.addEventListener('load', function() {
+        console.log('✅ Firebase Realtime Database initialized!');
+        document.getElementById('loadingOverlay').style.display = 'none';
+        
+        if (!currentUser) {
+            showAuthModal();
+        } else {
+            updateHeaderUI();
+            updateNavButtons();
+            loadData();
+        }
+        
+        setupEventListeners();
+    });
+    
+    function setupEventListeners() {
+        document.getElementById('sButton').addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('sDropdown').classList.toggle('active');
+        });
+        
+        document.addEventListener('click', function() {
+            document.getElementById('sDropdown').classList.remove('active');
+        });
+        
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            searchQuery = e.target.value.toLowerCase();
+            renderPosts();
+        });
+        
+        document.getElementById('usersSearchInput').addEventListener('input', function(e) {
+            renderUsers(e.target.value.toLowerCase());
+        });
+        
+        document.getElementById('fileUploadBtn').addEventListener('click', function() {
+            document.getElementById('fileInput').click();
+        });
+        
+        document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+        
+        document.getElementById('createHashtag').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addHashtag();
+            }
+        });
+        
+        document.getElementById('createForm').addEventListener('submit', handleCreatePost);
+        
+        document.getElementById('cameraBtn').addEventListener('click', function() {
+            if (currentUser && document.getElementById('profileCodeBox').style.display !== 'none') {
+                document.getElementById('profilePictureInput').click();
+            }
+        });
+        
+        document.getElementById('profilePictureInput').addEventListener('change', handleProfilePictureUpload);
+        
+        document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+        
+        document.getElementById('imageMessageBtn').addEventListener('click', function() {
+            document.getElementById('messageImageInput').click();
+        });
+        
+        document.getElementById('messageImageInput').addEventListener('change', handleMessageImage);
+    }
+    
+    function updateHeaderUI() {
+        const icon = document.getElementById('headerProfileIcon');
+        if (currentUser && currentUser.profile_picture) {
+            icon.src = currentUser.profile_picture;
+            icon.style.display = 'block';
+        } else {
+            icon.style.display = 'none';
+        }
+    }
+    
+    function updateNavButtons() {
+        document.getElementById('feedNavBtn').classList.remove('active');
+        document.getElementById('createNavBtn').classList.remove('active');
+        
+        if (currentPage === 'feed') {
+            document.getElementById('feedNavBtn').classList.add('active');
+        } else if (currentPage === 'create') {
+            document.getElementById('createNavBtn').classList.add('active');
+        }
+    }
+    
+    async function loadData() {
+        try {
+            console.log('🔄 Loading data from Firebase Realtime Database...');
+            
+            db.ref('posts').orderByChild('created_date').limitToLast(50).on('value', snapshot => {
+                const postsArray = [];
+                snapshot.forEach(child => {
+                    postsArray.push({ id: child.key, ...child.val() });
+                });
+                posts = postsArray.reverse();
+                console.log(`✅ Loaded ${posts.length} posts`);
+                dataLoaded = true;
+                if (currentPage === 'feed') renderPosts();
+                if (currentPage === 'admin') renderAdminPanel();
+            });
+            
+            db.ref('users').on('value', snapshot => {
+                const usersArray = [];
+                snapshot.forEach(child => {
+                    usersArray.push({ id: child.key, ...child.val() });
+                });
+                users = usersArray;
+                console.log(`✅ Loaded ${users.length} users`);
+                if (currentPage === 'users') renderUsers();
+            });
+            
+            loadConversations();
+        } catch (error) {
+            console.error('❌ Error loading data:', error);
+            showToast('Error loading data', 'error');
+        }
+    }
+    
+    async function loadConversations() {
+        if (!currentUser) return;
+        
+        try {
+            const userKey = currentUser.email.replace(/\./g, '_');
+            db.ref('conversations').orderByChild('participants/' + userKey).equalTo(true).on('value', snapshot => {
+                const convsArray = [];
+                snapshot.forEach(child => {
+                    convsArray.push({ id: child.key, ...child.val() });
+                });
+                conversations = convsArray;
+                updateMessengerBadge();
+                if (currentPage === 'conversations') renderConversations();
+            });
+        } catch (error) {
+            console.error('Error loading conversations:', error);
+        }
+    }
+    
+    function updateMessengerBadge() {
+        const userKey = currentUser.email.replace(/\./g, '_');
+        const unreadCount = conversations.filter(c => c.unreadBy && c.unreadBy[userKey]).length;
+        const badge = document.getElementById('messengerBadge');
+        if (unreadCount > 0) {
+            badge.textContent = unreadCount > 10 ? '10+' : unreadCount;
+            badge.style.display = 'block';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+    
+    function navigateTo(page) {
+        currentPage = page;
+        
+        document.getElementById('feedPage').classList.add('hidden');
+        document.getElementById('createPage').classList.add('hidden');
+        document.getElementById('profilePage').classList.add('hidden');
+        document.getElementById('usersPage').classList.add('hidden');
+        document.getElementById('conversationsPage').classList.add('hidden');
+        document.getElementById('messengerPage').classList.add('hidden');
+        document.getElementById('adminPage').classList.add('hidden');
+        
+        updateNavButtons();
+        
+        if (page === 'feed') {
+            document.getElementById('feedPage').classList.remove('hidden');
+            renderPosts();
+        } else if (page === 'create') {
+            document.getElementById('createPage').classList.remove('hidden');
+        } else if (page === 'profile') {
+            document.getElementById('profilePage').classList.remove('hidden');
+        } else if (page === 'users') {
+            document.getElementById('usersPage').classList.remove('hidden');
+            renderUsers();
+        } else if (page === 'conversations') {
+            document.getElementById('conversationsPage').classList.remove('hidden');
+            renderConversations();
+        } else if (page === 'messenger') {
+            document.getElementById('messengerPage').classList.remove('hidden');
+            loadMessages();
+        } else if (page === 'admin') {
+            document.getElementById('adminPage').classList.remove('hidden');
+            renderAdminPanel();
+        }
+    }
+    
+    function linkify(text) {
+        if (!text) return '';
+        
+        const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])|(\b[a-zA-Z0-9-]+\.(com|co\.za|io|net|org|gov|edu)[-A-Z0-9+&@#\/%?=~_|!:,.;]*)/ig;
+        const emailPattern = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi;
+        const phonePattern = /(\+?[0-9]{1,4}?[-.\s]?(\([0-9]{1,3}\))?[-.\s]?[0-9]{1,4}[-.\s]?[0-9]{1,4}[-.\s]?[0-9]{1,9})/g;
+        
+        return text
+            .replace(urlPattern, function(match) {
+                const href = match.match(/^https?:/) ? match : 'http://' + match;
+                return '<a href__="' + href + '" target="_blank">' + match + '</a>';
+            })
+            .replace(emailPattern, '<a href__="mailto:$1">$1</a>')
+            .replace(phonePattern, '<a href__="tel:$1">$1</a>');
+    }
+    
+    function renderPosts() {
+        let filtered = posts;
+        
+        if (searchQuery) {
+            filtered = filtered.filter(post => {
+                const user = users.find(u => u.email === post.created_by);
+                const userName = user ? user.full_name.toLowerCase() : '';
+                
+                return (post.caption && post.caption.toLowerCase().includes(searchQuery)) ||
+                    (post.hashtags && post.hashtags.some(tag => tag.toLowerCase().includes(searchQuery))) ||
+                    (post.location && post.location.toLowerCase().includes(searchQuery)) ||
+                    userName.includes(searchQuery);
+            });
+        }
+        
+        if (activeHashtag) {
+            filtered = filtered.filter(post => 
+                post.hashtags && post.hashtags.includes(activeHashtag)
+            );
+        }
+        
+        const container = document.getElementById('postsFeed');
+        
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    </div>
+                    <h3>No posts found</h3>
+                    <p>Try a different search or create your first post!</p>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = filtered.map(post => createPostHTML(post)).join('');
+    }
+    
+    function createPostHTML(post) {
+        const user = users.find(u => u.email === post.created_by) || { 
+            full_name: 'User', 
+            profile_picture: `https://ui-avatars.com/api/?name=User&size=32&background=6b7280&color=ffffff`,
+            email: post.created_by 
+        };
+        const urls = post.content_urls || [];
+        const contentTypes = post.content_types || [];
+        const contentType = post.content_type || 'image';
+        
+        let mediaHTML = '';
+        if (urls.length === 1) {
+            if (contentType === 'video' || (contentTypes[0] === 'video')) {
+                mediaHTML = `<div class="post-media"><video src="${urls[0]}" class="post-video-single" controls preload="metadata"></video></div>`;
+            } else {
+                mediaHTML = `<div class="post-media"><img src="${urls[0]}" class="post-image-single" onclick="openLightbox('${urls[0]}', 'image')" loading="lazy"></div>`;
+            }
+        } else if (urls.length > 1) {
+            const gridClass = urls.length === 2 ? 'grid-2' : 'grid-multi';
+            mediaHTML = `<div class="post-media"><div class="post-image-grid ${gridClass}">${urls.slice(0, 4).map((url, idx) => {
+                const type = contentTypes[idx] === 'video' ? 'video' : 'image';
+                if (type === 'video') {
+                    return `<video src="${url}" class="grid-video" onclick="openLightbox('${url}', 'video')" preload="metadata"></video>`;
+                } else {
+                    return `<img src="${url}" class="grid-image" onclick="openLightbox('${url}', 'image')" loading="lazy">`;
+                }
+            }).join('')}</div></div>`;
+        }
+        
+        const hashtagsHTML = post.hashtags && post.hashtags.length > 0 ? 
+            `<div class="post-hashtags">${post.hashtags.map(tag => `<span class="hashtag" onclick="filterByHashtag('${tag}')">#${tag}</span>`).join('')}</div>` : '';
+        
+        const date = new Date(post.created_date);
+        const dateStr = date.toLocaleDateString();
+        
+        const likesCount = post.likes_count || 0;
+        const viewsCount = post.views_count || 0;
+        
+        const linkedCaption = linkify(post.caption);
+        
+        const userKey = currentUser.email.replace(/\./g, '_');
+        const isLiked = post.likedBy && post.likedBy[userKey];
+        
+        return `
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="post-date">${dateStr}</div>
+                    <div class="post-views">
+                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#3b82f6" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <span>${viewsCount.toLocaleString()} views</span>
+                    </div>
+                </div>
+                <div class="post-content">
+                    ${post.caption ? `<p class="post-caption">${linkedCaption}</p>` : ''}
+                    ${mediaHTML}
+                    ${hashtagsHTML}
+                </div>
+                <div class="post-footer">
+                    <div class="post-likes" onclick="likePost('${post.id}')">
+                        <svg class="heart-icon ${isLiked ? 'liked' : ''}" viewBox="0 0 24 24" stroke="black" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                        <span style="font-weight:600;">${likesCount.toLocaleString()} likes</span>
+                    </div>
+                </div>
+                <div class="post-user" onclick="viewProfile('${user.email}')">
+                    <img src="${user.profile_picture}" class="user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&size=32&background=6b7280&color=ffffff'">
+                    <div class="user-info">
+                        <div class="user-name">${user.full_name}</div>
+                        <div class="user-email">${user.email}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    async function likePost(postId) {
+        try {
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+            
+            const likedBy = post.likedBy || {};
+            const likesCount = post.likes_count || 0;
+            const viewsCount = post.views_count || 0;
+            const userKey = currentUser.email.replace(/\./g, '_');
+            
+            if (likedBy[userKey]) {
+                await db.ref('posts/' + postId).update({
+                    ['likedBy/' + userKey]: null,
+                    likes_count: Math.max(0, likesCount - 1)
+                });
+            } else {
+                const newLikesCount = Math.min(likesCount + 1, Math.floor(viewsCount * 0.8));
+                await db.ref('posts/' + postId).update({
+                    ['likedBy/' + userKey]: true,
+                    likes_count: newLikesCount
+                });
+            }
+        } catch (error) {
+            console.error('Error liking post:', error);
+        }
+    }
+    
+    function filterByHashtag(tag) {
+        activeHashtag = activeHashtag === tag ? null : tag;
+        renderPosts();
+    }
+    
+    function openLightbox(url, type) {
+        const lightbox = document.createElement('div');
+        lightbox.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        
+        if (type === 'video') {
+            lightbox.innerHTML = `
+                <div style="position:relative;max-width:90%;max-height:90vh;">
+                    <video src="${url}" style="max-width:100%;max-height:85vh;border-radius:0.5rem;" controls autoplay></video>
+                    <button onclick="this.closest('div').parentElement.remove()" style="position:absolute;top:-3rem;right:0;background:#000;color:white;border:none;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:1.5rem;">×</button>
+                </div>
+            `;
+        } else {
+            lightbox.innerHTML = `
+                <div style="position:relative;max-width:90%;max-height:90vh;">
+                    <img src="${url}" style="max-width:100%;max-height:85vh;object-fit:contain;border-radius:0.5rem;">
+                    <button onclick="this.closest('div').parentElement.remove()" style="position:absolute;top:-3rem;right:0;background:#000;color:white;border:none;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:1.5rem;">×</button>
+                    <button onclick="downloadImage('${url}')" style="position:absolute;bottom:-3rem;right:0;background:#10b981;color:white;border:none;padding:0.75rem 1.5rem;border-radius:0.5rem;cursor:pointer;font-weight:600;">💾 Save</button>
+                </div>
+            `;
+        }
+        
+        lightbox.addEventListener('click', function(e) {
+            if (e.target === lightbox) lightbox.remove();
+        });
+        document.body.appendChild(lightbox);
+    }
+    
+    function downloadImage(url) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'streamx-image-' + Date.now() + '.jpg';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showToast('✅ Image saved!');
+    }
+    
+    function handleFileSelect(e) {
+        uploadedFiles = Array.from(e.target.files);
+        renderPreviews();
+    }
+    
+    function renderPreviews() {
+        const container = document.getElementById('previewContainer');
+        if (uploadedFiles.length === 0) {
+            container.innerHTML = '';
+            return;
+        }
+        
+        container.innerHTML = uploadedFiles.map((file, index) => {
+            const url = URL.createObjectURL(file);
+            const isVideo = file.type.startsWith('video/');
+            
+            if (isVideo) {
+                return `
+                    <div class="preview-item">
+                        <video src="${url}" class="preview-video" muted></video>
+                        <button type="button" class="preview-remove" onclick="removePreview(${index})">×</button>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="preview-item">
+                        <img src="${url}" class="preview-image">
+                        <button type="button" class="preview-remove" onclick="removePreview(${index})">×</button>
+                    </div>
+                `;
+            }
+        }).join('');
+    }
+    
+    function removePreview(index) {
+        uploadedFiles.splice(index, 1);
+        renderPreviews();
+    }
+    
+    function addHashtag() {
+        const input = document.getElementById('createHashtag');
+        const tag = input.value.trim().replace('#', '');
+        if (tag && !currentHashtags.includes(tag)) {
+            currentHashtags.push(tag);
+            renderHashtags();
+            input.value = '';
+        }
+    }
+    
+    function renderHashtags() {
+        const container = document.getElementById('hashtagsList');
+        container.innerHTML = currentHashtags.map(tag => 
+            `<span style="background:#f3f4f6;padding:0.375rem 0.75rem;border-radius:9999px;font-size:0.875rem;">#${tag} <button onclick="removeHashtag('${tag}')" style="background:none;border:none;cursor:pointer;color:#6b7280;margin-left:0.25rem;">×</button></span>`
+        ).join('');
+    }
+    
+    function removeHashtag(tag) {
+        currentHashtags = currentHashtags.filter(t => t !== tag);
+        renderHashtags();
+    }
+    
+    async function handleCreatePost(e) {
+        e.preventDefault();
+        
+        const caption = document.getElementById('createCaption').value.trim();
+        const location = document.getElementById('createLocation').value.trim();
+        
+        if (!caption && uploadedFiles.length === 0) {
+            showToast('Please add a caption or upload media!', 'error');
+            return;
+        }
+        
+        document.getElementById('submitText').style.display = 'none';
+        document.getElementById('submitLoading').style.display = 'inline-block';
+        document.getElementById('createPostBtn').disabled = true;
+        
+        try {
+            showToast('Uploading post...', 'success');
+            
+            const contentUrls = [];
+            const contentTypes = [];
+            
+            for (const file of uploadedFiles) {
+                if (file.type.startsWith('video/')) {
+                    const compressed = await compressVideo(file);
+                    contentUrls.push(compressed);
+                    contentTypes.push('video');
+                } else {
+                    const compressed = await compressImage(file);
+                    contentUrls.push(compressed);
+                    contentTypes.push('image');
+                }
+            }
+            
+            const initialViews = Math.floor(Math.random() * (243544 - 2399 + 1)) + 2399;
+            const initialLikes = Math.floor(initialViews * (Math.random() * 0.3 + 0.1));
+            
+            const mainType = contentTypes[0] || 'image';
+            
+            await db.ref('posts').push({
+                caption,
+                location,
+                hashtags: currentHashtags,
+                content_urls: contentUrls,
+                content_types: contentTypes,
+                content_type: mainType,
+                views_count: initialViews,
+                likes_count: initialLikes,
+                likedBy: {},
+                created_date: new Date().toISOString(),
+                created_by: currentUser.email
+            });
+            
+            showToast(`✅ Post created! ${initialViews.toLocaleString()} views & ${initialLikes.toLocaleString()} likes!`, 'success');
+            
+            document.getElementById('createCaption').value = '';
+            document.getElementById('createLocation').value = '';
+            document.getElementById('createHashtag').value = '';
+            uploadedFiles = [];
+            currentHashtags = [];
+            renderPreviews();
+            renderHashtags();
+            
+            navigateTo('feed');
+        } catch (error) {
+            showToast('Error creating post. Please try again.', 'error');
+            console.error(error);
+        }
+        
+        document.getElementById('submitText').style.display = 'inline';
+        document.getElementById('submitLoading').style.display = 'none';
+        document.getElementById('createPostBtn').disabled = false;
+    }
+    
+    function compressImage(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    const maxSize = 800;
+                    if (width > height && width > maxSize) {
+                        height = (height * maxSize) / width;
+                        width = maxSize;
+                    } else if (height > maxSize) {
+                        width = (width * maxSize) / height;
+                        height = maxSize;
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.7));
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+    
+    function compressVideo(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                resolve(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+    
+    function viewProfile(email) {
+        const user = users.find(u => u.email === email);
+        if (user) {
+            renderProfile(user);
+            navigateTo('profile');
+        }
+    }
+    
+    function renderProfile(user) {
+        document.getElementById('profileAvatar').src = user.profile_picture || '';
+        document.getElementById('profileName').textContent = user.full_name;
+        document.getElementById('profileEmail').textContent = user.email;
+        
+        if (user.email === currentUser.email) {
+            document.getElementById('editNameBtn').style.display = 'block';
+            document.getElementById('editBioBtn').style.display = 'block';
+            document.getElementById('editContactsBtn').style.display = 'block';
+            document.getElementById('profileAccessCode').textContent = user.accessCode || '------';
+            document.getElementById('profileCodeBox').style.display = 'block';
+            document.getElementById('profileResetCode').textContent = user.resetCode || 'r------';
+            document.getElementById('profileResetCodeBox').style.display = 'block';
+            document.getElementById('profileChatBtn').style.display = 'none';
+            document.getElementById('profileSwitchBtn').style.display = 'block';
+        } else {
+            document.getElementById('editNameBtn').style.display = 'none';
+            document.getElementById('editBioBtn').style.display = 'none';
+            document.getElementById('editContactsBtn').style.display = 'none';
+            document.getElementById('profileCodeBox').style.display = 'none';
+            document.getElementById('profileResetCodeBox').style.display = 'none';
+            document.getElementById('profileChatBtn').style.display = 'block';
+            document.getElementById('profileSwitchBtn').style.display = 'none';
+            
+            window.startChat = function() {
+                currentChatUser = user;
+                navigateTo('messenger');
+            };
+        }
+        
+        if (user.bio) {
+            document.getElementById('profileBio').textContent = user.bio;
+            document.getElementById('profileBio').style.display = 'block';
+        } else {
+            document.getElementById('profileBio').style.display = 'none';
+        }
+        
+        const contactLinksContainer = document.getElementById('profileContactLinks');
+        let contactHTML = '';
+        
+        if (user.email) {
+            contactHTML += `
+                <div class="contact-link-item">
+                    <svg fill="none" stroke="#6b7280" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    <a href__="mailto:${user.email}">${user.email}</a>
+                </div>
+            `;
+        }
+        
+        if (user.website) {
+            contactHTML += `
+                <div class="contact-link-item">
+                    <svg fill="none" stroke="#6b7280" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                    </svg>
+                    <a href__="${user.website.match(/^https?:/) ? user.website : 'http://' + user.website}" target="_blank">${user.website}</a>
+                </div>
+            `;
+        }
+        
+        if (user.phone) {
+            contactHTML += `
+                <div class="contact-link-item">
+                    <svg fill="none" stroke="#6b7280" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                    </svg>
+                    <a href__="tel:${user.phone}">${user.phone}</a>
+                </div>
+            `;
+        }
+        
+        if (user.whatsapp) {
+            contactHTML += `
+                <div class="contact-link-item">
+                    <svg fill="#25D366" stroke="none" viewBox="0 0 24 24">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                    </svg>
+                    <a href__="https://wa.me/${user.whatsapp.replace(/[^0-9]/g, '')}" target="_blank">${user.whatsapp}</a>
+                </div>
+            `;
+        }
+        
+        contactLinksContainer.innerHTML = contactHTML;
+        
+        const userPosts = posts.filter(p => p.created_by === user.email);
+        const totalViews = userPosts.reduce((sum, p) => sum + (p.views_count || 0), 0);
+        const totalLikes = userPosts.reduce((sum, p) => sum + (p.likes_count || 0), 0);
+        
+        document.getElementById('profilePostCount').textContent = userPosts.length;
+        document.getElementById('profileViewCount').textContent = totalViews.toLocaleString();
+        document.getElementById('profileLikeCount').textContent = totalLikes.toLocaleString();
+        
+        const postsContainer = document.getElementById('profilePosts');
+        if (userPosts.length === 0) {
+            postsContainer.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    </div>
+                    <h3>No posts yet</h3>
+                    <p>Share your first post!</p>
+                </div>
+            `;
+        } else {
+            postsContainer.innerHTML = userPosts.map(post => createPostHTML(post)).join('');
+        }
+    }
+    
+    async function handleProfilePictureUpload(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        try {
+            showToast('Uploading profile picture...', 'success');
+            
+            const compressed = await compressImage(file);
+            
+            await db.ref('users/' + currentUser.id).update({
+                profile_picture: compressed
+            });
+            
+            currentUser.profile_picture = compressed;
+            
+            const accountIndex = savedAccounts.findIndex(a => a.email === currentUser.email);
+            if (accountIndex !== -1) {
+                savedAccounts[accountIndex].profile_picture = compressed;
+            }
+            
+            updateHeaderUI();
+            renderProfile(currentUser);
+            
+            showToast('✅ Profile picture updated!', 'success');
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            showToast('Error updating profile', 'error');
+        }
+    }
+    
+    function renderUsers(search = '') {
+        const container = document.getElementById('usersList');
+        let filtered = users.filter(u => u.email !== currentUser.email);
+        
+        if (search) {
+            filtered = filtered.filter(u => 
+                u.full_name.toLowerCase().includes(search) ||
+                u.email.toLowerCase().includes(search)
+            );
+        }
+        
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <h3>No users found</h3>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = filtered.map(user => `
+            <div class="user-card" onclick="viewProfile('${user.email}')">
+                <img src="${user.profile_picture}" class="user-card-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&size=48&background=6b7280&color=ffffff'">
+                <div class="user-card-info">
+                    <div class="user-card-name">${user.full_name}</div>
+                    <div class="user-card-email">${user.email}</div>
+                </div>
+                <button class="message-icon-btn" onclick="event.stopPropagation();startChatWith('${user.email}')">
+                    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </button>
+            </div>
+        `).join('');
+    }
+    
+    function startChatWith(email) {
+        const user = users.find(u => u.email === email);
+        if (user) {
+            currentChatUser = user;
+            navigateTo('messenger');
+        }
+    }
+    
+    function renderConversations() {
+        const container = document.getElementById('conversationsList');
+        
+        if (conversations.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                    <h3>No conversations yet</h3>
+                    <p>Start chatting with users!</p>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = conversations.map(conv => {
+            const participants = conv.participants || {};
+            const otherEmail = Object.keys(participants).map(k => k.replace(/_/g, '.')).find(p => p !== currentUser.email);
+            const otherUser = users.find(u => u.email === otherEmail) || { 
+                full_name: 'User', 
+                profile_picture: `https://ui-avatars.com/api/?name=User&size=48&background=6b7280&color=ffffff`,
+                email: otherEmail 
+            };
+            const userKey = currentUser.email.replace(/\./g, '_');
+            const isUnread = conv.unreadBy && conv.unreadBy[userKey];
+            
+            return `
+                <div class="conversation-card ${isUnread ? 'unread' : ''}" onclick="openConversation('${otherUser.email}')">
+                    <img src="${otherUser.profile_picture}" class="conversation-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(otherUser.full_name)}&size=48&background=6b7280&color=ffffff'">
+                    <div class="conversation-info">
+                        <div class="conversation-name">${otherUser.full_name}</div>
+                        <div class="conversation-last-message">${conv.lastMessage || 'No messages yet'}</div>
+                    </div>
+                    ${isUnread ? '<span class="conversation-badge">New</span>' : ''}
+                </div>
+            `;
+        }).join('');
+    }
+    
+    function openConversation(email) {
+        const user = users.find(u => u.email === email);
+        if (user) {
+            currentChatUser = user;
+            navigateTo('messenger');
+        }
+    }
+    
+    async function loadMessages() {
+        if (!currentChatUser) return;
+        
+        document.getElementById('messengerAvatar').src = currentChatUser.profile_picture;
+        document.getElementById('messengerName').textContent = currentChatUser.full_name;
+        
+        try {
+            const participantsKey = [currentUser.email, currentChatUser.email].map(e => e.replace(/\./g, '_')).sort().join('_');
+            
+            const convSnapshot = await db.ref('conversations').orderByChild('participantsKey').equalTo(participantsKey).once('value');
+            
+            let conversationId;
+            if (!convSnapshot.exists()) {
+                const newConvRef = db.ref('conversations').push();
+                conversationId = newConvRef.key;
+                const participants = {};
+                participants[currentUser.email.replace(/\./g, '_')] = true;
+                participants[currentChatUser.email.replace(/\./g, '_')] = true;
+                await newConvRef.set({
+                    participants,
+                    participantsKey,
+                    created_date: new Date().toISOString(),
+                    lastMessage: '',
+                    unreadBy: {}
+                });
+            } else {
+                convSnapshot.forEach(child => {
+                    conversationId = child.key;
+                    const userKey = currentUser.email.replace(/\./g, '_');
+                    db.ref('conversations/' + conversationId + '/unreadBy/' + userKey).remove();
+                });
+            }
+            
+            if (messageUnsubscribe) messageUnsubscribe();
+            
+            db.ref('conversations/' + conversationId + '/messages').orderByChild('timestamp').on('value', snapshot => {
+                const messagesArray = [];
+                snapshot.forEach(child => {
+                    messagesArray.push({ id: child.key, ...child.val() });
+                });
+                messages = messagesArray;
+                renderMessages();
+            });
+        } catch (error) {
+            console.error('Error loading messages:', error);
+        }
+    }
+    
+    function renderMessages() {
+        const container = document.getElementById('messagesList');
+        
+        if (messages.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                    <h3>Start the conversation!</h3>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = messages.map(msg => {
+            const isSent = msg.sender === currentUser.email;
+            const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            if (msg.type === 'image') {
+                return `
+                    <div class="message-bubble ${isSent ? 'sent' : 'received'}" data-message-id="${msg.id}">
+                        <img src="${msg.imageUrl}" class="message-image" onclick="openLightbox('${msg.imageUrl}', 'image')">
+                        <div class="message-time">${time}</div>
+                        <div class="message-actions">
+                            <button class="message-action-btn-small" onclick="deleteMessage('${msg.id}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (msg.type === 'video') {
+                return `
+                    <div class="message-bubble ${isSent ? 'sent' : 'received'}" data-message-id="${msg.id}">
+                        <video src="${msg.videoUrl}" class="message-video" controls preload="metadata"></video>
+                        <div class="message-time">${time}</div>
+                        <div class="message-actions">
+                            <button class="message-action-btn-small" onclick="deleteMessage('${msg.id}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="message-bubble ${isSent ? 'sent' : 'received'}" data-message-id="${msg.id}">
+                    <div>${linkify(msg.text)}</div>
+                    <div class="message-time">${time}</div>
+                    <div class="message-actions">
+                        <button class="message-action-btn-small" onclick="deleteMessage('${msg.id}')">Delete</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        container.scrollTop = container.scrollHeight;
+    }
+    
+    async function sendMessage() {
+        const input = document.getElementById('messageInput');
+        const text = input.value.trim();
+        if (!text || !currentChatUser) return;
+        
+        input.value = '';
+        
+        try {
+            const participantsKey = [currentUser.email, currentChatUser.email].map(e => e.replace(/\./g, '_')).sort().join('_');
+            const convSnapshot = await db.ref('conversations').orderByChild('participantsKey').equalTo(participantsKey).once('value');
+            
+            let conversationId;
+            convSnapshot.forEach(child => {
+                conversationId = child.key;
+            });
+            
+            await db.ref('conversations/' + conversationId + '/messages').push({
+                text,
+                type: 'text',
+                sender: currentUser.email,
+                timestamp: new Date().toISOString()
+            });
+            
+            const updates = {};
+            updates['lastMessage'] = text;
+            updates['unreadBy/' + currentChatUser.email.replace(/\./g, '_')] = true;
+            await db.ref('conversations/' + conversationId).update(updates);
+        } catch (error) {
+            console.error('Error sending message:', error);
+            showToast('Error sending message', 'error');
+        }
+    }
+    
+    async function handleMessageImage(e) {
+        const file = e.target.files[0];
+        if (!file || !currentChatUser) return;
+        
+        try {
+            showToast('Sending media...', 'success');
+            
+            const isVideo = file.type.startsWith('video/');
+            let compressed;
+            let messageData = {
+                sender: currentUser.email,
+                timestamp: new Date().toISOString()
+            };
+            
+            if (isVideo) {
+                compressed = await compressVideo(file);
+                messageData.videoUrl = compressed;
+                messageData.type = 'video';
+            } else {
+                compressed = await compressImage(file);
+                messageData.imageUrl = compressed;
+                messageData.type = 'image';
+            }
+            
+            const participantsKey = [currentUser.email, currentChatUser.email].map(e => e.replace(/\./g, '_')).sort().join('_');
+            const convSnapshot = await db.ref('conversations').orderByChild('participantsKey').equalTo(participantsKey).once('value');
+            
+            let conversationId;
+            convSnapshot.forEach(child => {
+                conversationId = child.key;
+            });
+            
+            await db.ref('conversations/' + conversationId + '/messages').push(messageData);
+            
+            const updates = {};
+            updates['lastMessage'] = isVideo ? '🎥 Video' : '📷 Photo';
+            updates['unreadBy/' + currentChatUser.email.replace(/\./g, '_')] = true;
+            await db.ref('conversations/' + conversationId).update(updates);
+            
+            showToast('Media sent!', 'success');
+        } catch (error) {
+            console.error('Error sending media:', error);
+            showToast('Error sending media', 'error');
+        }
+    }
+    
+    async function deleteMessage(messageId) {
+        if (!confirm('Delete this message?')) return;
+        
+        try {
+            const participantsKey = [currentUser.email, currentChatUser.email].map(e => e.replace(/\./g, '_')).sort().join('_');
+            const convSnapshot = await db.ref('conversations').orderByChild('participantsKey').equalTo(participantsKey).once('value');
+            
+            let conversationId;
+            convSnapshot.forEach(child => {
+                conversationId = child.key;
+            });
+            
+            await db.ref('conversations/' + conversationId + '/messages/' + messageId).remove();
+            
+            showToast('Message deleted!', 'success');
+        } catch (error) {
+            console.error('Error deleting message:', error);
+            showToast('Error deleting message', 'error');
+        }
+    }
+    
+    async function blockUser() {
+        if (!confirm(`Block ${currentChatUser.full_name}? They won't be able to message you.`)) return;
+        
+        try {
+            const blockedKey = currentChatUser.email.replace(/\./g, '_');
+            await db.ref('users/' + currentUser.id + '/blockedUsers/' + blockedKey).set(true);
+            currentUser.blockedUsers = currentUser.blockedUsers || [];
+            currentUser.blockedUsers.push(currentChatUser.email);
+            
+            showToast('User blocked!', 'success');
+            navigateTo('conversations');
+        } catch (error) {
+            console.error('Error blocking user:', error);
+            showToast('Error blocking user', 'error');
+        }
+    }
+    
+    async function deleteConversation() {
+        if (!confirm('Delete this conversation? This cannot be undone.')) return;
+        
+        try {
+            const participantsKey = [currentUser.email, currentChatUser.email].map(e => e.replace(/\./g, '_')).sort().join('_');
+            const convSnapshot = await db.ref('conversations').orderByChild('participantsKey').equalTo(participantsKey).once('value');
+            
+            if (convSnapshot.exists()) {
+                convSnapshot.forEach(child => {
+                    db.ref('conversations/' + child.key).remove();
+                });
+                
+                showToast('Conversation deleted!', 'success');
+                navigateTo('conversations');
+            }
+        } catch (error) {
+            console.error('Error deleting conversation:', error);
+            showToast('Error deleting conversation', 'error');
+        }
+    }
+    
+    function viewUserProfile() {
+        if (currentChatUser) {
+            viewProfile(currentChatUser.email);
+        }
+    }
+    
+    function renderAdminPanel() {
+        const container = document.getElementById('adminPostsList');
+        
+        if (posts.length === 0) {
+            container.innerHTML = '<p style="text-align:center;color:#6b7280;">No posts to manage.</p>';
+            return;
+        }
+        
+        container.innerHTML = posts.map(post => {
+            const user = users.find(u => u.email === post.created_by) || { full_name: 'User', email: post.created_by };
+            const thumbnail = (post.content_urls && post.content_urls[0]) || 'https://via.placeholder.com/64';
+            const isVideo = post.content_type === 'video' || (post.content_types && post.content_types[0] === 'video');
+            
+            return `
+                <div class="admin-post-item">
+                    ${isVideo ? 
+                        `<video src="${thumbnail}" class="admin-post-thumbnail" muted></video>` :
+                        `<img src="${thumbnail}" class="admin-post-thumbnail" alt="Post">`
+                    }
+                    <div class="admin-post-info">
+                        <div class="admin-post-caption">${post.caption || 'No caption'}</div>
+                        <div class="admin-post-stats">${(post.views_count || 0).toLocaleString()} views • ${user.full_name}</div>
+                    </div>
+                    <div class="admin-actions">
+                        <button class="admin-action-btn views" onclick="increaseViews('${post.id}', 10000)">+10K Views</button>
+                        <button class="admin-action-btn views" onclick="customViews('${post.id}')">Custom</button>
+                        <button class="admin-action-btn delete" onclick="deletePost('${post.id}')">Delete</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    async function increaseViews(postId, amount) {
+        try {
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                const newViews = (post.views_count || 0) + amount;
+                await db.ref('posts/' + postId).update({
+                    views_count: newViews
+                });
+                showToast(`Views increased to ${newViews.toLocaleString()}!`, 'success');
+            }
+        } catch (error) {
+            console.error('Error increasing views:', error);
+        }
+    }
+    
+    async function customViews(postId) {
+        const amount = prompt('Enter number of views to add:');
+        if (amount && !isNaN(amount)) {
+            await increaseViews(postId, parseInt(amount));
+        }
+    }
+    
+    async function deletePost(postId) {
+        if (confirm('Are you sure you want to delete this post?')) {
+            try {
+                await db.ref('posts/' + postId).remove();
+                showToast('Post deleted!', 'success');
+            } catch (error) {
+                console.error('Error deleting post:', error);
+                showToast('Error deleting post', 'error');
+            }
+        }
+    }
+</script>
+</body>
+</html>
 
 
 

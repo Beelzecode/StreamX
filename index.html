@@ -1,20 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-
-
-
-    <link rel="manifest" href="manifest.json">
- <meta name="theme-color" content="#000000">
-
- <link rel="icon"  href="https://i.postimg.cc/xTHbY516/Stream-X-logo.png">
- <link rel="stylesheet" href="style.css">
-
-
-
-
+    <link rel="manifest" href__="manifest.json">
+    <meta name="theme-color" content="#000000">
+    <link rel="icon" href__="https://i.postimg.cc/xTHbY516/Stream-X-logo.png">
+    <link rel="stylesheet" href__="style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StreamX - Social Feed</title>
@@ -45,13 +35,117 @@
             100% { transform: rotate(360deg); }
         }
         
+        .feed-loading {
+            display: none;
+            text-align: center;
+            padding: 3rem 1rem;
+            background: #f9fafb;
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feed-loading.active {
+            display: block;
+        }
+        
+        .feed-loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e5e7eb;
+            border-top: 5px solid #000000;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        .feed-loading-text {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #000000;
+        }
+        
+        .custom-alert {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 1rem;
+        }
+        
+        .custom-alert-box {
+            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+            border: 3px solid #000000;
+        }
+        
+        .custom-alert-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #000000;
+            text-align: center;
+        }
+        
+        .custom-alert-message {
+            color: #374151;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+        
+        .custom-alert-buttons {
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .custom-alert-btn {
+            flex: 1;
+            padding: 0.875rem;
+            border: none;
+            border-radius: 0.625rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .custom-alert-btn-primary {
+            background: #000000;
+            color: white;
+        }
+        
+        .custom-alert-btn-primary:hover {
+            background: #1f2937;
+        }
+        
+        .custom-alert-btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        
+        .custom-alert-btn-secondary:hover {
+            background: #d1d5db;
+        }
+        
         .admin-modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.85);
             display: none;
             align-items: center;
             justify-content: center;
@@ -64,18 +158,19 @@
         }
         
         .admin-modal {
-            background: white;
-            border-radius: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+            border-radius: 1.25rem;
             padding: 2rem;
             max-width: 350px;
             width: 90%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+            border: 3px solid #000000;
         }
         
         .admin-modal h2 {
             font-size: 1.25rem;
             margin-bottom: 0.5rem;
-            color: #dc2626;
+            color: #000000;
         }
         
         .admin-modal p {
@@ -95,7 +190,7 @@
         
         .admin-input:focus {
             outline: none;
-            border-color: #dc2626;
+            border-color: #000000;
         }
         
         .admin-error {
@@ -121,7 +216,7 @@
         }
         
         .admin-btn-submit {
-            background: #dc2626;
+            background: #000000;
             color: white;
         }
         
@@ -136,7 +231,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.85);
             display: none;
             align-items: center;
             justify-content: center;
@@ -150,15 +245,16 @@
         }
         
         .auth-modal {
-            background: white;
+            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
             border-radius: 1.5rem;
             padding: 2rem 1.5rem;
             max-width: 350px;
             width: 100%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
             text-align: center;
             max-height: 90vh;
             overflow-y: auto;
+            border: 3px solid #000000;
         }
         
         .auth-logo {
@@ -208,14 +304,14 @@
         }
         
         .auth-tab.active {
-            color: #3b82f6;
-            border-bottom-color: #3b82f6;
+            color: #000000;
+            border-bottom-color: #000000;
         }
         
         .auth-input {
             width: 100%;
             padding: 0.75rem;
-            border: 1px solid #d1d5db;
+            border: 2px solid #d1d5db;
             border-radius: 0.75rem;
             margin-bottom: 0.75rem;
             font-size: 0.9375rem;
@@ -250,7 +346,7 @@
         }
         
         .auth-link {
-            color: #3b82f6;
+            color: #000000;
             cursor: pointer;
             text-decoration: underline;
             font-size: 0.875rem;
@@ -264,7 +360,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.85);
             display: none;
             align-items: center;
             justify-content: center;
@@ -277,14 +373,15 @@
         }
         
         .accounts-modal {
-            background: white;
+            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
             border-radius: 1.5rem;
             padding: 2rem;
             max-width: 400px;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+            border: 3px solid #000000;
         }
         
         .accounts-modal h2 {
@@ -312,8 +409,8 @@
         }
         
         .account-item.current {
-            background: #eff6ff;
-            border-color: #3b82f6;
+            background: #f3f4f6;
+            border-color: #000000;
         }
         
         .account-avatar-small {
@@ -338,7 +435,7 @@
         }
         
         .current-badge {
-            background: #3b82f6;
+            background: #000000;
             color: white;
             padding: 0.25rem 0.625rem;
             border-radius: 9999px;
@@ -747,6 +844,16 @@
             user-select: none;
         }
         
+        .post-comments-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            color: #6b7280;
+            font-weight: 600;
+            font-size: 0.9375rem;
+        }
+        
         .heart-icon {
             width: 22px;
             height: 22px;
@@ -759,6 +866,97 @@
         
         .post-likes:active .heart-icon {
             transform: scale(1.2);
+        }
+        
+        .comments-section {
+            background: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+            padding: 0.875rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .comment-item {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .comment-avatar {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .comment-author {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .comment-text {
+            font-size: 0.875rem;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        .comment-image {
+            max-width: 150px;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+        
+        .comment-audio {
+            width: 100%;
+            max-width: 250px;
+            margin-top: 0.5rem;
+        }
+        
+        .comment-input-area {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .comment-input {
+            flex: 1;
+            padding: 0.625rem;
+            border: 1px solid #d1d5db;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+        }
+        
+        .comment-btn {
+            width: 36px;
+            height: 36px;
+            background: #000000;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .comment-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: white;
+            fill: none;
+            stroke-width: 2;
         }
         
         .post-user {
@@ -836,6 +1034,28 @@
             border-radius: 0.5rem;
             font-family: inherit;
             font-size: 0.9375rem;
+        }
+        
+        .form-checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem;
+            background: #f9fafb;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+        }
+        
+        .form-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .form-checkbox-label {
+            font-size: 0.9375rem;
+            color: #374151;
+            cursor: pointer;
         }
         
         .preview-grid {
@@ -1218,13 +1438,14 @@
         }
         
         .messenger-action-btn {
-            padding: 0.5rem;
+            padding: 0.5rem 0.75rem;
             background: transparent;
             border: 1px solid #e5e7eb;
             border-radius: 0.5rem;
             cursor: pointer;
             font-size: 0.75rem;
             color: #6b7280;
+            font-weight: 600;
         }
         
         .messenger-action-btn.danger {
@@ -1268,11 +1489,6 @@
             border-bottom-left-radius: 0.25rem;
         }
         
-        .message-bubble.selected {
-            background: #fef2f2;
-            border: 2px solid #dc2626;
-        }
-        
         .message-image {
             max-width: 200px;
             border-radius: 0.5rem;
@@ -1283,6 +1499,12 @@
             max-width: 250px;
             border-radius: 0.5rem;
             background: #000000;
+        }
+        
+        .message-audio {
+            width: 100%;
+            max-width: 250px;
+            margin-top: 0.25rem;
         }
         
         .message-time {
@@ -1358,6 +1580,16 @@
         
         .messenger-btn.send svg {
             stroke: white;
+        }
+        
+        .messenger-btn.recording {
+            background: #dc2626;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
         
         .messenger-btn svg {
@@ -1459,24 +1691,6 @@
             margin-bottom: 0.5rem;
         }
         
-        .loading-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: #6b7280;
-        }
-        
-        .loading-state .loading {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto 1rem;
-        }
-        
-        .loading-state h3 {
-            font-size: 1.125rem;
-            color: #374151;
-            margin-bottom: 0.5rem;
-        }
-        
         .admin-page {
             max-width: 1200px;
             margin: 0 auto;
@@ -1554,6 +1768,40 @@
         .admin-action-btn.delete {
             background: #dc2626;
             color: white;
+        }
+        
+        .lightbox-save-btn {
+            background: #000000 !important;
+            color: white !important;
+        }
+        
+        .blocked-users-section {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #fee2e2;
+            border: 1px solid #dc2626;
+            border-radius: 0.5rem;
+        }
+        
+        .blocked-user-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem;
+            background: white;
+            border-radius: 0.375rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .unblock-btn {
+            padding: 0.375rem 0.75rem;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -1670,12 +1918,12 @@
 
             <input type="text" class="search-input" id="searchInput" placeholder="Search by caption, hashtag, or user...">
             
-            <div id="postsFeed">
-                <div class="loading-state">
-                    <h3>Loading from cache...</h3>
-                    <p>Fast loading with local storage</p>
-                </div>
+            <div id="feedLoadingIndicator" class="feed-loading active">
+                <div class="feed-loading-spinner"></div>
+                <div class="feed-loading-text">StreamX Loading</div>
             </div>
+            
+            <div id="postsFeed"></div>
         </div>
 
         <div id="createPage" class="main-content hidden">
@@ -1698,6 +1946,11 @@
                 </div>
                 
                 <div id="hashtagsList" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.5rem;"></div>
+                
+                <div class="form-checkbox-group">
+                    <input type="checkbox" id="allowComments" class="form-checkbox" checked>
+                    <label for="allowComments" class="form-checkbox-label">Allow comments on this post</label>
+                </div>
                 
                 <div id="previewContainer" class="preview-grid"></div>
                 
@@ -1767,6 +2020,11 @@
                 <div id="profileSwitchBtn" style="display:none;">
                     <button class="switch-account-btn" onclick="showAccountsModal()">Switch Account</button>
                 </div>
+                
+                <div id="profileBlockedUsers" class="blocked-users-section" style="display:none;">
+                    <h3 style="font-weight:bold;margin-bottom:0.75rem;color:#dc2626;">Blocked Users</h3>
+                    <div id="blockedUsersList"></div>
+                </div>
             </div>
             
             <h2 style="font-size:1.375rem;font-weight:bold;margin:1.75rem 0 1rem;">My Posts</h2>
@@ -1790,11 +2048,7 @@
                 <p>Your conversations.</p>
             </div>
             
-            <div id="conversationsList">
-                <div class="loading-state">
-                    <h3>Loading conversations...</h3>
-                </div>
-            </div>
+            <div id="conversationsList"></div>
         </div>
 
         <div id="messengerPage" class="main-content hidden" style="padding:0;max-width:100%;">
@@ -1810,7 +2064,8 @@
                         </div>
                     </div>
                     <div class="messenger-actions">
-                        <button class="messenger-action-btn danger" onclick="blockUser()">🚫</button>
+                        <button class="messenger-action-btn" id="unblockBtn" style="display:none;" onclick="unblockUser()">Unblock</button>
+                        <button class="messenger-action-btn danger" onclick="blockUser()">🚫 Block</button>
                         <button class="messenger-action-btn danger" onclick="deleteConversation()">🗑️</button>
                     </div>
                 </div>
@@ -1819,10 +2074,15 @@
                 
                 <div class="messenger-input-area">
                     <div class="messenger-input-row">
-                        <button class="messenger-btn" id="imageMessageBtn" title="Photo">
+                        <button class="messenger-btn" id="imageMessageBtn" title="Photo/Video">
                             <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                         </button>
                         <input type="file" id="messageImageInput" accept="image/*,video/*" style="display:none;">
+                        
+                        <button class="messenger-btn" id="voiceMessageBtn" title="Voice Note">
+                            <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                        </button>
+                        
                         <input type="text" class="messenger-input" id="messageInput" placeholder="Type a message...">
                         <button class="messenger-btn send" id="sendMessageBtn">
                             <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -1859,13 +2119,16 @@
         appId: "1:1073155867607:web:f4e0496523d360626a0192",
         measurementId: "G-7DX6HDZ3S6"
     };
-
-
-
- let savedAccounts = JSON.parse(localStorage.getItem('streamx-saved-accounts') || '[]');
+    
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    
+    const ADMIN_PASSWORD = 'VNAXXTTM';
+    
+    let savedAccounts = JSON.parse(localStorage.getItem('streamx-saved-accounts') || '[]');
     let currentUser = JSON.parse(localStorage.getItem('streamx-current-user') || 'null');
     let currentPage = 'feed';
-    let posts = JSON.parse(localStorage.getItem('streamx-posts-cache') || '[]');
+    let posts = [];
     let users = JSON.parse(localStorage.getItem('streamx-users-cache') || '[]');
     let currentChatUser = null;
     let messages = JSON.parse(localStorage.getItem('streamx-messages-cache') || '[]');
@@ -1877,23 +2140,45 @@
     let messageUnsubscribe = null;
     let currentAuthTab = 'register';
     let isAdminAuthenticated = sessionStorage.getItem('streamx-admin') === 'true';
-    let blockedUsers = [];
-    let selectedMessages = [];
-    let dataLoaded = posts.length > 0;
+    let dataLoaded = false;
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let isRecording = false;
+    let expandedComments = {};
     
-
-
-
-
-
-
+    function customAlert(title, message, callback) {
+        const overlay = document.createElement('div');
+        overlay.className = 'custom-alert';
+        overlay.innerHTML = `
+            <div class="custom-alert-box">
+                <div class="custom-alert-title">${title}</div>
+                <div class="custom-alert-message">${message}</div>
+                <div class="custom-alert-buttons">
+                    <button class="custom-alert-btn custom-alert-btn-primary" onclick="this.closest('.custom-alert').remove();${callback ? callback + '()' : ''}">OK</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    }
     
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    function customConfirm(title, message, onConfirm) {
+        const overlay = document.createElement('div');
+        overlay.className = 'custom-alert';
+        const confirmId = 'confirm_' + Date.now();
+        window[confirmId] = onConfirm;
+        overlay.innerHTML = `
+            <div class="custom-alert-box">
+                <div class="custom-alert-title">${title}</div>
+                <div class="custom-alert-message">${message}</div>
+                <div class="custom-alert-buttons">
+                    <button class="custom-alert-btn custom-alert-btn-secondary" onclick="this.closest('.custom-alert').remove()">Cancel</button>
+                    <button class="custom-alert-btn custom-alert-btn-primary" onclick="this.closest('.custom-alert').remove();window['${confirmId}']()">Confirm</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    }
     
-    const ADMIN_PASSWORD = 'VNAXXTTM';
-    
-   
     function generateResetCode() {
         return 'r' + Math.floor(10000 + Math.random() * 90000);
     }
@@ -1986,13 +2271,13 @@
     }
     
     function handleLogout() {
-        if (confirm('Are you sure you want to logout?')) {
+        customConfirm('Logout', 'Are you sure you want to logout?', function() {
             currentUser = null;
             localStorage.removeItem('streamx-current-user');
             sessionStorage.removeItem('streamx-admin');
             showAuthModal();
             updateHeaderUI();
-        }
+        });
     }
     
     async function handleRegister() {
@@ -2033,7 +2318,7 @@
                 resetCode,
                 profile_picture: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=128&background=000000&color=ffffff`,
                 created_date: new Date().toISOString(),
-                blockedUsers: [],
+                blockedUsers: {},
                 bio: '',
                 website: '',
                 phone: '',
@@ -2042,7 +2327,7 @@
             
             await newUserRef.set(newUser);
             
-            alert(`✅ Account created!\n\nYour Access Code: ${accessCode}\nYour Reset Code: ${resetCode}\n\nSave both codes to login and recover your account!`);
+            customAlert('Account Created', `✅ Account created!\n\nYour Access Code: ${accessCode}\nYour Reset Code: ${resetCode}\n\nSave both codes to login and recover your account!`);
             
             currentUser = newUser;
             localStorage.setItem('streamx-current-user', JSON.stringify(currentUser));
@@ -2164,7 +2449,7 @@
                 return;
             }
             
-            alert(`✅ Your Permanent Access Code is: ${userData.accessCode}`);
+            customAlert('Access Code Recovered', `✅ Your Permanent Access Code is: ${userData.accessCode}`);
             switchAuthTab('login');
         } catch (error) {
             console.error('Error recovering code:', error);
@@ -2331,15 +2616,21 @@
     
     window.addEventListener('load', function() {
         console.log('✅ Firebase Realtime Database initialized!');
+        
         if (!currentUser) {
             showAuthModal();
         } else {
             updateHeaderUI();
             updateNavButtons();
-            if (posts.length > 0) {
-                dataLoaded = true;
-                renderPosts();
+            
+            if (users.length > 0) {
+                renderUsers();
             }
+            if (conversations.length > 0) {
+                renderConversations();
+                updateMessengerBadge();
+            }
+            
             loadData();
         }
         
@@ -2398,6 +2689,11 @@
         });
         
         document.getElementById('messageImageInput').addEventListener('change', handleMessageImage);
+        
+        document.getElementById('voiceMessageBtn').addEventListener('mousedown', startRecording);
+        document.getElementById('voiceMessageBtn').addEventListener('mouseup', stopRecording);
+        document.getElementById('voiceMessageBtn').addEventListener('touchstart', startRecording);
+        document.getElementById('voiceMessageBtn').addEventListener('touchend', stopRecording);
     }
     
     function updateHeaderUI() {
@@ -2424,6 +2720,7 @@
     async function loadData() {
         try {
             console.log('🔄 Loading data from Firebase Realtime Database...');
+            document.getElementById('feedLoadingIndicator').classList.add('active');
             
             db.ref('posts').orderByChild('created_date').limitToLast(50).on('value', snapshot => {
                 const postsArray = [];
@@ -2431,11 +2728,11 @@
                     postsArray.push({ id: child.key, ...child.val() });
                 });
                 posts = postsArray.reverse();
-                localStorage.setItem('streamx-posts-cache', JSON.stringify(posts));
                 console.log(`✅ Loaded ${posts.length} posts`);
                 dataLoaded = true;
                 if (currentPage === 'feed') renderPosts();
                 if (currentPage === 'admin') renderAdminPanel();
+                document.getElementById('feedLoadingIndicator').classList.remove('active');
             });
             
             db.ref('users').on('value', snapshot => {
@@ -2447,13 +2744,19 @@
                 localStorage.setItem('streamx-users-cache', JSON.stringify(users));
                 console.log(`✅ Loaded ${users.length} users`);
                 if (currentPage === 'users') renderUsers();
+                
+                const currentUserData = usersArray.find(u => u.email === currentUser.email);
+                if (currentUserData) {
+                    currentUser = currentUserData;
+                    localStorage.setItem('streamx-current-user', JSON.stringify(currentUser));
+                }
             });
             
             loadConversations();
-            showToast('All data loaded!', 'success');
         } catch (error) {
             console.error('❌ Error loading data:', error);
             showToast('Error loading data', 'error');
+            document.getElementById('feedLoadingIndicator').classList.remove('active');
         }
     }
     
@@ -2540,7 +2843,14 @@
             .replace(phonePattern, '<a href__="tel:$1">$1</a>');
     }
     
+    function toggleComments(postId) {
+        expandedComments[postId] = !expandedComments[postId];
+        renderPosts();
+    }
+    
     function renderPosts() {
+        document.getElementById('feedLoadingIndicator').classList.remove('active');
+        
         let filtered = posts;
         
         if (searchQuery) {
@@ -2563,18 +2873,14 @@
         
         const container = document.getElementById('postsFeed');
         
-        if (!dataLoaded) {
-            return;
-        }
-        
         if (filtered.length === 0) {
             container.innerHTML = `
                 <div class="empty-state">
                     <div class="empty-icon">
                         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                     </div>
-                    <h3>No posts found</h3>
-                    <p>Try a different search or create your first post!</p>
+                    <h3>StreamX Posts Still Loading</h3>
+                    <p>Wait for 2-3 Minutes due to Low internet Speed !</p>
                 </div>
             `;
             return;
@@ -2620,11 +2926,64 @@
         
         const likesCount = post.likes_count || 0;
         const viewsCount = post.views_count || 0;
+        const commentsCount = post.comments ? Object.keys(post.comments).length : 0;
         
         const linkedCaption = linkify(post.caption);
         
         const userKey = currentUser.email.replace(/\./g, '_');
         const isLiked = post.likedBy && post.likedBy[userKey];
+        
+        const allowComments = post.allow_comments !== false;
+        const isExpanded = expandedComments[post.id];
+        
+        let commentsHTML = '';
+        if (allowComments) {
+            commentsHTML = `
+                <div class="post-comments-btn" onclick="toggleComments('${post.id}')">
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#6b7280" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <span>${commentsCount} comments</span>
+                </div>
+            `;
+            
+            if (isExpanded) {
+                commentsHTML += `<div class="comments-section" id="comments_${post.id}">`;
+                
+                if (post.comments) {
+                    Object.entries(post.comments).forEach(([commentId, comment]) => {
+                        const commentUser = users.find(u => u.email === comment.author) || { full_name: 'User', profile_picture: '' };
+                        commentsHTML += `
+                            <div class="comment-item">
+                                <div class="comment-header">
+                                    <img src="${commentUser.profile_picture}" class="comment-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(commentUser.full_name)}&size=24&background=6b7280&color=ffffff'">
+                                    <span class="comment-author">${commentUser.full_name}</span>
+                                </div>
+                                ${comment.text ? `<div class="comment-text">${linkify(comment.text)}</div>` : ''}
+                                ${comment.imageUrl ? `<img src="${comment.imageUrl}" class="comment-image" onclick="openLightbox('${comment.imageUrl}', 'image')">` : ''}
+                                ${comment.audioUrl ? `<audio src="${comment.audioUrl}" class="comment-audio" controls></audio>` : ''}
+                            </div>
+                        `;
+                    });
+                }
+                
+                commentsHTML += `
+                    <div class="comment-input-area">
+                        <input type="text" class="comment-input" id="commentInput_${post.id}" placeholder="Add a comment..." onkeypress="if(event.key==='Enter')addComment('${post.id}')">
+                        <button class="comment-btn" onclick="document.getElementById('commentImageInput_${post.id}').click()">
+                            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        </button>
+                        <input type="file" id="commentImageInput_${post.id}" accept="image/*" style="display:none;" onchange="addCommentWithImage('${post.id}', this)">
+                        <button class="comment-btn" id="commentVoiceBtn_${post.id}" onmousedown="startCommentRecording('${post.id}')" onmouseup="stopCommentRecording('${post.id}')" ontouchstart="startCommentRecording('${post.id}')" ontouchend="stopCommentRecording('${post.id}')">
+                            <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                        </button>
+                        <button class="comment-btn" onclick="addComment('${post.id}')">
+                            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                        </button>
+                    </div>
+                </div>`;
+            }
+        }
         
         return `
             <div class="post-card">
@@ -2647,6 +3006,7 @@
                         </svg>
                         <span style="font-weight:600;">${likesCount.toLocaleString()} likes</span>
                     </div>
+                    ${commentsHTML}
                 </div>
                 <div class="post-user" onclick="viewProfile('${user.email}')">
                     <img src="${user.profile_picture}" class="user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&size=32&background=6b7280&color=ffffff'">
@@ -2659,7 +3019,104 @@
         `;
     }
     
+    async function addComment(postId) {
+        const input = document.getElementById('commentInput_' + postId);
+        const text = input.value.trim();
+        if (!text) return;
+        
+        try {
+            await db.ref('posts/' + postId + '/comments').push({
+                text,
+                author: currentUser.email,
+                timestamp: new Date().toISOString()
+            });
+            input.value = '';
+            showToast('Comment added!');
+        } catch (error) {
+            console.error('Error adding comment:', error);
+            showToast('Error adding comment', 'error');
+        }
+    }
+    
+    async function addCommentWithImage(postId, inputElement) {
+        const file = inputElement.files[0];
+        if (!file) return;
+        
+        try {
+            showToast('Uploading comment...', 'success');
+            const compressed = await compressImage(file);
+            
+            await db.ref('posts/' + postId + '/comments').push({
+                imageUrl: compressed,
+                author: currentUser.email,
+                timestamp: new Date().toISOString()
+            });
+            
+            inputElement.value = '';
+            showToast('Comment added!');
+        } catch (error) {
+            console.error('Error adding comment:', error);
+            showToast('Error adding comment', 'error');
+        }
+    }
+    
+    let commentRecorders = {};
+    let commentAudioChunks = {};
+    
+    async function startCommentRecording(postId) {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            commentRecorders[postId] = new MediaRecorder(stream);
+            commentAudioChunks[postId] = [];
+            
+            commentRecorders[postId].ondataavailable = (e) => {
+                commentAudioChunks[postId].push(e.data);
+            };
+            
+            commentRecorders[postId].start();
+            document.getElementById('commentVoiceBtn_' + postId).classList.add('recording');
+        } catch (error) {
+            console.error('Error starting recording:', error);
+            showToast('Microphone access denied', 'error');
+        }
+    }
+    
+    async function stopCommentRecording(postId) {
+        if (!commentRecorders[postId]) return;
+        
+        commentRecorders[postId].onstop = async () => {
+            const audioBlob = new Blob(commentAudioChunks[postId], { type: 'audio/webm' });
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    await db.ref('posts/' + postId + '/comments').push({
+                        audioUrl: e.target.result,
+                        author: currentUser.email,
+                        timestamp: new Date().toISOString()
+                    });
+                    showToast('Voice note added!');
+                } catch (error) {
+                    console.error('Error adding voice note:', error);
+                    showToast('Error adding voice note', 'error');
+                }
+            };
+            reader.readAsDataURL(audioBlob);
+            
+            commentRecorders[postId].stream.getTracks().forEach(track => track.stop());
+            delete commentRecorders[postId];
+            delete commentAudioChunks[postId];
+        };
+        
+        commentRecorders[postId].stop();
+        document.getElementById('commentVoiceBtn_' + postId).classList.remove('recording');
+    }
+    
     async function likePost(postId) {
+        if (!dataLoaded) {
+            showToast('Still loading, please wait...', 'error');
+            return;
+        }
+        
         try {
             const post = posts.find(p => p.id === postId);
             if (!post) return;
@@ -2693,7 +3150,7 @@
     
     function openLightbox(url, type) {
         const lightbox = document.createElement('div');
-        lightbox.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem;';
+        lightbox.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;';
         
         if (type === 'video') {
             lightbox.innerHTML = `
@@ -2707,7 +3164,7 @@
                 <div style="position:relative;max-width:90%;max-height:90vh;">
                     <img src="${url}" style="max-width:100%;max-height:85vh;object-fit:contain;border-radius:0.5rem;">
                     <button onclick="this.closest('div').parentElement.remove()" style="position:absolute;top:-3rem;right:0;background:#000;color:white;border:none;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:1.5rem;">×</button>
-                    <button onclick="downloadImage('${url}')" style="position:absolute;bottom:-3rem;right:0;background:#10b981;color:white;border:none;padding:0.75rem 1.5rem;border-radius:0.5rem;cursor:pointer;font-weight:600;">💾 Save</button>
+                    <button onclick="downloadImage('${url}')" class="lightbox-save-btn" style="position:absolute;bottom:-3rem;right:0;background:#000000;color:white;border:none;padding:0.75rem 1.5rem;border-radius:0.5rem;cursor:pointer;font-weight:600;">💾 Save</button>
                 </div>
             `;
         }
@@ -2794,6 +3251,7 @@
         
         const caption = document.getElementById('createCaption').value.trim();
         const location = document.getElementById('createLocation').value.trim();
+        const allowComments = document.getElementById('allowComments').checked;
         
         if (!caption && uploadedFiles.length === 0) {
             showToast('Please add a caption or upload media!', 'error');
@@ -2836,7 +3294,9 @@
                 content_type: mainType,
                 views_count: initialViews,
                 likes_count: initialLikes,
+                allow_comments: allowComments,
                 likedBy: {},
+                comments: {},
                 created_date: new Date().toISOString(),
                 created_by: currentUser.email
             });
@@ -2846,6 +3306,7 @@
             document.getElementById('createCaption').value = '';
             document.getElementById('createLocation').value = '';
             document.getElementById('createHashtag').value = '';
+            document.getElementById('allowComments').checked = true;
             uploadedFiles = [];
             currentHashtags = [];
             renderPreviews();
@@ -2872,7 +3333,7 @@
                     let width = img.width;
                     let height = img.height;
                     
-                    const maxSize = 800;
+                    const maxSize = 400;
                     if (width > height && width > maxSize) {
                         height = (height * maxSize) / width;
                         width = maxSize;
@@ -2885,7 +3346,7 @@
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.7));
+                    resolve(canvas.toDataURL('image/jpeg', 0.4));
                 };
                 img.src = e.target.result;
             };
@@ -2926,6 +3387,24 @@
             document.getElementById('profileResetCodeBox').style.display = 'block';
             document.getElementById('profileChatBtn').style.display = 'none';
             document.getElementById('profileSwitchBtn').style.display = 'block';
+            
+            const blockedUsers = user.blockedUsers || {};
+            const blockedEmails = Object.keys(blockedUsers).map(k => k.replace(/_/g, '.'));
+            if (blockedEmails.length > 0) {
+                document.getElementById('profileBlockedUsers').style.display = 'block';
+                const blockedList = document.getElementById('blockedUsersList');
+                blockedList.innerHTML = blockedEmails.map(email => {
+                    const blockedUser = users.find(u => u.email === email) || { full_name: email, email };
+                    return `
+                        <div class="blocked-user-item">
+                            <span>${blockedUser.full_name}</span>
+                            <button class="unblock-btn" onclick="unblockUserFromProfile('${email}')">Unblock</button>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                document.getElementById('profileBlockedUsers').style.display = 'none';
+            }
         } else {
             document.getElementById('editNameBtn').style.display = 'none';
             document.getElementById('editBioBtn').style.display = 'none';
@@ -2934,6 +3413,7 @@
             document.getElementById('profileResetCodeBox').style.display = 'none';
             document.getElementById('profileChatBtn').style.display = 'block';
             document.getElementById('profileSwitchBtn').style.display = 'none';
+            document.getElementById('profileBlockedUsers').style.display = 'none';
             
             window.startChat = function() {
                 currentChatUser = user;
@@ -3018,6 +3498,21 @@
             `;
         } else {
             postsContainer.innerHTML = userPosts.map(post => createPostHTML(post)).join('');
+        }
+    }
+    
+    async function unblockUserFromProfile(email) {
+        try {
+            const blockedKey = email.replace(/\./g, '_');
+            await db.ref('users/' + currentUser.id + '/blockedUsers/' + blockedKey).remove();
+            currentUser.blockedUsers = currentUser.blockedUsers || {};
+            delete currentUser.blockedUsers[blockedKey];
+            localStorage.setItem('streamx-current-user', JSON.stringify(currentUser));
+            renderProfile(currentUser);
+            showToast('User unblocked!', 'success');
+        } catch (error) {
+            console.error('Error unblocking user:', error);
+            showToast('Error unblocking user', 'error');
         }
     }
     
@@ -3152,6 +3647,14 @@
         document.getElementById('messengerAvatar').src = currentChatUser.profile_picture;
         document.getElementById('messengerName').textContent = currentChatUser.full_name;
         
+        const blockedUsers = currentUser.blockedUsers || {};
+        const blockedKey = currentChatUser.email.replace(/\./g, '_');
+        if (blockedUsers[blockedKey]) {
+            document.getElementById('unblockBtn').style.display = 'block';
+        } else {
+            document.getElementById('unblockBtn').style.display = 'none';
+        }
+        
         try {
             const participantsKey = [currentUser.email, currentChatUser.email].map(e => e.replace(/\./g, '_')).sort().join('_');
             
@@ -3181,7 +3684,7 @@
             
             if (messageUnsubscribe) messageUnsubscribe();
             
-            db.ref('conversations/' + conversationId + '/messages').orderByChild('timestamp').on('value', snapshot => {
+            db.ref('conversations/' + conversationId + '/messages').orderByChild('timestamp').limitToLast(100).on('value', snapshot => {
                 const messagesArray = [];
                 snapshot.forEach(child => {
                     messagesArray.push({ id: child.key, ...child.val() });
@@ -3238,6 +3741,18 @@
                 `;
             }
             
+            if (msg.type === 'audio') {
+                return `
+                    <div class="message-bubble ${isSent ? 'sent' : 'received'}" data-message-id="${msg.id}">
+                        <audio src="${msg.audioUrl}" class="message-audio" controls></audio>
+                        <div class="message-time">${time}</div>
+                        <div class="message-actions">
+                            <button class="message-action-btn-small" onclick="deleteMessage('${msg.id}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }
+            
             return `
                 <div class="message-bubble ${isSent ? 'sent' : 'received'}" data-message-id="${msg.id}">
                     <div>${linkify(msg.text)}</div>
@@ -3285,6 +3800,72 @@
         }
     }
     
+    async function startRecording(e) {
+        e.preventDefault();
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            
+            mediaRecorder.ondataavailable = (e) => {
+                audioChunks.push(e.data);
+            };
+            
+            mediaRecorder.start();
+            isRecording = true;
+            document.getElementById('voiceMessageBtn').classList.add('recording');
+        } catch (error) {
+            console.error('Error starting recording:', error);
+            showToast('Microphone access denied', 'error');
+        }
+    }
+    
+    async function stopRecording(e) {
+        e.preventDefault();
+        if (!mediaRecorder || !isRecording) return;
+        
+        mediaRecorder.onstop = async () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const participantsKey = [currentUser.email, currentChatUser.email].map(em => em.replace(/\./g, '_')).sort().join('_');
+                    const convSnapshot = await db.ref('conversations').orderByChild('participantsKey').equalTo(participantsKey).once('value');
+                    
+                    let conversationId;
+                    convSnapshot.forEach(child => {
+                        conversationId = child.key;
+                    });
+                    
+                    await db.ref('conversations/' + conversationId + '/messages').push({
+                        audioUrl: e.target.result,
+                        type: 'audio',
+                        sender: currentUser.email,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    const updates = {};
+                    updates['lastMessage'] = '🎤 Voice note';
+                    updates['unreadBy/' + currentChatUser.email.replace(/\./g, '_')] = true;
+                    await db.ref('conversations/' + conversationId).update(updates);
+                    
+                    showToast('Voice note sent!');
+                } catch (error) {
+                    console.error('Error sending voice note:', error);
+                    showToast('Error sending voice note', 'error');
+                }
+            };
+            reader.readAsDataURL(audioBlob);
+            
+            mediaRecorder.stream.getTracks().forEach(track => track.stop());
+            mediaRecorder = null;
+            isRecording = false;
+        };
+        
+        mediaRecorder.stop();
+        document.getElementById('voiceMessageBtn').classList.remove('recording');
+    }
+    
     async function handleMessageImage(e) {
         const file = e.target.files[0];
         if (!file || !currentChatUser) return;
@@ -3294,7 +3875,6 @@
             
             const isVideo = file.type.startsWith('video/');
             let compressed;
-            let messageType;
             let messageData = {
                 sender: currentUser.email,
                 timestamp: new Date().toISOString()
@@ -3302,12 +3882,10 @@
             
             if (isVideo) {
                 compressed = await compressVideo(file);
-                messageType = 'video';
                 messageData.videoUrl = compressed;
                 messageData.type = 'video';
             } else {
                 compressed = await compressImage(file);
-                messageType = 'image';
                 messageData.imageUrl = compressed;
                 messageData.type = 'image';
             }
@@ -3335,63 +3913,78 @@
     }
     
     async function deleteMessage(messageId) {
-        if (!confirm('Delete this message?')) return;
-        
-        try {
-            const participantsKey = [currentUser.email, currentChatUser.email].map(e => e.replace(/\./g, '_')).sort().join('_');
-            const convSnapshot = await db.ref('conversations').orderByChild('participantsKey').equalTo(participantsKey).once('value');
-            
-            let conversationId;
-            convSnapshot.forEach(child => {
-                conversationId = child.key;
-            });
-            
-            await db.ref('conversations/' + conversationId + '/messages/' + messageId).remove();
-            
-            showToast('Message deleted!', 'success');
-        } catch (error) {
-            console.error('Error deleting message:', error);
-            showToast('Error deleting message', 'error');
-        }
+        customConfirm('Delete Message', 'Delete this message?', async function() {
+            try {
+                const participantsKey = [currentUser.email, currentChatUser.email].map(e => e.replace(/\./g, '_')).sort().join('_');
+                const convSnapshot = await db.ref('conversations').orderByChild('participantsKey').equalTo(participantsKey).once('value');
+                
+                let conversationId;
+                convSnapshot.forEach(child => {
+                    conversationId = child.key;
+                });
+                
+                await db.ref('conversations/' + conversationId + '/messages/' + messageId).remove();
+                
+                showToast('Message deleted!', 'success');
+            } catch (error) {
+                console.error('Error deleting message:', error);
+                showToast('Error deleting message', 'error');
+            }
+        });
     }
     
     async function blockUser() {
-        if (!confirm(`Block ${currentChatUser.full_name}? They won't be able to message you.`)) return;
-        
+        customConfirm('Block User', `Block ${currentChatUser.full_name}? They won't be able to message you.`, async function() {
+            try {
+                const blockedKey = currentChatUser.email.replace(/\./g, '_');
+                await db.ref('users/' + currentUser.id + '/blockedUsers/' + blockedKey).set(true);
+                currentUser.blockedUsers = currentUser.blockedUsers || {};
+                currentUser.blockedUsers[blockedKey] = true;
+                localStorage.setItem('streamx-current-user', JSON.stringify(currentUser));
+                
+                showToast('User blocked!', 'success');
+                navigateTo('conversations');
+            } catch (error) {
+                console.error('Error blocking user:', error);
+                showToast('Error blocking user', 'error');
+            }
+        });
+    }
+    
+    async function unblockUser() {
         try {
             const blockedKey = currentChatUser.email.replace(/\./g, '_');
-            await db.ref('users/' + currentUser.id + '/blockedUsers/' + blockedKey).set(true);
-            currentUser.blockedUsers = currentUser.blockedUsers || [];
-            currentUser.blockedUsers.push(currentChatUser.email);
+            await db.ref('users/' + currentUser.id + '/blockedUsers/' + blockedKey).remove();
+            currentUser.blockedUsers = currentUser.blockedUsers || {};
+            delete currentUser.blockedUsers[blockedKey];
             localStorage.setItem('streamx-current-user', JSON.stringify(currentUser));
-            
-            showToast('User blocked!', 'success');
-            navigateTo('conversations');
+            document.getElementById('unblockBtn').style.display = 'none';
+            showToast('User unblocked!', 'success');
         } catch (error) {
-            console.error('Error blocking user:', error);
-            showToast('Error blocking user', 'error');
+            console.error('Error unblocking user:', error);
+            showToast('Error unblocking user', 'error');
         }
     }
     
     async function deleteConversation() {
-        if (!confirm('Delete this conversation? This cannot be undone.')) return;
-        
-        try {
-            const participantsKey = [currentUser.email, currentChatUser.email].map(e => e.replace(/\./g, '_')).sort().join('_');
-            const convSnapshot = await db.ref('conversations').orderByChild('participantsKey').equalTo(participantsKey).once('value');
-            
-            if (convSnapshot.exists()) {
-                convSnapshot.forEach(child => {
-                    db.ref('conversations/' + child.key).remove();
-                });
+        customConfirm('Delete Conversation', 'Delete this conversation? This cannot be undone.', async function() {
+            try {
+                const participantsKey = [currentUser.email, currentChatUser.email].map(e => e.replace(/\./g, '_')).sort().join('_');
+                const convSnapshot = await db.ref('conversations').orderByChild('participantsKey').equalTo(participantsKey).once('value');
                 
-                showToast('Conversation deleted!', 'success');
-                navigateTo('conversations');
+                if (convSnapshot.exists()) {
+                    convSnapshot.forEach(child => {
+                        db.ref('conversations/' + child.key).remove();
+                    });
+                    
+                    showToast('Conversation deleted!', 'success');
+                    navigateTo('conversations');
+                }
+            } catch (error) {
+                console.error('Error deleting conversation:', error);
+                showToast('Error deleting conversation', 'error');
             }
-        } catch (error) {
-            console.error('Error deleting conversation:', error);
-            showToast('Error deleting conversation', 'error');
-        }
+        });
     }
     
     function viewUserProfile() {
@@ -3456,7 +4049,7 @@
     }
     
     async function deletePost(postId) {
-        if (confirm('Are you sure you want to delete this post?')) {
+        customConfirm('Delete Post', 'Are you sure you want to delete this post?', async function() {
             try {
                 await db.ref('posts/' + postId).remove();
                 showToast('Post deleted!', 'success');
@@ -3464,11 +4057,8 @@
                 console.error('Error deleting post:', error);
                 showToast('Error deleting post', 'error');
             }
-        }
+        });
     }
 </script>
 </body>
 </html>
-
-
-

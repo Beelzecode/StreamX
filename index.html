@@ -1,17 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-
-
-<link rel="manifest" href="manifest.json">
- <meta name="theme-color" content="#000000">
-
-<link rel="icon" href="https://i.postimg.cc/xTHbY516/Stream-X-logo.png" type="image/png">
-<link rel="stylesheet" href="style.css">
-
-
-
+    <link rel="manifest" href__="manifest.json">
+    <meta name="theme-color" content="#000000">
+    <link rel="icon" href__="https://i.postimg.cc/xTHbY516/Stream-X-logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StreamX - Social Feed</title>
@@ -28,6 +20,7 @@
             color: #000000;
             line-height: 1.6;
             min-height: 100vh;
+            overscroll-behavior: contain;
         }
         
         .loading {
@@ -51,7 +44,7 @@
         .skeleton-text { height: 1rem; margin-bottom: 0.5rem; }
         .skeleton-image { width: 100%; height: 300px; }
         
-        .admin-modal-overlay, .auth-modal-overlay, .accounts-modal-overlay, .post-modal-overlay, .lightbox-overlay, .group-modal-overlay, .members-modal-overlay {
+        .admin-modal-overlay, .auth-modal-overlay, .accounts-modal-overlay, .post-modal-overlay, .lightbox-overlay, .group-modal-overlay, .members-modal-overlay, .ai-modal-overlay, .market-modal-overlay, .promote-modal-overlay, .story-modal-overlay, .audio-modal-overlay, .ad-modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -67,20 +60,22 @@
             overflow-y: auto;
         }
         
-        .admin-modal-overlay.active, .auth-modal-overlay.active, .accounts-modal-overlay.active, .post-modal-overlay.active, .lightbox-overlay.active, .group-modal-overlay.active, .members-modal-overlay.active {
+        .admin-modal-overlay.active, .auth-modal-overlay.active, .accounts-modal-overlay.active, .post-modal-overlay.active, .lightbox-overlay.active, .group-modal-overlay.active, .members-modal-overlay.active, .ai-modal-overlay.active, .market-modal-overlay.active, .promote-modal-overlay.active, .story-modal-overlay.active, .audio-modal-overlay.active, .ad-modal-overlay.active {
             display: flex;
         }
         
-        .admin-modal, .group-modal {
+        .admin-modal, .group-modal, .ad-modal {
             background: white;
             border-radius: 1rem;
             padding: 2rem;
-            max-width: 350px;
+            max-width: 500px;
             width: 90%;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
-        .admin-modal h2, .group-modal h2 {
+        .admin-modal h2, .group-modal h2, .ad-modal h2 {
             font-size: 1.25rem;
             margin-bottom: 0.5rem;
             color: #000000;
@@ -92,7 +87,7 @@
             font-size: 0.875rem;
         }
         
-        .admin-input, .group-input {
+        .admin-input, .group-input, .ad-input {
             width: 100%;
             padding: 0.75rem;
             border: 2px solid #d1d5db;
@@ -101,7 +96,7 @@
             margin-bottom: 1rem;
         }
         
-        .admin-input:focus, .group-input:focus {
+        .admin-input:focus, .group-input:focus, .ad-input:focus {
             outline: none;
             border-color: #000000;
         }
@@ -113,12 +108,12 @@
             display: none;
         }
         
-        .admin-buttons, .group-buttons {
+        .admin-buttons, .group-buttons, .ad-buttons {
             display: flex;
             gap: 0.5rem;
         }
         
-        .admin-btn, .group-btn {
+        .admin-btn, .group-btn, .ad-btn {
             flex: 1;
             padding: 0.75rem;
             border: none;
@@ -128,12 +123,12 @@
             transition: all 0.2s;
         }
         
-        .admin-btn-submit, .group-btn-submit {
+        .admin-btn-submit, .group-btn-submit, .ad-btn-submit {
             background: #000000;
             color: white;
         }
         
-        .admin-btn-cancel, .group-btn-cancel {
+        .admin-btn-cancel, .group-btn-cancel, .ad-btn-cancel {
             background: #e5e7eb;
             color: #374151;
         }
@@ -407,39 +402,6 @@
             font-weight: bold;
         }
         
-        .s-dropdown {
-            position: absolute;
-            top: 2.5rem;
-            left: 0;
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            min-width: 140px;
-            display: none;
-            z-index: 1000;
-        }
-        
-        .s-dropdown.active {
-            display: block;
-        }
-        
-        .s-dropdown button {
-            width: 100%;
-            padding: 0.625rem 1rem;
-            border: none;
-            background: transparent;
-            text-align: left;
-            cursor: pointer;
-            font-weight: 600;
-            color: #dc2626;
-            font-size: 0.875rem;
-        }
-        
-        .s-dropdown button:hover {
-            background: #fee2e2;
-        }
-        
         .header-nav {
             display: flex;
             align-items: center;
@@ -532,6 +494,7 @@
             max-width: 600px;
             margin: 0 auto;
             padding: 1.5rem 1rem;
+            padding-bottom: 5rem;
         }
         
         .page-header {
@@ -587,12 +550,72 @@
             font-size: 0.6875rem;
         }
         
+        .stories-container {
+            display: flex;
+            gap: 0.75rem;
+            overflow-x: auto;
+            padding: 0.75rem 0;
+            margin-bottom: 1.5rem;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .stories-container::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .story-circle {
+            flex-shrink: 0;
+            width: 70px;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .story-circle-img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #000000;
+            padding: 2px;
+        }
+        
+        .story-circle.add .story-circle-img {
+            border-color: #d1d5db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f3f4f6;
+        }
+        
+        .story-circle-name {
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
         .post-card {
             background: #ffffff;
             border: 1px solid #e5e7eb;
             border-radius: 0.75rem;
             overflow: hidden;
             margin-bottom: 1.25rem;
+        }
+        
+        .post-card.sponsored {
+            border: 2px solid #fbbf24;
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);
+        }
+        
+        .sponsored-badge {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #000000;
+            padding: 0.5rem 1rem;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-align: center;
+            letter-spacing: 0.05em;
         }
         
         .post-header {
@@ -642,11 +665,12 @@
             margin-bottom: 0.75rem;
             border-radius: 0.5rem;
             overflow: hidden;
+            position: relative;
         }
         
         .post-image-single, .post-video {
             width: 100%;
-            max-height: 500px;
+            max-height: 600px;
             object-fit: cover;
             cursor: pointer;
         }
@@ -670,6 +694,128 @@
             width: 100%;
             aspect-ratio: 1;
             object-fit: cover;
+        }
+        
+        .audio-badge {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8125rem;
+            cursor: pointer;
+        }
+        
+        .audio-badge img {
+            width: 32px;
+            height: 32px;
+            border-radius: 0.25rem;
+            object-fit: cover;
+        }
+        
+        .music-control-panel {
+            background: #f3f4f6;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .music-album-art {
+            width: 80px;
+            height: 80px;
+            border-radius: 0.5rem;
+            object-fit: cover;
+            margin: 0 auto 0.75rem;
+            display: block;
+        }
+        
+        .music-info {
+            text-align: center;
+            margin-bottom: 0.75rem;
+        }
+        
+        .music-title {
+            font-weight: 600;
+            font-size: 0.9375rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .music-artist {
+            font-size: 0.8125rem;
+            color: #6b7280;
+        }
+        
+        .music-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .music-btn {
+            background: #000000;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .music-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: white;
+            fill: none;
+            stroke-width: 2;
+        }
+        
+        .music-progress {
+            width: 100%;
+            height: 6px;
+            background: #d1d5db;
+            border-radius: 3px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .music-progress-bar {
+            height: 100%;
+            background: #000000;
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s;
+        }
+        
+        .music-time {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-bottom: 0.75rem;
+        }
+        
+        .use-sound-btn {
+            width: 100%;
+            padding: 0.625rem;
+            background: #000000;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.875rem;
         }
         
         .post-hashtags {
@@ -727,7 +873,7 @@
             stroke-width: 2;
         }
         
-        .post-user {
+        .post-user, .ad-info {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -735,6 +881,34 @@
             padding: 0.75rem 0.875rem;
             border-top: 1px solid #f3f4f6;
             background: #f9fafb;
+        }
+        
+        .ad-info {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.625rem;
+        }
+        
+        .ad-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .ad-row svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+        
+        .ad-row a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+        
+        .ad-row a:hover {
+            text-decoration: underline;
         }
         
         .post-user-info {
@@ -1286,6 +1460,11 @@
             border-bottom-left-radius: 0.25rem;
         }
         
+        .message-bubble.story-comment {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+        }
+        
         .message-sender-name {
             font-size: 0.75rem;
             font-weight: 600;
@@ -1437,6 +1616,7 @@
         
         .conversation-info {
             flex: 1;
+            min-width: 0;
         }
         
         .conversation-name {
@@ -1566,6 +1746,123 @@
             cursor: pointer;
         }
         
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border: 2px solid #000000;
+            border-radius: 2rem 2rem 0 0;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            gap: 2rem;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            z-index: 90;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        .bottom-nav.hidden-nav {
+            transform: translateX(-50%) translateY(100%);
+        }
+        
+        .bottom-nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        .bottom-nav-btn svg {
+            width: 24px;
+            height: 24px;
+            stroke: #000000;
+            fill: none;
+            stroke-width: 2;
+        }
+        
+        .bottom-nav-btn span {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #000000;
+        }
+        
+        .ai-modal, .market-modal, .promote-modal, .story-modal, .audio-modal {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            max-width: 500px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+        
+        .ai-chat {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        
+        .ai-message {
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            max-width: 85%;
+        }
+        
+        .ai-message.user {
+            align-self: flex-end;
+            background: #000000;
+            color: white;
+        }
+        
+        .ai-message.ai {
+            align-self: flex-start;
+            background: #f3f4f6;
+            color: #000000;
+        }
+        
+        .market-item {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .market-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+        
+        .market-item-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+        
+        .market-likes {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
         .hidden {
             display: none !important;
         }
@@ -1636,7 +1933,7 @@
             font-size: 1.125rem;
             font-weight: bold;
             margin-bottom: 1rem;
-            color: #dc2626;
+            color: #000000;
         }
         
         .admin-post-item {
@@ -1712,7 +2009,7 @@
         .post-modal-header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-between;
             padding: 1rem;
             border-bottom: 1px solid #e5e7eb;
             flex-shrink: 0;
@@ -1997,7 +2294,10 @@
 <body>
     <div id="adminModalOverlay" class="admin-modal-overlay">
         <div class="admin-modal">
-            <h2>Admin Panel</h2>
+            <div style="text-align:center;margin-bottom:1.5rem;">
+                <div style="width:60px;height:60px;background:#000;border-radius:1rem;display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;font-size:2rem;color:white;font-weight:bold;">S</div>
+                <h2>StreamX Admin</h2>
+            </div>
             <p>Enter password to access admin controls</p>
             <div id="adminModalError" class="admin-error"></div>
             <input type="password" id="adminPasswordInput" class="admin-input" placeholder="Admin Password">
@@ -2126,18 +2426,168 @@
         </div>
     </div>
 
+    <div id="storyModal" class="story-modal-overlay">
+        <div class="story-modal">
+            <h2 style="font-size:1.5rem;font-weight:bold;margin-bottom:1rem;text-align:center;">Create Story</h2>
+            <input type="file" id="storyMediaInput" accept="image/*,video/*,audio/*" style="display:none;">
+            <button class="file-upload-btn" onclick="document.getElementById('storyMediaInput').click()">
+                <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                <div>Upload Photo, Video or Audio</div>
+            </button>
+            <div id="storyPreview" style="margin:1rem 0;"></div>
+            <div style="display:flex;gap:0.5rem;">
+                <button class="admin-btn admin-btn-cancel" style="flex:1;" onclick="closeStoryModal()">Cancel</button>
+                <button class="admin-btn admin-btn-submit" style="flex:1;" onclick="publishStory()">Publish</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="audioModal" class="audio-modal-overlay">
+        <div class="audio-modal">
+            <h2 style="font-size:1.5rem;font-weight:bold;margin-bottom:1rem;text-align:center;">Upload Music</h2>
+            <input type="file" id="audioFileInput" accept="audio/*" style="display:none;">
+            <input type="file" id="audioArtInput" accept="image/*" style="display:none;">
+            
+            <button class="file-upload-btn" onclick="document.getElementById('audioArtInput').click()" style="padding:1rem;">
+                <svg viewBox="0 0 24 24" style="width:32px;height:32px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <div style="font-size:0.875rem;">Upload Album Art</div>
+            </button>
+            
+            <div id="audioArtPreview" style="margin:1rem 0;text-align:center;"></div>
+            
+            <button class="file-upload-btn" onclick="document.getElementById('audioFileInput').click()" style="padding:1rem;margin-top:1rem;">
+                <svg viewBox="0 0 24 24" style="width:32px;height:32px;"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                <div style="font-size:0.875rem;">Upload Audio File</div>
+            </button>
+            
+            <input type="text" id="audioTitle" class="admin-input" placeholder="Song Title">
+            
+            <div style="display:flex;gap:0.5rem;margin-top:1rem;">
+                <button class="admin-btn admin-btn-cancel" style="flex:1;" onclick="closeAudioModal()">Cancel</button>
+                <button class="admin-btn admin-btn-submit" style="flex:1;" onclick="publishMusic()">Publish Music</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="aiModal" class="ai-modal-overlay">
+        <div class="ai-modal">
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:2px solid #e5e7eb;">
+                <svg style="width:32px;height:32px;fill:#000000;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+                <h2 style="font-size:1.5rem;font-weight:bold;margin:0;">X AI</h2>
+                <button class="post-modal-close" onclick="closeAI()" style="margin-left:auto;width:32px;height:32px;">×</button>
+            </div>
+            <div id="aiChat" class="ai-chat"></div>
+            <div style="display:flex;gap:0.5rem;">
+                <input type="text" id="aiInput" class="admin-input" placeholder="Ask X AI anything..." style="margin:0;">
+                <button class="admin-btn admin-btn-submit" style="padding:0.75rem 1.5rem;flex:none;" onclick="sendAIMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="marketModal" class="market-modal-overlay">
+        <div class="market-modal">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:1rem;border-bottom:2px solid #e5e7eb;">
+                <h2 style="font-size:1.5rem;font-weight:bold;margin:0;">X Market</h2>
+                <button class="post-modal-close" onclick="closeMarket()">×</button>
+            </div>
+            
+            <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
+                <button class="nav-btn" id="marketViewBtn" onclick="setMarketMode('view')" style="flex:1;">View</button>
+                <button class="nav-btn" id="marketBuyBtn" onclick="setMarketMode('buy')" style="flex:1;">Buy</button>
+                <button class="nav-btn" id="marketSellBtn" onclick="setMarketMode('sell')" style="flex:1;">Sell</button>
+            </div>
+            
+            <input type="text" id="marketSearch" class="search-input" placeholder="Search location or items..." style="margin-bottom:1rem;">
+            
+            <div id="marketContent"></div>
+        </div>
+    </div>
+
+    <div id="promoteModal" class="promote-modal-overlay">
+        <div class="promote-modal">
+            <h2 style="font-size:1.5rem;font-weight:bold;margin-bottom:1rem;text-align:center;">Promote Your Business</h2>
+            <p style="color:#6b7280;font-size:0.875rem;margin-bottom:1rem;text-align:center;">Reach millions of views!</p>
+            
+            <div id="promoteForm">
+                <input type="file" id="promoteMediaInput" accept="image/*,video/*" multiple style="display:none;">
+                <button class="file-upload-btn" onclick="document.getElementById('promoteMediaInput').click()" style="padding:1.5rem;">
+                    <svg viewBox="0 0 24 24" style="width:36px;height:36px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    <div>Upload Promo Media</div>
+                </button>
+                
+                <div id="promoteMediaPreview" style="margin:1rem 0;"></div>
+                
+                <input type="text" id="promoteName" class="admin-input" placeholder="Business Name">
+                <textarea id="promoteDescription" class="admin-input" placeholder="Description" rows="3" style="resize:vertical;"></textarea>
+                <input type="text" id="promoteLink" class="admin-input" placeholder="Website (optional)">
+                <input type="text" id="promoteWhatsApp" class="admin-input" placeholder="WhatsApp Number (optional)">
+                <input type="text" id="promoteEmail" class="admin-input" placeholder="Email (optional)">
+                
+                <div style="background:#f3f4f6;padding:1rem;border-radius:0.5rem;margin:1rem 0;">
+                    <h3 style="font-weight:bold;margin-bottom:0.5rem;">Pricing</h3>
+                    <p style="font-size:0.875rem;color:#374151;">• 1.5M - 3.5M views = R500 (30 days)</p>
+                    <p style="font-size:0.875rem;color:#374151;">• Each additional 1.5M views = +R500</p>
+                    <div id="promoteCalculation" style="margin-top:0.75rem;font-weight:bold;font-size:1.125rem;"></div>
+                </div>
+                
+                <div style="display:flex;gap:0.5rem;">
+                    <button class="admin-btn admin-btn-cancel" style="flex:1;" onclick="closePromote()">Cancel</button>
+                    <button class="admin-btn admin-btn-submit" style="flex:1;" onclick="confirmPromotion()">Continue</button>
+                </div>
+            </div>
+            
+            <div id="promotePayment" style="display:none;">
+                <div style="background:#eff6ff;padding:1rem;border-radius:0.5rem;margin-bottom:1rem;border:2px solid #3b82f6;">
+                    <h3 style="font-weight:bold;margin-bottom:0.5rem;">Bank Details</h3>
+                    <p style="font-size:0.875rem;"><strong>Capitec:</strong> 2037437125</p>
+                    <p style="font-size:0.875rem;"><strong>FNB:</strong> 63116681461</p>
+                    <p style="font-size:0.875rem;margin-top:0.5rem;color:#374151;">Amount: <strong id="promoteAmount">R0</strong></p>
+                </div>
+                
+                <p style="font-size:0.875rem;color:#6b7280;margin-bottom:1rem;">After payment, click "Start Promotion" to submit your ad for approval.</p>
+                
+                <button class="admin-btn admin-btn-submit" style="width:100%;" onclick="startPromotion()">Start Promotion</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="adModal" class="ad-modal-overlay">
+        <div class="ad-modal">
+            <h2 style="text-align:center;margin-bottom:1.5rem;">Create Advertisement</h2>
+            
+            <input type="file" id="adMediaInput" accept="image/*,video/*" multiple style="display:none;">
+            <button class="file-upload-btn" onclick="document.getElementById('adMediaInput').click()" style="padding:1.5rem;">
+                <svg viewBox="0 0 24 24" style="width:36px;height:36px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <div>Upload Ad Media (Multi-Image Supported)</div>
+            </button>
+            
+            <div id="adMediaPreview" style="margin:1rem 0;"></div>
+            
+            <input type="text" id="adCompanyName" class="ad-input" placeholder="Company Name">
+            <textarea id="adCaption" class="ad-input" placeholder="Ad Description" rows="3" style="resize:vertical;"></textarea>
+            <input type="text" id="adWebsite" class="ad-input" placeholder="Website URL">
+            <input type="text" id="adEmail" class="ad-input" placeholder="Email">
+            <input type="text" id="adWhatsApp" class="ad-input" placeholder="WhatsApp Number">
+            <input type="date" id="adEndDate" class="ad-input" placeholder="End Date">
+            <input type="number" id="adPayment" class="ad-input" placeholder="Payment Amount (R)">
+            
+            <div class="ad-buttons">
+                <button class="ad-btn ad-btn-cancel" onclick="closeAdModal()">Cancel</button>
+                <button class="ad-btn ad-btn-submit" onclick="publishAd()">Publish Ad</button>
+            </div>
+        </div>
+    </div>
+
     <header class="header">
         <div class="header-content">
             <div class="logo">
                 <div class="logo-icon" id="sButton">S</div>
-                <div class="s-dropdown" id="sDropdown">
-                    <button onclick="openAdminModal()">Admin Panel</button>
-                </div>
                 <h1>StreamX</h1>
             </div>
             
             <div class="header-nav">
                 <button class="nav-btn" id="feedNavBtn" onclick="navigateTo('feed')">Feed</button>
+                <button class="nav-btn" id="musicNavBtn" onclick="navigateTo('music')">Music</button>
                 <button class="nav-btn" id="createNavBtn" onclick="navigateTo('create')">Create</button>
             </div>
             
@@ -2159,7 +2609,16 @@
         <div id="feedPage" class="main-content">
             <div class="page-header">
                 <h1>Feed</h1>
-                <p>Explore content from the community.</p>
+                <p>Explore content from the community</p>
+            </div>
+            
+            <div class="stories-container" id="storiesContainer">
+                <div class="story-circle add" onclick="openStoryModal()">
+                    <div class="story-circle-img">
+                        <svg style="width:32px;height:32px;stroke:#6b7280;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </div>
+                    <div class="story-circle-name">Add Story</div>
+                </div>
             </div>
             
             <div class="partner-banner">
@@ -2174,6 +2633,20 @@
             <input type="text" class="search-input" id="searchInput" placeholder="Search by caption, hashtag, or user...">
             
             <div id="postsFeed"></div>
+        </div>
+
+        <div id="musicPage" class="main-content hidden">
+            <div class="page-header">
+                <h1>Music</h1>
+                <p>Discover and share music</p>
+            </div>
+            
+            <button class="submit-btn" style="margin-bottom:1.5rem;" onclick="openAudioModal()">
+                <svg viewBox="0 0 24 24" style="width:20px;height:20px;"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                <span>Upload Music</span>
+            </button>
+            
+            <div id="musicFeed"></div>
         </div>
 
         <div id="createPage" class="main-content hidden">
@@ -2196,6 +2669,24 @@
                 </div>
                 
                 <div id="hashtagsList" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.5rem;"></div>
+                
+                <div id="selectedAudioDisplay" style="display:none;background:#f3f4f6;padding:0.875rem;border-radius:0.5rem;margin-bottom:0.5rem;">
+                    <div style="display:flex;align-items:center;gap:0.5rem;justify-content:space-between;">
+                        <div style="display:flex;align-items:center;gap:0.5rem;">
+                            <svg style="width:20px;height:20px;fill:#000000;" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                            <span id="selectedAudioName" style="font-weight:600;font-size:0.875rem;">Audio Selected</span>
+                        </div>
+                        <button type="button" onclick="removeSelectedAudio()" style="background:#dc2626;color:white;border:none;padding:0.25rem 0.5rem;border-radius:0.25rem;font-size:0.75rem;cursor:pointer;">Remove</button>
+                    </div>
+                    <div style="margin-top:0.5rem;">
+                        <label style="font-size:0.8125rem;color:#6b7280;display:block;margin-bottom:0.25rem;">Background Music Volume:</label>
+                        <input type="range" id="bgMusicVolume" min="0" max="100" value="30" style="width:100%;">
+                    </div>
+                    <div style="margin-top:0.5rem;">
+                        <label style="font-size:0.8125rem;color:#6b7280;display:block;margin-bottom:0.25rem;">Original Content Volume:</label>
+                        <input type="range" id="originalVolume" min="0" max="100" value="70" style="width:100%;">
+                    </div>
+                </div>
                 
                 <div class="form-checkbox-container" onclick="toggleCommentsEnabled()">
                     <div class="form-checkbox checked" id="commentsCheckbox">
@@ -2346,15 +2837,46 @@
 
         <div id="adminPage" class="admin-page hidden">
             <div class="page-header">
-                <h1 style="color:#dc2626;">Admin Panel</h1>
-                <p>Manage posts and views</p>
+                <h1>StreamX Admin</h1>
+                <p>Manage posts, users, and ads</p>
+            </div>
+            
+            <div class="admin-section">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                    <h3 class="admin-section-title" style="margin:0;">Advertisements</h3>
+                    <button class="admin-btn admin-btn-submit" style="padding:0.5rem 1rem;" onclick="openAdModal()">+ Create Ad</button>
+                </div>
+                <div id="adminAdsList"></div>
+                
+                <h4 style="font-weight:bold;margin:1.5rem 0 0.75rem;">Ad History & Payments</h4>
+                <div id="adHistory"></div>
             </div>
             
             <div class="admin-section">
                 <h3 class="admin-section-title">Post Management</h3>
                 <div id="adminPostsList"></div>
             </div>
+            
+            <div class="admin-section">
+                <h3 class="admin-section-title">Users</h3>
+                <div id="adminUsersList"></div>
+            </div>
         </div>
+    </div>
+
+    <div id="bottomNav" class="bottom-nav hidden-nav">
+        <button class="bottom-nav-btn" onclick="openAI()">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+            <span>X AI</span>
+        </button>
+        <button class="bottom-nav-btn" onclick="openMarket()">
+            <svg viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            <span>X Market</span>
+        </button>
+        <button class="bottom-nav-btn" onclick="openPromote()">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <span>Promote</span>
+        </button>
     </div>
 
 <script>
@@ -2372,123 +2894,342 @@
     const db = firebase.firestore();
     
     const ADMIN_PASSWORD = 'VNAXXTTM';
-    const MAX_CACHED_POSTS = 50;
-    const CACHE_VERSION = 'streamx-v3';
+    const MAX_CACHED_ITEMS = 7;
     
-    let savedAccounts = JSON.parse(localStorage.getItem('streamx-saved-accounts') || '[]');
-    let currentUser = JSON.parse(localStorage.getItem('streamx-current-user') || 'null');
-    let currentPage = 'feed';
-    let posts = [];
-    let users = [];
-    let currentChatUser = null;
-    let currentGroupChat = null;
-    let messages = [];
-    let conversations = [];
-    let uploadedFiles = [];
-    let currentHashtags = [];
-    let searchQuery = '';
-    let activeHashtag = null;
-    let messageUnsubscribe = null;
-    let currentAuthTab = 'register';
-    let isAdminAuthenticated = sessionStorage.getItem('streamx-admin') === 'true';
-    let dataLoaded = false;
-    let imageCache;
-    let commentsEnabled = true;
-    let currentViewPost = null;
-    let currentComments = [];
-    let commentImageFile = null;
-    let commentUnsubscribe = null;
-    let currentLightboxUrl = '';
-    let selectedMembers = [];
+    var savedAccounts = JSON.parse(localStorage.getItem('streamx-saved-accounts') || '[]');
+    var currentUser = JSON.parse(localStorage.getItem('streamx-current-user') || 'null');
+    var currentPage = 'feed';
+    var posts = [];
+    var musicPosts = [];
+    var stories = [];
+    var users = [];
+    var ads = [];
+    var marketItems = [];
+    var currentChatUser = null;
+    var currentGroupChat = null;
+    var messages = [];
+    var conversations = [];
+    var uploadedFiles = [];
+    var currentHashtags = [];
+    var searchQuery = '';
+    var activeHashtag = null;
+    var messageUnsubscribe = null;
+    var currentAuthTab = 'register';
+    var isAdminAuthenticated = sessionStorage.getItem('streamx-admin') === 'true';
+    var dataLoaded = false;
+    var commentsEnabled = true;
+    var currentViewPost = null;
+    var currentComments = [];
+    var commentImageFile = null;
+    var commentUnsubscribe = null;
+    var currentLightboxUrl = '';
+    var selectedMembers = [];
+    var sClickCount = 0;
+    var sClickTimeout = null;
+    var selectedAudio = null;
+    var currentAudioPlaying = null;
+    var marketMode = 'view';
+    var promoteMedia = [];
+    var storyMedia = null;
+    var audioFile = null;
+    var audioArt = null;
+    var lastScrollY = 0;
+    var aiMessages = [];
     
-    async function initImageCache() {
+    function saveCachedPosts() {
         try {
-            imageCache = await caches.open(CACHE_VERSION);
-        } catch (e) {
-            console.log('Cache API not available');
-        }
-    }
-    
-    async function cacheImage(url) {
-        if (!imageCache) return;
-        try {
-            const response = await fetch(url);
-            await imageCache.put(url, response);
-        } catch (e) {}
-    }
-    
-    function savePostsToLocalStorage(postsData) {
-        try {
-            const metadataOnly = postsData.slice(0, MAX_CACHED_POSTS).map(post => ({
-                id: post.id,
-                caption: post.caption,
-                location: post.location,
-                hashtags: post.hashtags,
-                content_type: post.content_type,
-                views_count: post.views_count,
-                likes_count: post.likes_count,
-                likedBy: post.likedBy,
-                created_date: post.created_date,
-                created_by: post.created_by,
-                comments_enabled: post.comments_enabled !== false,
-                comments_count: post.comments_count || 0,
-                imageUrls: post.content_urls || []
+            const latest = posts.slice(0, MAX_CACHED_ITEMS).map(p => ({
+                id: p.id,
+                caption: p.caption,
+                location: p.location,
+                hashtags: p.hashtags,
+                content_type: p.content_type,
+                content_urls: p.content_urls,
+                views_count: p.views_count,
+                likes_count: p.likes_count,
+                likedBy: p.likedBy,
+                created_date: p.created_date,
+                created_by: p.created_by,
+                comments_enabled: p.comments_enabled,
+                comments_count: p.comments_count,
+                audio_id: p.audio_id
             }));
-            
-            localStorage.setItem('streamx-posts-cache', JSON.stringify({
-                posts: metadataOnly,
-                timestamp: Date.now()
-            }));
-            
-            if (postsData.length > 0 && post.content_type !== 'video') {
-                setTimeout(() => {
-                    postsData.slice(0, 10).forEach(post => {
-                        if (post.content_urls) {
-                            post.content_urls.forEach(url => cacheImage(url));
-                        }
-                    });
-                }, 1000);
-            }
+            localStorage.setItem('streamx-posts-v5', JSON.stringify(latest));
         } catch (e) {
             if (e.name === 'QuotaExceededError') {
-                localStorage.removeItem('streamx-posts-cache');
+                localStorage.removeItem('streamx-posts-v5');
             }
         }
     }
     
     function getCachedPosts() {
         try {
-            const cached = localStorage.getItem('streamx-posts-cache');
-            if (cached) {
-                const { posts, timestamp } = JSON.parse(cached);
-                if (Date.now() - timestamp < 30 * 60 * 1000) {
-                    return posts.map(p => ({...p, content_urls: p.imageUrls}));
-                }
-            }
-        } catch (e) {}
-        return null;
+            return JSON.parse(localStorage.getItem('streamx-posts-v5') || '[]');
+        } catch (e) {
+            return [];
+        }
     }
     
-    function saveUsersToLocalStorage(usersData) {
+    function saveCachedConversations() {
         try {
-            localStorage.setItem('streamx-users-cache', JSON.stringify({
-                users: usersData.slice(0, 100),
-                timestamp: Date.now()
+            const latest = conversations.slice(0, MAX_CACHED_ITEMS).map(c => ({
+                id: c.id,
+                type: c.type,
+                participants: c.participants,
+                group_name: c.group_name,
+                group_picture: c.group_picture,
+                lastMessage: c.lastMessage ? c.lastMessage.substring(0, 30) : '',
+                unreadBy: c.unreadBy
             }));
-        } catch (e) {}
+            localStorage.setItem('streamx-convs-v5', JSON.stringify(latest));
+        } catch (e) {
+            if (e.name === 'QuotaExceededError') {
+                localStorage.removeItem('streamx-convs-v5');
+            }
+        }
+    }
+    
+    function getCachedConversations() {
+        try {
+            return JSON.parse(localStorage.getItem('streamx-convs-v5') || '[]');
+        } catch (e) {
+            return [];
+        }
+    }
+    
+    function saveCachedUsers() {
+        try {
+            const latest = users.slice(0, 20).map(u => ({
+                id: u.id,
+                email: u.email,
+                full_name: u.full_name,
+                profile_picture: u.profile_picture
+            }));
+            localStorage.setItem('streamx-users-v5', JSON.stringify(latest));
+        } catch (e) {
+            if (e.name === 'QuotaExceededError') {
+                localStorage.removeItem('streamx-users-v5');
+            }
+        }
     }
     
     function getCachedUsers() {
         try {
-            const cached = localStorage.getItem('streamx-users-cache');
-            if (cached) {
-                const { users, timestamp } = JSON.parse(cached);
-                if (Date.now() - timestamp < 30 * 60 * 1000) {
-                    return users;
-                }
+            return JSON.parse(localStorage.getItem('streamx-users-v5') || '[]');
+        } catch (e) {
+            return [];
+        }
+    }
+    
+    window.addEventListener('popstate', function(e) {
+        e.preventDefault();
+        if (currentPage !== 'feed') {
+            navigateTo('feed');
+        }
+    });
+    
+    window.addEventListener('load', async function() {
+        console.log('✅ Firebase initialized!');
+        
+        history.pushState({ page: 'feed' }, '', window.location.href);
+        
+        if (!currentUser) {
+            showAuthModal();
+        } else {
+            updateHeaderUI();
+            updateNavButtons();
+            
+            const cachedPosts = getCachedPosts();
+            const cachedUsers = getCachedUsers();
+            const cachedConvs = getCachedConversations();
+            
+            if (cachedPosts.length > 0) {
+                posts = cachedPosts;
+                dataLoaded = true;
+                console.log(`⚡ Loaded ${posts.length} posts from cache`);
+                renderPosts();
             }
-        } catch (e) {}
-        return null;
+            
+            if (cachedUsers.length > 0) {
+                users = cachedUsers;
+                console.log(`⚡ Loaded ${users.length} users from cache`);
+            }
+            
+            if (cachedConvs.length > 0) {
+                conversations = cachedConvs;
+                console.log(`⚡ Loaded ${conversations.length} conversations from cache`);
+            }
+            
+            loadData();
+        }
+        
+        setupEventListeners();
+        
+        const migrated = localStorage.getItem('streamx-migrated-v5');
+        if (!migrated) {
+            setTimeout(() => {
+                ensureAllUsersHaveCodes();
+            }, 3000);
+        }
+    });
+    
+    let lastScrollPosition = 0;
+    window.addEventListener('scroll', function() {
+        const bottomNav = document.getElementById('bottomNav');
+        const currentScroll = window.scrollY;
+        
+        if (currentPage === 'feed') {
+            if (currentScroll > lastScrollPosition && currentScroll > 100) {
+                bottomNav.classList.add('hidden-nav');
+            } else if (currentScroll < lastScrollPosition) {
+                bottomNav.classList.remove('hidden-nav');
+            }
+            
+            if (currentScroll < 50) {
+                bottomNav.classList.remove('hidden-nav');
+            }
+        }
+        
+        lastScrollPosition = currentScroll;
+    });
+    
+    async function ensureAllUsersHaveCodes() {
+        try {
+            const usersRef = db.collection('users');
+            const snapshot = await usersRef.limit(50).get();
+            
+            const updates = [];
+            
+            snapshot.forEach((doc) => {
+                const userData = doc.data();
+                const needsUpdate = {};
+                
+                if (!userData.accessCode) {
+                    needsUpdate.accessCode = Math.floor(100000 + Math.random() * 900000).toString();
+                }
+                if (!userData.resetCode) {
+                    needsUpdate.resetCode = generateResetCode();
+                }
+                if (!userData.bio) needsUpdate.bio = '';
+                if (!userData.website) needsUpdate.website = '';
+                if (!userData.phone) needsUpdate.phone = '';
+                if (!userData.whatsapp) needsUpdate.whatsapp = '';
+                
+                if (Object.keys(needsUpdate).length > 0) {
+                    updates.push({ ref: doc.ref, data: needsUpdate });
+                }
+            });
+            
+            for (let i = 0; i < updates.length; i++) {
+                await updates[i].ref.update(updates[i].data);
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+            
+            if (updates.length > 0) {
+                console.log(`✅ Updated ${updates.length} users with missing codes`);
+            }
+            
+            localStorage.setItem('streamx-migrated-v5', 'true');
+        } catch (error) {
+            console.error('Error ensuring codes:', error);
+        }
+    }
+    
+    function setupEventListeners() {
+        document.getElementById('sButton').addEventListener('click', function(e) {
+            e.stopPropagation();
+            sClickCount++;
+            
+            if (sClickTimeout) clearTimeout(sClickTimeout);
+            
+            if (sClickCount === 3) {
+                sClickCount = 0;
+                openAdminModal();
+            } else {
+                sClickTimeout = setTimeout(() => {
+                    sClickCount = 0;
+                }, 1000);
+            }
+        });
+        
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            searchQuery = e.target.value.toLowerCase();
+            renderPosts();
+        });
+        
+        document.getElementById('usersSearchInput').addEventListener('input', function(e) {
+            renderUsers(e.target.value.toLowerCase());
+        });
+        
+        document.getElementById('fileUploadBtn').addEventListener('click', function() {
+            document.getElementById('fileInput').click();
+        });
+        
+        document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+        
+        document.getElementById('createHashtag').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addHashtag();
+            }
+        });
+        
+        document.getElementById('createForm').addEventListener('submit', handleCreatePost);
+        
+        document.getElementById('cameraBtn').addEventListener('click', function() {
+            if (currentUser && document.getElementById('profileCodeBox').style.display !== 'none') {
+                document.getElementById('profilePictureInput').click();
+            }
+        });
+        
+        document.getElementById('profilePictureInput').addEventListener('change', handleProfilePictureUpload);
+        
+        document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        
+        document.getElementById('imageMessageBtn').addEventListener('click', function() {
+            document.getElementById('messageImageInput').click();
+        });
+        
+        document.getElementById('messageImageInput').addEventListener('change', handleMessageImage);
+        
+        document.getElementById('commentImageInput').addEventListener('change', handleCommentImage);
+        
+        document.getElementById('commentInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+        
+        document.getElementById('commentInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                submitComment();
+            }
+        });
+        
+        document.getElementById('storyMediaInput').addEventListener('change', handleStoryMedia);
+        document.getElementById('audioFileInput').addEventListener('change', handleAudioFile);
+        document.getElementById('audioArtInput').addEventListener('change', handleAudioArt);
+        document.getElementById('promoteMediaInput').addEventListener('change', handlePromoteMedia);
+        document.getElementById('adMediaInput').addEventListener('change', handleAdMedia);
+        
+        document.getElementById('aiInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendAIMessage();
+            }
+        });
+        
+        document.getElementById('marketSearch').addEventListener('input', function() {
+            if (marketMode === 'view' || marketMode === 'buy') {
+                renderMarketItems();
+            }
+        });
     }
     
     function toggleCommentsEnabled() {
@@ -2516,7 +3257,7 @@
             savedAccounts.push({
                 email: account.email,
                 full_name: account.full_name,
-                profile_picture : account.profile_picture,
+                profile_picture: account.profile_picture,
                 accessCode: account.accessCode,
                 resetCode: account.resetCode
             });
@@ -2603,6 +3344,7 @@
             currentUser = null;
             localStorage.removeItem('streamx-current-user');
             sessionStorage.removeItem('streamx-admin');
+            isAdminAuthenticated = false;
             showAuthModal();
             updateHeaderUI();
         }
@@ -2642,7 +3384,7 @@
                 full_name: name,
                 accessCode,
                 resetCode,
-                profile_picture: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=128&background=000000&color=ffffff`,
+                profile_picture: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=200&background=000000&color=ffffff`,
                 created_date: new Date().toISOString(),
                 blockedUsers: [],
                 bio: '',
@@ -3003,7 +3745,7 @@
                 group_name: groupName,
                 participants: participants,
                 admins: [currentUser.email],
-                group_picture: `https://ui-avatars.com/api/?name=${encodeURIComponent(groupName)}&size=128&background=000000&color=ffffff`,
+                group_picture: `https://ui-avatars.com/api/?name=${encodeURIComponent(groupName)}&size=200&background=000000&color=ffffff`,
                 created_date: new Date().toISOString(),
                 created_by: currentUser.email,
                 lastMessage: '',
@@ -3094,157 +3836,6 @@
         }
     }
     
-    window.addEventListener('load', async function() {
-        console.log('✅ Firebase initialized!');
-        await initImageCache();
-        
-        if (!currentUser) {
-            showAuthModal();
-        } else {
-            updateHeaderUI();
-            updateNavButtons();
-            
-            const cachedPosts = getCachedPosts();
-            const cachedUsers = getCachedUsers();
-            
-            if (cachedPosts) {
-                posts = cachedPosts;
-                dataLoaded = true;
-                console.log(`⚡ Loaded ${posts.length} posts from cache`);
-                renderPosts();
-            }
-            
-            if (cachedUsers) {
-                users = cachedUsers;
-                console.log(`⚡ Loaded ${users.length} users from cache`);
-            }
-            
-            loadData();
-        }
-        
-        setupEventListeners();
-        
-        const migrated = localStorage.getItem('streamx-migrated-v3');
-        if (!migrated) {
-            setTimeout(() => {
-                ensureAllUsersHaveCodes();
-            }, 3000);
-        }
-    });
-    
-    async function ensureAllUsersHaveCodes() {
-        try {
-            const usersRef = db.collection('users');
-            const snapshot = await usersRef.limit(50).get();
-            
-            const updates = [];
-            
-            snapshot.forEach((doc) => {
-                const userData = doc.data();
-                const needsUpdate = {};
-                
-                if (!userData.accessCode) {
-                    needsUpdate.accessCode = Math.floor(100000 + Math.random() * 900000).toString();
-                }
-                if (!userData.resetCode) {
-                    needsUpdate.resetCode = generateResetCode();
-                }
-                if (!userData.bio) needsUpdate.bio = '';
-                if (!userData.website) needsUpdate.website = '';
-                if (!userData.phone) needsUpdate.phone = '';
-                if (!userData.whatsapp) needsUpdate.whatsapp = '';
-                
-                if (Object.keys(needsUpdate).length > 0) {
-                    updates.push({ ref: doc.ref, data: needsUpdate });
-                }
-            });
-            
-            for (let i = 0; i < updates.length; i++) {
-                await updates[i].ref.update(updates[i].data);
-                await new Promise(resolve => setTimeout(resolve, 100));
-            }
-            
-            if (updates.length > 0) {
-                console.log(`✅ Updated ${updates.length} users with missing codes`);
-            }
-            
-            localStorage.setItem('streamx-migrated-v3', 'true');
-        } catch (error) {
-            console.error('Error ensuring codes:', error);
-        }
-    }
-    
-    function setupEventListeners() {
-        document.getElementById('sButton').addEventListener('click', function(e) {
-            e.stopPropagation();
-            document.getElementById('sDropdown').classList.toggle('active');
-        });
-        
-        document.addEventListener('click', function() {
-            document.getElementById('sDropdown').classList.remove('active');
-        });
-        
-        document.getElementById('searchInput').addEventListener('input', function(e) {
-            searchQuery = e.target.value.toLowerCase();
-            renderPosts();
-        });
-        
-        document.getElementById('usersSearchInput').addEventListener('input', function(e) {
-            renderUsers(e.target.value.toLowerCase());
-        });
-        
-        document.getElementById('fileUploadBtn').addEventListener('click', function() {
-            document.getElementById('fileInput').click();
-        });
-        
-        document.getElementById('fileInput').addEventListener('change', handleFileSelect);
-        
-        document.getElementById('createHashtag').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                addHashtag();
-            }
-        });
-        
-        document.getElementById('createForm').addEventListener('submit', handleCreatePost);
-        
-        document.getElementById('cameraBtn').addEventListener('click', function() {
-            if (currentUser && document.getElementById('profileCodeBox').style.display !== 'none') {
-                document.getElementById('profilePictureInput').click();
-            }
-        });
-        
-        document.getElementById('profilePictureInput').addEventListener('change', handleProfilePictureUpload);
-        
-        document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
-        document.getElementById('messageInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-        
-        document.getElementById('imageMessageBtn').addEventListener('click', function() {
-            document.getElementById('messageImageInput').click();
-        });
-        
-        document.getElementById('messageImageInput').addEventListener('change', handleMessageImage);
-        
-        document.getElementById('commentImageInput').addEventListener('change', handleCommentImage);
-        
-        document.getElementById('commentInput').addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-        });
-        
-        document.getElementById('commentInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                submitComment();
-            }
-        });
-    }
-    
     function updateHeaderUI() {
         const icon = document.getElementById('headerProfileIcon');
         if (currentUser && currentUser.profile_picture) {
@@ -3257,10 +3848,13 @@
     
     function updateNavButtons() {
         document.getElementById('feedNavBtn').classList.remove('active');
+        document.getElementById('musicNavBtn').classList.remove('active');
         document.getElementById('createNavBtn').classList.remove('active');
         
         if (currentPage === 'feed') {
             document.getElementById('feedNavBtn').classList.add('active');
+        } else if (currentPage === 'music') {
+            document.getElementById('musicNavBtn').classList.add('active');
         } else if (currentPage === 'create') {
             document.getElementById('createNavBtn').classList.add('active');
         }
@@ -3272,20 +3866,51 @@
             
             db.collection('posts').orderBy('created_date', 'desc').limit(100)
                 .onSnapshot(snapshot => {
-                    posts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    console.log(`✅ Loaded ${posts.length} posts from Firebase`);
-                    savePostsToLocalStorage(posts);
+                    posts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(p => !p.is_music && !p.is_ad && !p.is_story);
+                    console.log(`✅ Loaded ${posts.length} posts`);
+                    saveCachedPosts();
                     dataLoaded = true;
                     if (currentPage === 'feed') renderPosts();
                     if (currentPage === 'admin') renderAdminPanel();
                 });
             
+            db.collection('posts').where('is_music', '==', true).orderBy('created_date', 'desc')
+                .onSnapshot(snapshot => {
+                    musicPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    console.log(`✅ Loaded ${musicPosts.length} music posts`);
+                    if (currentPage === 'music') renderMusicFeed();
+                });
+            
+            db.collection('posts').where('is_story', '==', true).orderBy('created_date', 'desc')
+                .onSnapshot(snapshot => {
+                    stories = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    console.log(`✅ Loaded ${stories.length} stories`);
+                    renderStories();
+                });
+            
+            db.collection('posts').where('is_ad', '==', true).orderBy('created_date', 'desc')
+                .onSnapshot(snapshot => {
+                    ads = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    console.log(`✅ Loaded ${ads.length} ads`);
+                    checkExpiredAds();
+                    if (currentPage === 'feed') renderPosts();
+                    if (currentPage === 'admin') renderAdminPanel();
+                });
+            
+            db.collection('market').orderBy('created_date', 'desc')
+                .onSnapshot(snapshot => {
+                    marketItems = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    console.log(`✅ Loaded ${marketItems.length} market items`);
+                    animateMarketLikes();
+                });
+            
             db.collection('users')
                 .onSnapshot(snapshot => {
                     users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    console.log(`✅ Loaded ${users.length} users from Firebase`);
-                    saveUsersToLocalStorage(users);
+                    console.log(`✅ Loaded ${users.length} users`);
+                    saveCachedUsers();
                     if (currentPage === 'users') renderUsers();
+                    if (currentPage === 'admin') renderAdminPanel();
                 });
             
             loadConversations();
@@ -3293,6 +3918,44 @@
             console.error('❌ Error loading data:', error);
             showToast('Error loading data', 'error');
         }
+    }
+    
+    async function checkExpiredAds() {
+        const now = new Date();
+        for (const ad of ads) {
+            if (ad.end_date && !ad.archived) {
+                const endDate = new Date(ad.end_date);
+                if (now > endDate) {
+                    try {
+                        await db.collection('posts').doc(ad.id).update({
+                            archived: true,
+                            archived_date: new Date().toISOString()
+                        });
+                        console.log(`📦 Archived expired ad: ${ad.id}`);
+                    } catch (e) {
+                        console.error('Error archiving expired ad:', e);
+                    }
+                }
+            }
+        }
+    }
+    
+    function animateMarketLikes() {
+        marketItems.forEach(item => {
+            if (!item.targetLikes) {
+                item.targetLikes = Math.floor(Math.random() * (3421 - 234 + 1)) + 234;
+                item.currentLikes = 0;
+            }
+            
+            if (item.currentLikes < item.targetLikes) {
+                const interval = setInterval(() => {
+                    item.currentLikes = Math.min(item.currentLikes + Math.floor(Math.random() * 20) + 1, item.targetLikes);
+                    if (item.currentLikes >= item.targetLikes) {
+                        clearInterval(interval);
+                    }
+                }, 100);
+            }
+        });
     }
     
     async function loadConversations() {
@@ -3303,6 +3966,7 @@
                 .where('participants', 'array-contains', currentUser.email)
                 .onSnapshot(snapshot => {
                     conversations = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    saveCachedConversations();
                     updateMessengerBadge();
                     if (currentPage === 'conversations') renderConversations();
                 });
@@ -3326,6 +3990,7 @@
         currentPage = page;
         
         document.getElementById('feedPage').classList.add('hidden');
+        document.getElementById('musicPage').classList.add('hidden');
         document.getElementById('createPage').classList.add('hidden');
         document.getElementById('profilePage').classList.add('hidden');
         document.getElementById('usersPage').classList.add('hidden');
@@ -3333,11 +3998,22 @@
         document.getElementById('messengerPage').classList.add('hidden');
         document.getElementById('adminPage').classList.add('hidden');
         
+        const bottomNav = document.getElementById('bottomNav');
+        if (page === 'feed') {
+            bottomNav.classList.remove('hidden-nav');
+        } else {
+            bottomNav.classList.add('hidden-nav');
+        }
+        
         updateNavButtons();
         
         if (page === 'feed') {
             document.getElementById('feedPage').classList.remove('hidden');
             renderPosts();
+            renderStories();
+        } else if (page === 'music') {
+            document.getElementById('musicPage').classList.remove('hidden');
+            renderMusicFeed();
         } else if (page === 'create') {
             document.getElementById('createPage').classList.remove('hidden');
         } else if (page === 'profile') {
@@ -3352,8 +4028,932 @@
             document.getElementById('messengerPage').classList.remove('hidden');
             loadMessages();
         } else if (page === 'admin') {
+            if (!isAdminAuthenticated) {
+                openAdminModal();
+                return;
+            }
             document.getElementById('adminPage').classList.remove('hidden');
             renderAdminPanel();
+        }
+    }
+    
+    function openStoryModal() {
+        document.getElementById('storyModal').classList.add('active');
+        storyMedia = null;
+        document.getElementById('storyPreview').innerHTML = '';
+    }
+    
+    function closeStoryModal() {
+        document.getElementById('storyModal').classList.remove('active');
+    }
+    
+    function handleStoryMedia(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        if (file.size > 20 * 1024 * 1024) {
+            showToast('File too large! Maximum 20MB', 'error');
+            return;
+        }
+        
+        storyMedia = file;
+        const url = URL.createObjectURL(file);
+        const preview = document.getElementById('storyPreview');
+        
+        if (file.type.startsWith('video/')) {
+            preview.innerHTML = `<video src="${url}" controls style="width:100%;max-height:300px;border-radius:0.5rem;"></video>`;
+        } else if (file.type.startsWith('audio/')) {
+            preview.innerHTML = `<audio src="${url}" controls style="width:100%;"></audio>`;
+        } else {
+            preview.innerHTML = `<img src="${url}" style="width:100%;max-height:300px;object-fit:cover;border-radius:0.5rem;">`;
+        }
+    }
+    
+    async function publishStory() {
+        if (!storyMedia) {
+            showToast('Please select media!', 'error');
+            return;
+        }
+        
+        try {
+            showToast('Publishing story...', 'success');
+            
+            let mediaUrl;
+            const isVideo = storyMedia.type.startsWith('video/');
+            const isAudio = storyMedia.type.startsWith('audio/');
+            
+            if (isVideo) {
+                mediaUrl = await fileToBase64(storyMedia);
+            } else if (isAudio) {
+                mediaUrl = await fileToBase64(storyMedia);
+            } else {
+                mediaUrl = await compressImage(storyMedia, 1200, 0.85);
+            }
+            
+            const initialViews = Math.floor(Math.random() * (1000002 - 350 + 1)) + 350;
+            
+            await db.collection('posts').add({
+                is_story: true,
+                content_url: mediaUrl,
+                content_type: isVideo ? 'video' : (isAudio ? 'audio' : 'image'),
+                views_count: initialViews,
+                created_date: new Date().toISOString(),
+                created_by: currentUser.email,
+                expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+            });
+            
+            showToast(`✅ Story published! ${initialViews.toLocaleString()} views!`, 'success');
+            closeStoryModal();
+        } catch (error) {
+            console.error('Error publishing story:', error);
+            showToast('Error publishing story', 'error');
+        }
+    }
+    
+    function renderStories() {
+        const container = document.getElementById('storiesContainer');
+        const userStories = stories.filter(s => s.created_by === currentUser.email);
+        const otherStories = stories.filter(s => s.created_by !== currentUser.email);
+        
+        const grouped = {};
+        otherStories.forEach(story => {
+            if (!grouped[story.created_by]) {
+                grouped[story.created_by] = [];
+            }
+            grouped[story.created_by].push(story);
+        });
+        
+        let html = `
+            <div class="story-circle add" onclick="openStoryModal()">
+                <div class="story-circle-img">
+                    <svg style="width:32px;height:32px;stroke:#6b7280;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </div>
+                <div class="story-circle-name">Add Story</div>
+            </div>
+        `;
+        
+        if (userStories.length > 0) {
+            const firstStory = userStories[0];
+            html += `
+                <div class="story-circle" onclick="viewStory('${currentUser.email}')">
+                    <img src="${firstStory.content_type === 'image' ? firstStory.content_url : currentUser.profile_picture}" class="story-circle-img">
+                    <div class="story-circle-name">You</div>
+                </div>
+            `;
+        }
+        
+        Object.keys(grouped).forEach(email => {
+            const user = users.find(u => u.email === email) || { full_name: 'User', profile_picture: '' };
+            const firstStory = grouped[email][0];
+            html += `
+                <div class="story-circle" onclick="viewStory('${email}')">
+                    <img src="${firstStory.content_type === 'image' ? firstStory.content_url : user.profile_picture}" class="story-circle-img" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&size=70&background=6b7280&color=ffffff'">
+                    <div class="story-circle-name">${user.full_name.split(' ')[0]}</div>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+    }
+    
+    function viewStory(email) {
+        const userStories = stories.filter(s => s.created_by === email);
+        if (userStories.length === 0) return;
+        
+        let currentIndex = 0;
+        
+        const modal = document.createElement('div');
+        modal.className = 'lightbox-overlay active';
+        modal.innerHTML = `
+            <div class="lightbox-content">
+                <div id="storyContent" style="position:relative;max-width:500px;width:100%;max-height:90vh;background:#000;border-radius:1rem;overflow:hidden;"></div>
+                <button class="lightbox-close" onclick="this.closest('.lightbox-overlay').remove()">×</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        function showStoryAtIndex(index) {
+            const story = userStories[index];
+            const user = users.find(u => u.email === email) || { full_name: 'User', profile_picture: '' };
+            
+            let mediaHTML = '';
+            if (story.content_type === 'video') {
+                mediaHTML = `<video src="${story.content_url}" style="width:100%;max-height:70vh;object-fit:contain;" controls autoplay></video>`;
+            } else if (story.content_type === 'audio') {
+                mediaHTML = `<audio src="${story.content_url}" controls autoplay style="width:100%;"></audio>`;
+            } else {
+                mediaHTML = `<img src="${story.content_url}" style="width:100%;max-height:70vh;object-fit:contain;">`;
+            }
+            
+            const isOwn = email === currentUser.email;
+            
+            document.getElementById('storyContent').innerHTML = `
+                <div style="position:absolute;top:1rem;left:1rem;right:1rem;display:flex;align-items:center;justify-content:space-between;z-index:10;">
+                    <div style="display:flex;align-items:center;gap:0.5rem;">
+                        <img src="${user.profile_picture}" style="width:32px;height:32px;border-radius:50%;border:2px solid white;" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&size=32&background=6b7280&color=ffffff'">
+                        <span style="color:white;font-weight:600;font-size:0.875rem;">${user.full_name}</span>
+                    </div>
+                    ${isOwn ? `<button onclick="deleteStory('${story.id}')" style="background:#dc2626;color:white;border:none;padding:0.5rem 1rem;border-radius:0.5rem;font-weight:600;cursor:pointer;font-size:0.75rem;">Delete</button>` : ''}
+                </div>
+                ${mediaHTML}
+                <div style="padding:1rem;background:white;">
+                    <div style="font-size:0.875rem;color:#6b7280;margin-bottom:0.5rem;">👁️ ${story.views_count.toLocaleString()} views</div>
+                    ${!isOwn ? `
+                        <input type="text" id="storyCommentInput" placeholder="Reply to story..." style="width:100%;padding:0.75rem;border:1px solid #d1d5db;border-radius:0.5rem;margin-bottom:0.5rem;">
+                        <button onclick="replyToStory('${story.id}', '${email}')" style="width:100%;padding:0.75rem;background:#000;color:white;border:none;border-radius:0.5rem;font-weight:600;cursor:pointer;">Send Reply</button>
+                    ` : ''}
+                </div>
+            `;
+        }
+        
+        showStoryAtIndex(currentIndex);
+    }
+    
+    async function deleteStory(storyId) {
+        if (!confirm('Delete this story?')) return;
+        
+        try {
+            await db.collection('posts').doc(storyId).delete();
+            showToast('Story deleted!', 'success');
+            document.querySelector('.lightbox-overlay.active')?.remove();
+        } catch (error) {
+            console.error('Error deleting story:', error);
+            showToast('Error deleting story', 'error');
+        }
+    }
+    
+    async function replyToStory(storyId, storyOwnerEmail) {
+        const input = document.getElementById('storyCommentInput');
+        const text = input.value.trim();
+        if (!text) return;
+        
+        try {
+            const participants = [currentUser.email, storyOwnerEmail].sort();
+            let convSnapshot = await db.collection('conversations')
+                .where('participants', '==', participants)
+                .limit(1)
+                .get();
+            
+            let conversationId;
+            if (convSnapshot.empty) {
+                const newConv = await db.collection('conversations').add({
+                    participants,
+                    created_date: new Date().toISOString(),
+                    lastMessage: '',
+                    unreadBy: []
+                });
+                conversationId = newConv.id;
+            } else {
+                conversationId = convSnapshot.docs[0].id;
+            }
+            
+            const storyOwner = users.find(u => u.email === storyOwnerEmail);
+            const storyOwnerName = storyOwner ? storyOwner.full_name : 'User';
+            
+            await db.collection('conversations').doc(conversationId).collection('messages').add({
+                text: `💬 Comment from story: ${text}`,
+                type: 'story_comment',
+                story_id: storyId,
+                story_owner_name: storyOwnerName,
+                sender: currentUser.email,
+                timestamp: new Date().toISOString()
+            });
+            
+            await db.collection('conversations').doc(conversationId).update({
+                lastMessage: `Comment from story by ${currentUser.full_name}`,
+                unreadBy: [storyOwnerEmail]
+            });
+            
+            showToast('Reply sent!', 'success');
+            input.value = '';
+        } catch (error) {
+            console.error('Error replying to story:', error);
+            showToast('Error sending reply', 'error');
+        }
+    }
+    
+    function openAudioModal() {
+        document.getElementById('audioModal').classList.add('active');
+        audioFile = null;
+        audioArt = null;
+        document.getElementById('audioTitle').value = '';
+        document.getElementById('audioArtPreview').innerHTML = '';
+    }
+    
+    function closeAudioModal() {
+        document.getElementById('audioModal').classList.remove('active');
+    }
+    
+    function handleAudioFile(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        if (file.size > 20 * 1024 * 1024) {
+            showToast('Audio file too large! Maximum 20MB', 'error');
+            return;
+        }
+        
+        audioFile = file;
+        showToast('Audio file selected!', 'success');
+    }
+    
+    function handleAudioArt(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        audioArt = file;
+        const url = URL.createObjectURL(file);
+        document.getElementById('audioArtPreview').innerHTML = `<img src="${url}" style="width:120px;height:120px;object-fit:cover;border-radius:0.5rem;border:2px solid #e5e7eb;">`;
+    }
+    
+    async function publishMusic() {
+        const title = document.getElementById('audioTitle').value.trim();
+        
+        if (!audioFile || !audioArt || !title) {
+            showToast('Please fill all fields!', 'error');
+            return;
+        }
+        
+        try {
+            showToast('Publishing music...', 'success');
+            
+            const audioUrl = await fileToBase64(audioFile);
+            const artUrl = await compressImage(audioArt, 800, 0.85);
+            
+            const initialViews = Math.floor(Math.random() * (243544 - 2399 + 1)) + 2399;
+            const initialLikes = Math.floor(initialViews * (Math.random() * 0.3 + 0.1));
+            
+            await db.collection('posts').add({
+                is_music: true,
+                title: title,
+                audio_url: audioUrl,
+                album_art: artUrl,
+                views_count: initialViews,
+                likes_count: initialLikes,
+                likedBy: [],
+                comments_enabled: true,
+                comments_count: 0,
+                created_date: new Date().toISOString(),
+                created_by: currentUser.email
+            });
+            
+            showToast(`✅ Music published! ${initialViews.toLocaleString()} views!`, 'success');
+            closeAudioModal();
+        } catch (error) {
+            console.error('Error publishing music:', error);
+            showToast('Error publishing music', 'error');
+        }
+    }
+    
+    function renderMusicFeed() {
+        const container = document.getElementById('musicFeed');
+        
+        if (musicPosts.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <h3>No music yet</h3>
+                    <p>Be the first to share music!</p>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = musicPosts.map(music => {
+            const user = users.find(u => u.email === music.created_by) || { full_name: 'Artist', profile_picture: '' };
+            const likesCount = music.likes_count || 0;
+            const viewsCount = music.views_count || 0;
+            const commentsCount = music.comments_count || 0;
+            const isLiked = music.likedBy && music.likedBy.includes(currentUser.email);
+            
+            return `
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="post-date">${new Date(music.created_date).toLocaleDateString()}</div>
+                        <div class="post-views">
+                            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#3b82f6" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <span>${viewsCount.toLocaleString()} views</span>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <div class="music-control-panel">
+                            <img src="${music.album_art}" class="music-album-art">
+                            <div class="music-info">
+                                <div class="music-title">${music.title}</div>
+                                <div class="music-artist">${user.full_name}</div>
+                            </div>
+                            <div class="music-controls">
+                                <button class="music-btn" onclick="toggleAudio('${music.id}', '${music.audio_url}')">
+                                    <svg id="playIcon${music.id}" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                </button>
+                            </div>
+                            <div class="music-progress" onclick="seekAudio(event, '${music.id}')">
+                                <div class="music-progress-bar" id="progress${music.id}"></div>
+                            </div>
+                            <div class="music-time">
+                                <span id="currentTime${music.id}">0:00</span>
+                                <span id="duration${music.id}">0:00</span>
+                            </div>
+                            <button class="use-sound-btn" onclick="selectAudioForPost('${music.id}', '${music.title}', '${user.full_name}', '${music.album_art}', '${music.audio_url}')">Use This Sound</button>
+                        </div>
+                    </div>
+                    <div class="post-footer">
+                        <div class="post-likes" onclick="likeMusicPost('${music.id}')">
+                            <svg class="heart-icon ${isLiked ? 'liked' : ''}" viewBox="0 0 24 24" stroke="black" stroke-width="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                            </svg>
+                            <span style="font-weight:600;">${likesCount.toLocaleString()} likes</span>
+                        </div>
+                        <div class="post-comments-btn" onclick="openPostModal('${music.id}')">
+                            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            <span style="font-weight:600;">${commentsCount} ${commentsCount === 1 ? 'comment' : 'comments'}</span>
+                        </div>
+                    </div>
+                    <div class="post-user">
+                        <div class="post-user-info" onclick="viewProfile('${user.email}')">
+                            <img src="${user.profile_picture}" class="user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&size=64&background=6b7280&color=ffffff'">
+                            <div class="user-info">
+                                <div class="user-name">${user.full_name}</div>
+                                <div class="user-email">${user.email}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    function toggleAudio(musicId, audioUrl) {
+        const audioElement = document.getElementById('audioPlayer') || createAudioPlayer();
+        const playIcon = document.getElementById('playIcon' + musicId);
+        
+        if (currentAudioPlaying === musicId) {
+            if (audioElement.paused) {
+                audioElement.play();
+                playIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+            } else {
+                audioElement.pause();
+                playIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+            }
+        } else {
+            if (currentAudioPlaying) {
+                const oldIcon = document.getElementById('playIcon' + currentAudioPlaying);
+                if (oldIcon) oldIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+            }
+            
+            audioElement.src = audioUrl;
+            audioElement.play();
+            currentAudioPlaying = musicId;
+            playIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+            
+            audioElement.ontimeupdate = () => {
+                const progress = (audioElement.currentTime / audioElement.duration) * 100;
+                const progressBar = document.getElementById('progress' + musicId);
+                if (progressBar) progressBar.style.width = progress + '%';
+                const currentTime = document.getElementById('currentTime' + musicId);
+                if (currentTime) currentTime.textContent = formatTime(audioElement.currentTime);
+                const duration = document.getElementById('duration' + musicId);
+                if (duration) duration.textContent = formatTime(audioElement.duration);
+            };
+            
+            audioElement.onended = () => {
+                playIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+                currentAudioPlaying = null;
+            };
+        }
+    }
+    
+    function createAudioPlayer() {
+        const audio = document.createElement('audio');
+        audio.id = 'audioPlayer';
+        audio.style.display = 'none';
+        document.body.appendChild(audio);
+        return audio;
+    }
+    
+    function formatTime(seconds) {
+        if (isNaN(seconds)) return '0:00';
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+    
+    function seekAudio(event, musicId) {
+        const audioElement = document.getElementById('audioPlayer');
+        if (!audioElement || currentAudioPlaying !== musicId) return;
+        
+        const rect = event.target.getBoundingClientRect();
+        const percent = (event.clientX - rect.left) / rect.width;
+        audioElement.currentTime = audioElement.duration * percent;
+    }
+    
+    function selectAudioForPost(musicId, title, artist, albumArt, audioUrl) {
+        selectedAudio = { musicId, title, artist, albumArt, audioUrl };
+        document.getElementById('selectedAudioDisplay').style.display = 'block';
+        document.getElementById('selectedAudioName').textContent = `${title} - ${artist}`;
+        navigateTo('create');
+        showToast('Audio selected! Create your post.', 'success');
+    }
+    
+    function removeSelectedAudio() {
+        selectedAudio = null;
+        document.getElementById('selectedAudioDisplay').style.display = 'none';
+    }
+    
+    async function likeMusicPost(musicId) {
+        try {
+            const music = musicPosts.find(m => m.id === musicId);
+            if (!music) return;
+            
+            const likedBy = music.likedBy || [];
+            const likesCount = music.likes_count || 0;
+            
+            if (likedBy.includes(currentUser.email)) {
+                await db.collection('posts').doc(musicId).update({
+                    likedBy: firebase.firestore.FieldValue.arrayRemove(currentUser.email),
+                    likes_count: Math.max(0, likesCount - 1)
+                });
+            } else {
+                await db.collection('posts').doc(musicId).update({
+                    likedBy: firebase.firestore.FieldValue.arrayUnion(currentUser.email),
+                    likes_count: likesCount + 1
+                });
+            }
+        } catch (error) {
+            console.error('Error liking music:', error);
+        }
+    }
+    
+    function openAI() {
+        document.getElementById('aiModal').classList.add('active');
+        renderAIChat();
+    }
+    
+    function closeAI() {
+        document.getElementById('aiModal').classList.remove('active');
+    }
+    
+    function renderAIChat() {
+        const container = document.getElementById('aiChat');
+        if (aiMessages.length === 0) {
+            container.innerHTML = `<div class="ai-message ai" style="margin:0 auto;">Hi! I'm X AI, your intelligent assistant. How can I help you today?</div>`;
+        } else {
+            container.innerHTML = aiMessages.map(msg => `
+                <div class="ai-message ${msg.role}">${msg.text}</div>
+            `).join('');
+            container.scrollTop = container.scrollHeight;
+        }
+    }
+    
+    function sendAIMessage() {
+        const input = document.getElementById('aiInput');
+        const text = input.value.trim();
+        if (!text) return;
+        
+        aiMessages.push({ role: 'user', text });
+        input.value = '';
+        renderAIChat();
+        
+        setTimeout(() => {
+            const responses = [
+                "I'm X AI, here to help! What would you like to know?",
+                "That's a great question! StreamX is all about freedom of expression.",
+                "I can help you with that. Feel free to ask me anything about StreamX or general questions!",
+                "Interesting! StreamX gives you complete creative freedom. What else can I help with?",
+                "I'm here to assist! StreamX is designed for unrestricted content sharing.",
+                "How can I help you with StreamX today? I'm here to answer your questions!",
+                "StreamX is your platform for unlimited creativity. What would you like to explore?"
+            ];
+            const response = responses[Math.floor(Math.random() * responses.length)];
+            aiMessages.push({ role: 'ai', text: response });
+            renderAIChat();
+        }, 800);
+    }
+    
+    function openMarket() {
+        document.getElementById('marketModal').classList.add('active');
+        setMarketMode('view');
+    }
+    
+    function closeMarket() {
+        document.getElementById('marketModal').classList.remove('active');
+    }
+    
+    function setMarketMode(mode) {
+        marketMode = mode;
+        document.getElementById('marketViewBtn').classList.remove('active');
+        document.getElementById('marketBuyBtn').classList.remove('active');
+        document.getElementById('marketSellBtn').classList.remove('active');
+        
+        if (mode === 'view') {
+            document.getElementById('marketViewBtn').classList.add('active');
+            renderMarketItems();
+        } else if (mode === 'buy') {
+            document.getElementById('marketBuyBtn').classList.add('active');
+            renderMarketItems();
+        } else if (mode === 'sell') {
+            document.getElementById('marketSellBtn').classList.add('active');
+            renderSellForm();
+        }
+    }
+    
+    function renderMarketItems() {
+        const container = document.getElementById('marketContent');
+        const searchQuery = document.getElementById('marketSearch').value.toLowerCase();
+        
+        let filtered = [...marketItems, ...ads.filter(a => a.show_in_market)];
+        
+        if (marketMode === 'buy') {
+            filtered = filtered.filter(item => item.created_by !== currentUser.email);
+        }
+        
+        if (searchQuery) {
+            filtered = filtered.filter(item => 
+                (item.name && item.name.toLowerCase().includes(searchQuery)) ||
+                (item.location && item.location.toLowerCase().includes(searchQuery)) ||
+                (item.company_name && item.company_name.toLowerCase().includes(searchQuery)) ||
+                (item.category && item.category.toLowerCase().includes(searchQuery))
+            );
+        }
+        
+        if (filtered.length === 0) {
+            container.innerHTML = `<div class="empty-state"><h3>No items found</h3></div>`;
+            return;
+        }
+        
+        container.innerHTML = filtered.map(item => {
+            const likesCount = item.currentLikes || item.likes_count || 0;
+            const user = users.find(u => u.email === item.created_by);
+            const isAd = item.is_ad;
+            
+            return `
+                <div class="market-item">
+                    <div class="market-item-header">
+                        <div style="font-weight:600;font-size:0.9375rem;">${isAd ? item.company_name : item.name}</div>
+                        <div class="market-likes">
+                            <svg style="width:18px;height:18px;fill:#000000;" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            <span>${likesCount.toLocaleString()}</span>
+                        </div>
+                    </div>
+                    <img src="${isAd ? item.content_urls[0] : item.image_url}" class="market-item-image" onclick="openLightbox('${isAd ? item.content_urls[0] : item.image_url}', 'image')">
+                    ${!isAd ? `
+                        <div style="margin-bottom:0.75rem;">
+                            ${item.condition ? `<span style="background:#f3f4f6;padding:0.25rem 0.5rem;border-radius:0.25rem;font-size:0.75rem;font-weight:600;margin-right:0.5rem;">${item.condition}</span>` : ''}
+                            ${item.category ? `<span style="background:#f3f4f6;padding:0.25rem 0.5rem;border-radius:0.25rem;font-size:0.75rem;font-weight:600;">${item.category}</span>` : ''}
+                        </div>
+                        ${item.description ? `<p style="font-size:0.875rem;color:#374151;margin-bottom:0.5rem;">${item.description}</p>` : ''}
+                        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+                            <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            <span style="font-size:0.875rem;color:#6b7280;">${item.location}</span>
+                        </div>
+                        ${item.whatsapp ? `
+                            <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;">
+                                <svg fill="#25D366" stroke="none" viewBox="0 0 24 24" style="width:16px;height:16px;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                                <a href__="https://wa.me/${item.whatsapp.replace(/[^0-9]/g, '')}" style="font-size:0.875rem;color:#25D366;text-decoration:none;">${item.whatsapp}</a>
+                            </div>
+                        ` : ''}
+                        <button class="message-icon-btn" onclick="startChatAboutItem('${item.created_by}', '${item.name}')" style="width:100%;border-radius:0.5rem;height:auto;padding:0.75rem;">
+                            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            <span style="margin-left:0.5rem;">Message Seller</span>
+                        </button>
+                    ` : `
+                        <div style="font-size:0.875rem;color:#6b7280;margin-bottom:0.5rem;">${item.caption}</div>
+                    `}
+                </div>
+            `;
+        }).join('');
+    }
+    
+    function renderSellForm() {
+        document.getElementById('marketContent').innerHTML = `
+            <div class="create-form">
+                <input type="text" id="itemName" class="admin-input" placeholder="Item Name">
+                <textarea id="itemDescription" class="admin-input" placeholder="Description" rows="3" style="resize:vertical;"></textarea>
+                <input type="text" id="itemLocation" class="admin-input" placeholder="Location">
+                <input type="text" id="itemWhatsApp" class="admin-input" placeholder="WhatsApp Number">
+                
+                <select id="itemCategory" class="admin-input">
+                    <option value="">Select Category</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="fashion">Fashion</option>
+                    <option value="home">Home & Garden</option>
+                    <option value="vehicles">Vehicles</option>
+                    <option value="other">Other</option>
+                </select>
+                
+                <select id="itemCondition" class="admin-input">
+                    <option value="new">New</option>
+                    <option value="used">Used</option>
+                </select>
+                
+                <input type="file" id="itemImageInput" accept="image/*" style="display:none;">
+                <button class="file-upload-btn" onclick="document.getElementById('itemImageInput').click()" style="padding:1.5rem;">
+                    <svg viewBox="0 0 24 24" style="width:36px;height:36px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    <div>Upload Item Photo</div>
+                </button>
+                
+                <div id="itemImagePreview" style="margin:1rem 0;text-align:center;"></div>
+                
+                <button class="submit-btn" onclick="publishMarketItem()">Publish Item</button>
+            </div>
+        `;
+        
+        document.getElementById('itemImageInput').onchange = async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const url = URL.createObjectURL(file);
+            document.getElementById('itemImagePreview').innerHTML = `<img src="${url}" style="width:200px;height:200px;object-fit:cover;border-radius:0.5rem;">`;
+        };
+    }
+    
+    async function publishMarketItem() {
+        const name = document.getElementById('itemName').value.trim();
+        const description = document.getElementById('itemDescription').value.trim();
+        const location = document.getElementById('itemLocation').value.trim();
+        const whatsapp = document.getElementById('itemWhatsApp').value.trim();
+        const category = document.getElementById('itemCategory').value;
+        const condition = document.getElementById('itemCondition').value;
+        const imageFile = document.getElementById('itemImageInput').files[0];
+        
+        if (!name || !location || !imageFile) {
+            showToast('Please fill required fields!', 'error');
+            return;
+        }
+        
+        try {
+            showToast('Publishing item...', 'success');
+            
+            const imageUrl = await compressImage(imageFile, 1200, 0.85);
+            
+            await db.collection('market').add({
+                name,
+                description,
+                location,
+                whatsapp,
+                category,
+                condition,
+                image_url: imageUrl,
+                created_date: new Date().toISOString(),
+                created_by: currentUser.email
+            });
+            
+            showToast('✅ Item published!', 'success');
+            setMarketMode('view');
+        } catch (error) {
+            console.error('Error publishing item:', error);
+            showToast('Error publishing item', 'error');
+        }
+    }
+    
+    function startChatAboutItem(sellerEmail, itemName) {
+        const user = users.find(u => u.email === sellerEmail);
+        if (user) {
+            currentChatUser = user;
+            currentGroupChat = null;
+            closeMarket();
+            navigateTo('messenger');
+            setTimeout(() => {
+                document.getElementById('messageInput').value = `Hi! I'm interested in: ${itemName}`;
+            }, 500);
+        }
+    }
+    
+    function openPromote() {
+        document.getElementById('promoteModal').classList.add('active');
+        promoteMedia = [];
+        document.getElementById('promoteName').value = '';
+        document.getElementById('promoteDescription').value = '';
+        document.getElementById('promoteLink').value = '';
+        document.getElementById('promoteWhatsApp').value = '';
+        document.getElementById('promoteEmail').value = '';
+        document.getElementById('promoteForm').style.display = 'block';
+        document.getElementById('promotePayment').style.display = 'none';
+        document.getElementById('promoteMediaPreview').innerHTML = '';
+        document.getElementById('promoteCalculation').textContent = '';
+    }
+    
+    function closePromote() {
+        document.getElementById('promoteModal').classList.remove('active');
+    }
+    
+    function handlePromoteMedia(e) {
+        const files = Array.from(e.target.files);
+        promoteMedia = [];
+        
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                promoteMedia.push(ev.target.result);
+                document.getElementById('promoteMediaPreview').innerHTML = promoteMedia.map(url => `
+                    <img src="${url}" style="width:100px;height:100px;object-fit:cover;border-radius:0.5rem;display:inline-block;margin:0.25rem;">
+                `).join('');
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+    
+    function confirmPromotion() {
+        const name = document.getElementById('promoteName').value.trim();
+        const description = document.getElementById('promoteDescription').value.trim();
+        
+        if (!name || !description || promoteMedia.length === 0) {
+            showToast('Please fill required fields!', 'error');
+            return;
+        }
+        
+        const baseViews = 1500000;
+        const maxViews = 3500888;
+        const estimatedViews = Math.floor(Math.random() * (maxViews - baseViews + 1)) + baseViews;
+        const multiplier = Math.ceil(estimatedViews / baseViews);
+        const cost = multiplier * 500;
+        
+        document.getElementById('promoteCalculation').innerHTML = `
+            Estimated Views: <span style="color:#3b82f6;">${estimatedViews.toLocaleString()}</span><br>
+            Total Cost: <span style="color:#10b981;">R${cost}</span>
+        `;
+        
+        document.getElementById('promoteAmount').textContent = `R${cost}`;
+        document.getElementById('promoteForm').style.display = 'none';
+        document.getElementById('promotePayment').style.display = 'block';
+    }
+    
+    async function startPromotion() {
+        const name = document.getElementById('promoteName').value.trim();
+        const description = document.getElementById('promoteDescription').value.trim();
+        const link = document.getElementById('promoteLink').value.trim();
+        const whatsapp = document.getElementById('promoteWhatsApp').value.trim();
+        const email = document.getElementById('promoteEmail').value.trim();
+        const amount = document.getElementById('promoteAmount').textContent;
+        
+        try {
+            await db.collection('conversations').add({
+                type: 'admin_message',
+                participants: [currentUser.email, 'admin'],
+                created_date: new Date().toISOString(),
+                lastMessage: `Promotion request from ${currentUser.full_name}`,
+                promotion_data: {
+                    business_name: name,
+                    description,
+                    link,
+                    whatsapp,
+                    email,
+                    amount,
+                    media: promoteMedia,
+                    status: 'pending',
+                    created_by: currentUser.email
+                },
+                unreadBy: ['admin']
+            });
+            
+            const emailBody = `New Promotion Request\n\nBusiness: ${name}\nDescription: ${description}\nAmount: ${amount}\nContact: ${whatsapp || email}\n\nPromoter: ${currentUser.full_name} (${currentUser.email})`;
+            window.location.href = `mailto:streamxpromo@gmail.com?subject=Promotion Payment - ${name}&body=${encodeURIComponent(emailBody)}`;
+            
+            showToast('✅ Promotion request submitted!', 'success');
+            closePromote();
+        } catch (error) {
+            console.error('Error submitting promotion:', error);
+            showToast('Error submitting promotion', 'error');
+        }
+    }
+    
+    function openAdModal() {
+        document.getElementById('adModal').classList.add('active');
+        window.adMediaFiles = [];
+        document.getElementById('adCompanyName').value = '';
+        document.getElementById('adCaption').value = '';
+        document.getElementById('adWebsite').value = '';
+        document.getElementById('adEmail').value = '';
+        document.getElementById('adWhatsApp').value = '';
+        document.getElementById('adEndDate').value = '';
+        document.getElementById('adPayment').value = '';
+        document.getElementById('adMediaPreview').innerHTML = '';
+    }
+    
+    function closeAdModal() {
+        document.getElementById('adModal').classList.remove('active');
+    }
+    
+    function handleAdMedia(e) {
+        const files = Array.from(e.target.files);
+        window.adMediaFiles = [];
+        
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                window.adMediaFiles.push(ev.target.result);
+                document.getElementById('adMediaPreview').innerHTML = window.adMediaFiles.map((url, i) => `
+                    <img src="${url}" style="width:100px;height:100px;object-fit:cover;border-radius:0.5rem;display:inline-block;margin:0.25rem;">
+                `).join('');
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+    
+    async function publishAd() {
+        const companyName = document.getElementById('adCompanyName').value.trim();
+        const caption = document.getElementById('adCaption').value.trim();
+        const website = document.getElementById('adWebsite').value.trim();
+        const email = document.getElementById('adEmail').value.trim();
+        const whatsapp = document.getElementById('adWhatsApp').value.trim();
+        const endDate = document.getElementById('adEndDate').value;
+        const payment = parseFloat(document.getElementById('adPayment').value);
+        
+        if (!companyName || !caption || !window.adMediaFiles || window.adMediaFiles.length === 0 || !endDate) {
+            showToast('Please fill required fields!', 'error');
+            return;
+        }
+        
+        try {
+            showToast('Publishing ad...', 'success');
+            
+            let dailyIncrease = Math.floor(Math.random() * (700000 - 545234 + 1)) + 545234;
+            const initialViews = dailyIncrease;
+            const initialLikes = Math.floor(initialViews * 0.05);
+            
+            const adDocRef = await db.collection('posts').add({
+                is_ad: true,
+                show_in_market: false,
+                company_name: companyName,
+                caption,
+                website,
+                email,
+                whatsapp,
+                content_urls: window.adMediaFiles,
+                content_type: 'image',
+                views_count: initialViews,
+                likes_count: initialLikes,
+                likedBy: [],
+                comments_enabled: false,
+                end_date: endDate,
+                payment_amount: payment || 0,
+                daily_increase: dailyIncrease,
+                created_date: new Date().toISOString(),
+                created_by: currentUser.email,
+                archived: false
+            });
+            
+            const adId = adDocRef.id;
+            
+            const dailyBoostInterval = setInterval(async () => {
+                try {
+                    const adDoc = await db.collection('posts').doc(adId).get();
+                    if (adDoc.exists && !adDoc.data().archived) {
+                        const currentViews = adDoc.data().views_count || 0;
+                        await adDoc.ref.update({
+                            views_count: currentViews + dailyIncrease
+                        });
+                    } else {
+                        clearInterval(dailyBoostInterval);
+                    }
+                } catch (e) {
+                    clearInterval(dailyBoostInterval);
+                }
+            }, 24 * 60 * 60 * 1000);
+            
+            showToast(`✅ Ad published! ${initialViews.toLocaleString()} views!`, 'success');
+            closeAdModal();
+        } catch (error) {
+            console.error('Error publishing ad:', error);
+            showToast('Error publishing ad', 'error');
         }
     }
     
@@ -3407,7 +5007,9 @@
             return;
         }
         
-        if (filtered.length === 0) {
+        const activeAds = ads.filter(a => !a.show_in_market && !a.archived);
+        
+        if (filtered.length === 0 && activeAds.length === 0) {
             container.innerHTML = `
                 <div class="empty-state">
                     <div class="empty-icon">
@@ -3420,21 +5022,81 @@
             return;
         }
         
-        container.innerHTML = filtered.map(post => createPostHTML(post)).join('');
+        const allContent = [...activeAds, ...filtered];
         
-        setTimeout(() => {
-            document.querySelectorAll('img[data-lazy]').forEach(img => {
-                const src = img.getAttribute('data-lazy');
-                img.src = src;
-                img.removeAttribute('data-lazy');
-            });
-        }, 100);
+        container.innerHTML = allContent.map(post => {
+            if (post.is_ad) {
+                return createAdHTML(post);
+            }
+            return createPostHTML(post);
+        }).join('');
+    }
+    
+    function createAdHTML(ad) {
+        const urls = ad.content_urls || [];
+        
+        let mediaHTML = '';
+        if (urls.length === 1) {
+            mediaHTML = `<div class="post-media"><img src="${urls[0]}" class="post-image-single" onclick="openLightbox('${urls[0]}', 'image')"></div>`;
+        } else if (urls.length > 1) {
+            mediaHTML = `
+                <div class="post-media" style="position:relative;">
+                    <div style="overflow-x:auto;display:flex;gap:2px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;">
+                        ${urls.map((url, i) => `<img src="${url}" style="min-width:100%;height:400px;object-fit:cover;scroll-snap-align:start;" onclick="openLightbox('${url}', 'image')">`).join('')}
+                    </div>
+                    <div style="position:absolute;bottom:1rem;right:1rem;background:rgba(0,0,0,0.7);color:white;padding:0.375rem 0.625rem;border-radius:0.375rem;font-size:0.75rem;font-weight:600;">1/${urls.length}</div>
+                </div>
+            `;
+        }
+        
+        const daysLeft = ad.end_date ? Math.ceil((new Date(ad.end_date) - new Date()) / (1000 * 60 * 60 * 24)) : 0;
+        
+        return `
+            <div class="post-card sponsored">
+                <div class="sponsored-badge">SPONSORED${daysLeft > 0 ? ` • ${daysLeft} days left` : ''}</div>
+                <div class="post-header">
+                    <div class="post-date">${new Date(ad.created_date).toLocaleDateString()}</div>
+                    <div class="post-views">
+                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#3b82f6" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <span>${(ad.views_count || 0).toLocaleString()} views</span>
+                    </div>
+                </div>
+                <div class="post-content">
+                    ${ad.caption ? `<p class="post-caption">${linkify(ad.caption)}</p>` : ''}
+                    ${mediaHTML}
+                </div>
+                <div class="ad-info">
+                    <div class="ad-row">
+                        <svg fill="#000000" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                        <span style="font-weight:600;font-size:0.9375rem;">${ad.company_name}</span>
+                    </div>
+                    ${ad.website ? `
+                        <div class="ad-row">
+                            <svg fill="none" stroke="#000000" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>
+                            <a href__="${ad.website.match(/^https?:/) ? ad.website : 'http://' + ad.website}" target="_blank">${ad.website}</a>
+                        </div>
+                    ` : ''}
+                    ${ad.email ? `
+                        <div class="ad-row">
+                            <svg fill="none" stroke="#000000" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            <a href__="mailto:${ad.email}">${ad.email}</a>
+                        </div>
+                    ` : ''}
+                    ${ad.whatsapp ? `
+                        <div class="ad-row">
+                            <svg fill="#000000" stroke="none" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                            <a href__="https://wa.me/${ad.whatsapp.replace(/[^0-9]/g, '')}" target="_blank">${ad.whatsapp}</a>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
     }
     
     function createPostHTML(post) {
         const user = users.find(u => u.email === post.created_by) || { 
             full_name: 'User', 
-            profile_picture: `https://ui-avatars.com/api/?name=User&size=32&background=6b7280&color=ffffff`,
+            profile_picture: `https://ui-avatars.com/api/?name=User&size=64&background=6b7280&color=ffffff`,
             email: post.created_by 
         };
         const urls = post.content_urls || [];
@@ -3442,12 +5104,28 @@
         
         let mediaHTML = '';
         if (post.content_type === 'video' && urls.length > 0) {
-            mediaHTML = `<div class="post-media"><video src="${urls[0]}" class="post-video" controls onclick="event.stopPropagation();openLightbox('${urls[0]}', 'video')"></video></div>`;
+            mediaHTML = `<div class="post-media"><video src="${urls[0]}" class="post-video" controls onclick="event.stopPropagation();openLightbox('${urls[0]}', 'video')"></video>`;
+            
+            if (post.audio_id) {
+                const audio = musicPosts.find(m => m.id === post.audio_id);
+                if (audio) {
+                    const audioUser = users.find(u => u.email === audio.created_by);
+                    mediaHTML += `<div class="audio-badge" onclick="viewAudioInfo('${audio.id}')">
+                        <img src="${audio.album_art}">
+                        <div>
+                            <div style="font-size:0.75rem;font-weight:600;">${audio.title}</div>
+                            <div style="font-size:0.6875rem;opacity:0.8;">${audioUser?.full_name || 'Artist'}</div>
+                        </div>
+                    </div>`;
+                }
+            }
+            
+            mediaHTML += '</div>';
         } else if (urls.length === 1) {
-            mediaHTML = `<div class="post-media"><img data-lazy="${urls[0]}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3C/svg%3E" class="post-image-single" onclick="openLightbox('${urls[0]}', 'image')" loading="lazy"></div>`;
+            mediaHTML = `<div class="post-media"><img src="${urls[0]}" class="post-image-single" onclick="openLightbox('${urls[0]}', 'image')"></div>`;
         } else if (urls.length > 1) {
             const gridClass = urls.length === 2 ? 'grid-2' : 'grid-multi';
-            mediaHTML = `<div class="post-media"><div class="post-image-grid ${gridClass}">${urls.slice(0, 4).map((url, idx) => `<img data-lazy="${url}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23f0f0f0' width='200' height='200'/%3E%3C/svg%3E" class="grid-image" onclick="openPostModal('${post.id}', ${idx})" loading="lazy">`).join('')}</div></div>`;
+            mediaHTML = `<div class="post-media"><div class="post-image-grid ${gridClass}">${urls.slice(0, 4).map((url, idx) => `<img src="${url}" class="grid-image" onclick="openPostModal('${post.id}', ${idx})">`).join('')}</div></div>`;
         }
         
         const hashtagsHTML = post.hashtags && post.hashtags.length > 0 ? 
@@ -3493,7 +5171,7 @@
                 </div>
                 <div class="post-user">
                     <div class="post-user-info" onclick="viewProfile('${user.email}')">
-                        <img src="${user.profile_picture}" class="user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&size=32&background=6b7280&color=ffffff'">
+                        <img src="${user.profile_picture}" class="user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&size=64&background=6b7280&color=ffffff'">
                         <div class="user-info">
                             <div class="user-name">${user.full_name}</div>
                             <div class="user-email">${user.email}</div>
@@ -3505,20 +5183,32 @@
         `;
     }
     
+    function viewAudioInfo(audioId) {
+        const audio = musicPosts.find(m => m.id === audioId);
+        if (!audio) return;
+        
+        const artist = users.find(u => u.email === audio.created_by);
+        
+        alert(`🎵 ${audio.title}\n\n👤 Artist: ${artist?.full_name || 'Unknown'}\n👁️ Views: ${(audio.views_count || 0).toLocaleString()}\n❤️ Likes: ${(audio.likes_count || 0).toLocaleString()}`);
+    }
+    
     async function openPostModal(postId, imageIndex = 0) {
         try {
-            currentViewPost = posts.find(p => p.id === postId);
+            const allPosts = [...posts, ...musicPosts];
+            currentViewPost = allPosts.find(p => p.id === postId);
             if (!currentViewPost) return;
             
             const user = users.find(u => u.email === currentViewPost.created_by) || {
                 full_name: 'User',
-                profile_picture: `https://ui-avatars.com/api/?name=User&size=32&background=6b7280&color=ffffff`
+                profile_picture: `https://ui-avatars.com/api/?name=User&size=64&background=6b7280&color=ffffff`
             };
             
             const urls = currentViewPost.content_urls || [];
             let mediaHTML = '';
             
-            if (currentViewPost.content_type === 'video' && urls.length > 0) {
+            if (currentViewPost.is_music) {
+                mediaHTML = `<img src="${currentViewPost.album_art}" class="post-modal-image">`;
+            } else if (currentViewPost.content_type === 'video' && urls.length > 0) {
                 mediaHTML = `<video src="${urls[0]}" class="post-modal-video" controls></video>`;
             } else if (urls.length > 0) {
                 mediaHTML = `<img src="${urls[imageIndex]}" class="post-modal-image">`;
@@ -3531,13 +5221,14 @@
             
             document.getElementById('postModalInfo').innerHTML = `
                 <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;">
-                    <img src="${user.profile_picture}" class="user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&size=32&background=6b7280&color=ffffff'">
+                    <img src="${user.profile_picture}" class="user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&size=64&background=6b7280&color=ffffff'">
                     <div>
                         <div class="user-name">${user.full_name}</div>
                         <div class="user-email">${user.email}</div>
                     </div>
                 </div>
                 ${currentViewPost.caption ? `<p class="post-caption">${linkify(currentViewPost.caption)}</p>` : ''}
+                ${currentViewPost.is_music ? `<p class="post-caption" style="font-weight:600;">🎵 ${currentViewPost.title}</p>` : ''}
                 ${hashtagsHTML}
                 <div style="display:flex;align-items:center;gap:1.5rem;margin-top:1rem;font-size:0.875rem;color:#6b7280;">
                     <span>❤️ ${(currentViewPost.likes_count || 0).toLocaleString()} likes</span>
@@ -3608,7 +5299,7 @@
         container.innerHTML = currentComments.map(comment => {
             const user = users.find(u => u.email === comment.created_by) || {
                 full_name: 'User',
-                profile_picture: `https://ui-avatars.com/api/?name=User&size=32&background=6b7280&color=ffffff`,
+                profile_picture: `https://ui-avatars.com/api/?name=User&size=64&background=6b7280&color=ffffff`,
                 email: comment.created_by
             };
             
@@ -3618,7 +5309,7 @@
             
             return `
                 <div class="comment-item">
-                    <img src="${user.profile_picture}" class="comment-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&size=32&background=6b7280&color=ffffff'">
+                    <img src="${user.profile_picture}" class="comment-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&size=64&background=6b7280&color=ffffff'">
                     <div style="flex:1;max-width:calc(100% - 3rem);overflow:hidden;">
                         <div class="comment-content">
                             <div class="comment-author">${user.full_name}</div>
@@ -3675,7 +5366,7 @@
             
             if (commentImageFile) {
                 showToast('Uploading image...', 'success');
-                imageUrl = await compressImage(commentImageFile);
+                imageUrl = await compressImage(commentImageFile, 800, 0.75);
             }
             
             await db.collection('posts').doc(currentViewPost.id).collection('comments').add({
@@ -3777,10 +5468,10 @@
     function handleFileSelect(e) {
         const files = Array.from(e.target.files);
         
-        const oversized = files.filter(f => f.size > 10 * 1024 * 1024);
+        const oversized = files.filter(f => f.size > 20 * 1024 * 1024);
         if (oversized.length > 0) {
-            showToast('Some files are too large! Maximum 10MB each', 'error');
-            uploadedFiles = files.filter(f => f.size <= 10 * 1024 * 1024);
+            showToast('Some files are too large! Maximum 20MB each', 'error');
+            uploadedFiles = files.filter(f => f.size <= 20 * 1024 * 1024);
         } else {
             uploadedFiles = files;
         }
@@ -3867,18 +5558,16 @@
             for (let i = 0; i < uploadedFiles.length; i++) {
                 const file = uploadedFiles[i];
                 if (file.type.startsWith('video/')) {
-                    contentUrls.push(await compressVideo(file));
+                    contentUrls.push(await fileToBase64(file));
                 } else {
-                    contentUrls.push(await compressImage(file));
+                    contentUrls.push(await compressImage(file, 1200, 0.85));
                 }
-                
-                if (i === 0) showToast(`Processing ${i + 1}/${uploadedFiles.length}...`, 'success');
             }
             
             const initialViews = Math.floor(Math.random() * (243544 - 2399 + 1)) + 2399;
             const initialLikes = Math.floor(initialViews * (Math.random() * 0.3 + 0.1));
             
-            await db.collection('posts').add({
+            const postData = {
                 caption,
                 location,
                 hashtags: currentHashtags,
@@ -3891,7 +5580,15 @@
                 comments_count: 0,
                 created_date: new Date().toISOString(),
                 created_by: currentUser.email
-            });
+            };
+            
+            if (selectedAudio) {
+                postData.audio_id = selectedAudio.musicId;
+                postData.bg_music_volume = parseFloat(document.getElementById('bgMusicVolume').value) / 100;
+                postData.original_volume = parseFloat(document.getElementById('originalVolume').value) / 100;
+            }
+            
+            await db.collection('posts').add(postData);
             
             showToast(`✅ Post created! ${initialViews.toLocaleString()} views!`, 'success');
             
@@ -3901,7 +5598,9 @@
             uploadedFiles = [];
             currentHashtags = [];
             commentsEnabled = true;
+            selectedAudio = null;
             document.getElementById('commentsCheckbox').classList.add('checked');
+            document.getElementById('selectedAudioDisplay').style.display = 'none';
             renderPreviews();
             renderHashtags();
             
@@ -3916,7 +5615,7 @@
         document.getElementById('createPostBtn').disabled = false;
     }
     
-    function compressVideo(file) {
+    function fileToBase64(file) {
         return new Promise((resolve) => {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -3926,7 +5625,7 @@
         });
     }
     
-    function compressImage(file) {
+    function compressImage(file, maxSize = 1200, quality = 0.85) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -3937,7 +5636,6 @@
                         let width = img.width;
                         let height = img.height;
                         
-                        const maxSize = 600;
                         if (width > height && width > maxSize) {
                             height = (height * maxSize) / width;
                             width = maxSize;
@@ -3950,7 +5648,7 @@
                         canvas.height = height;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
-                        resolve(canvas.toDataURL('image/jpeg', 0.5));
+                        resolve(canvas.toDataURL('image/jpeg', quality));
                     } catch (error) {
                         reject(error);
                     }
@@ -3971,7 +5669,6 @@
             
             for (const doc of commentsSnapshot.docs) {
                 await doc.ref.delete();
-                await new Promise(resolve => setTimeout(resolve, 50));
             }
             
             await db.collection('posts').doc(postId).delete();
@@ -4108,7 +5805,7 @@
         try {
             showToast('Uploading profile picture...', 'success');
             
-            const compressed = await compressImage(file);
+            const compressed = await compressImage(file, 400, 0.8);
             
             await db.collection('users').doc(currentUser.id).update({
                 profile_picture: compressed
@@ -4195,12 +5892,15 @@
             const isUnread = conv.unreadBy && conv.unreadBy.includes(currentUser.email);
             
             if (isGroup) {
+                const lastMessagePreview = conv.lastMessage && conv.lastMessage.length > 30 ? 
+                    conv.lastMessage.substring(0, 30) + '...' : (conv.lastMessage || 'No messages yet');
+                
                 return `
                     <div class="conversation-card ${isUnread ? 'unread' : ''}" onclick="openGroupConversation('${conv.id}')">
                         <img src="${conv.group_picture}" class="conversation-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(conv.group_name)}&size=48&background=000000&color=ffffff'">
                         <div class="conversation-info">
                             <div class="conversation-name">${conv.group_name} 👥</div>
-                            <div class="conversation-last-message">${conv.lastMessage || 'No messages yet'}</div>
+                            <div class="conversation-last-message">${lastMessagePreview}</div>
                         </div>
                         ${isUnread ? '<span class="conversation-badge">New</span>' : ''}
                     </div>
@@ -4214,12 +5914,15 @@
                 email: otherEmail 
             };
             
+            const lastMessagePreview = conv.lastMessage && conv.lastMessage.length > 30 ? 
+                conv.lastMessage.substring(0, 30) + '...' : (conv.lastMessage || 'No messages yet');
+            
             return `
                 <div class="conversation-card ${isUnread ? 'unread' : ''}" onclick="openConversation('${otherUser.email}')">
                     <img src="${otherUser.profile_picture}" class="conversation-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(otherUser.full_name)}&size=48&background=6b7280&color=ffffff'">
                     <div class="conversation-info">
                         <div class="conversation-name">${otherUser.full_name}</div>
-                        <div class="conversation-last-message">${conv.lastMessage || 'No messages yet'}</div>
+                        <div class="conversation-last-message">${lastMessagePreview}</div>
                     </div>
                     ${isUnread ? '<span class="conversation-badge">New</span>' : ''}
                 </div>
@@ -4253,6 +5956,65 @@
         }
     }
     
+    async function blockUser() {
+        if (!currentChatUser) return;
+        
+        if (!confirm(`Block ${currentChatUser.full_name}?`)) return;
+        
+        try {
+            await db.collection('users').doc(currentUser.id).update({
+                blockedUsers: firebase.firestore.FieldValue.arrayUnion(currentChatUser.email)
+            });
+            
+            currentUser.blockedUsers = currentUser.blockedUsers || [];
+            currentUser.blockedUsers.push(currentChatUser.email);
+            localStorage.setItem('streamx-current-user', JSON.stringify(currentUser));
+            
+            showToast(`${currentChatUser.full_name} blocked!`, 'success');
+            navigateTo('conversations');
+        } catch (error) {
+            console.error('Error blocking user:', error);
+            showToast('Error blocking user', 'error');
+        }
+    }
+    
+    async function deleteConversation() {
+        if (!confirm('Delete this conversation?')) return;
+        
+        try {
+            if (currentGroupChat) {
+                const messagesSnapshot = await db.collection('conversations').doc(currentGroupChat.id).collection('messages').get();
+                const batch = db.batch();
+                messagesSnapshot.docs.forEach(doc => batch.delete(doc.ref));
+                await batch.commit();
+                
+                await db.collection('conversations').doc(currentGroupChat.id).delete();
+            } else if (currentChatUser) {
+                const participants = [currentUser.email, currentChatUser.email].sort();
+                const convSnapshot = await db.collection('conversations')
+                    .where('participants', '==', participants)
+                    .limit(1)
+                    .get();
+                
+                if (!convSnapshot.empty) {
+                    const conversationId = convSnapshot.docs[0].id;
+                    const messagesSnapshot = await db.collection('conversations').doc(conversationId).collection('messages').get();
+                    const batch = db.batch();
+                    messagesSnapshot.docs.forEach(doc => batch.delete(doc.ref));
+                    await batch.commit();
+                    
+                    await db.collection('conversations').doc(conversationId).delete();
+                }
+            }
+            
+            showToast('Conversation deleted!', 'success');
+            navigateTo('conversations');
+        } catch (error) {
+            console.error('Error deleting conversation:', error);
+            showToast('Error deleting conversation', 'error');
+        }
+    }
+    
     async function loadMessages() {
         if (messageUnsubscribe) {
             messageUnsubscribe();
@@ -4272,6 +6034,7 @@
                 
                 messageUnsubscribe = db.collection('conversations').doc(currentGroupChat.id).collection('messages')
                     .orderBy('timestamp', 'asc')
+                    .limit(100)
                     .onSnapshot(snapshot => {
                         messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                         renderGroupMessages();
@@ -4313,6 +6076,7 @@
                 
                 messageUnsubscribe = db.collection('conversations').doc(conversationId).collection('messages')
                     .orderBy('timestamp', 'asc')
+                    .limit(100)
                     .onSnapshot(snapshot => {
                         messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                         renderMessages();
@@ -4343,10 +6107,12 @@
         container.innerHTML = messages.map(msg => {
             const isSent = msg.sender === currentUser.email;
             const time = new Date(msg.timestamp).toLocaleString([], { hour: '2-digit', minute: '2-digit' });
+            const isStoryComment = msg.type === 'story_comment';
             
             if (msg.type === 'image') {
                 return `
-                    <div class="message-bubble ${isSent ? 'sent' : 'received'}" data-message-id="${msg.id}">
+                    <div class="message-bubble ${isSent ? 'sent' : 'received'} ${isStoryComment ? 'story-comment' : ''}" data-message-id="${msg.id}">
+                        ${isStoryComment ? `<div style="font-size:0.75rem;margin-bottom:0.25rem;opacity:0.9;">💬 Story reply</div>` : ''}
                         <img src="${msg.imageUrl}" class="message-image" onclick="openLightbox('${msg.imageUrl}', 'image')">
                         <div class="message-time">${time}</div>
                         ${isSent ? `<div class="message-actions"><button class="message-action-btn-small" onclick="deleteMessage('${msg.id}')">Delete</button></div>` : ''}
@@ -4354,9 +6120,12 @@
                 `;
             }
             
+            const textPreview = msg.text && msg.text.length > 100 ? msg.text.substring(0, 100) + '...' : msg.text;
+            
             return `
-                <div class="message-bubble ${isSent ? 'sent' : 'received'}" data-message-id="${msg.id}">
-                    <div>${linkify(msg.text)}</div>
+                <div class="message-bubble ${isSent ? 'sent' : 'received'} ${isStoryComment ? 'story-comment' : ''}" data-message-id="${msg.id}">
+                    ${isStoryComment ? `<div style="font-size:0.75rem;margin-bottom:0.25rem;opacity:0.9;">💬 Story reply</div>` : ''}
+                    <div>${linkify(textPreview)}</div>
                     <div class="message-time">${time}</div>
                     ${isSent ? `<div class="message-actions"><button class="message-action-btn-small" onclick="deleteMessage('${msg.id}')">Delete</button></div>` : ''}
                 </div>
@@ -4375,7 +6144,7 @@
                     <div class="empty-icon">
                         <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     </div>
-                    <h3>Start the Conversation!</h3>
+                    <h3>Start the conversation!</h3>
                 </div>
             `;
             return;
@@ -4387,11 +6156,13 @@
             const time = new Date(msg.timestamp).toLocaleString([], { hour: '2-digit', minute: '2-digit' });
             const likesCount = msg.likes ? msg.likes.length : 0;
             const isLiked = msg.likes && msg.likes.includes(currentUser.email);
+            const isStoryComment = msg.type === 'story_comment';
             
             if (msg.type === 'image') {
                 return `
-                    <div class="message-bubble ${isSent ? 'sent' : 'received'}" data-message-id="${msg.id}">
+                    <div class="message-bubble ${isSent ? 'sent' : 'received'} ${isStoryComment ? 'story-comment' : ''}" data-message-id="${msg.id}">
                         <div class="message-sender-name">${sender.full_name}</div>
+                        ${isStoryComment ? `<div style="font-size:0.75rem;margin-bottom:0.25rem;opacity:0.9;">💬 Story reply</div>` : ''}
                         <img src="${msg.imageUrl}" class="message-image" onclick="openLightbox('${msg.imageUrl}', 'image')">
                         <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">
                             <div class="message-time">${time}</div>
@@ -4405,10 +6176,13 @@
                 `;
             }
             
+            const textPreview = msg.text && msg.text.length > 100 ? msg.text.substring(0, 100) + '...' : msg.text;
+            
             return `
-                <div class="message-bubble ${isSent ? 'sent' : 'received'}" data-message-id="${msg.id}">
+                <div class="message-bubble ${isSent ? 'sent' : 'received'} ${isStoryComment ? 'story-comment' : ''}" data-message-id="${msg.id}">
                     <div class="message-sender-name">${sender.full_name}</div>
-                    <div>${linkify(msg.text)}</div>
+                    ${isStoryComment ? `<div style="font-size:0.75rem;margin-bottom:0.25rem;opacity:0.9;">💬 Story reply</div>` : ''}
+                    <div>${linkify(textPreview)}</div>
                     <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">
                         <div class="message-time">${time}</div>
                         <div class="message-like-btn ${isLiked ? 'liked' : ''}" onclick="likeGroupMessage('${msg.id}')">
@@ -4471,8 +6245,10 @@
                     likes: autoLikes
                 });
                 
+                const lastMessagePreview = text.length > 30 ? text.substring(0, 30) + '...' : text;
+                
                 await db.collection('conversations').doc(currentGroupChat.id).update({
-                    lastMessage: text,
+                    lastMessage: lastMessagePreview,
                     unreadBy: currentGroupChat.participants.filter(p => p !== currentUser.email)
                 });
             } else {
@@ -4491,8 +6267,10 @@
                     timestamp: new Date().toISOString()
                 });
                 
+                const lastMessagePreview = text.length > 30 ? text.substring(0, 30) + '...' : text;
+                
                 await db.collection('conversations').doc(conversationId).update({
-                    lastMessage: text,
+                    lastMessage: lastMessagePreview,
                     unreadBy: [currentChatUser.email]
                 });
             }
@@ -4515,7 +6293,7 @@
         try {
             showToast('Sending image...', 'success');
             
-            const compressed = await compressImage(file);
+            const compressed = await compressImage(file, 800, 0.75);
             
             if (currentGroupChat) {
                 const memberCount = currentGroupChat.participants.length;
@@ -4571,14 +6349,15 @@
         try {
             if (currentGroupChat) {
                 await db.collection('conversations').doc(currentGroupChat.id).collection('messages').doc(messageId).delete();
-            } else {
+            } else if (currentChatUser) {
                 const participants = [currentUser.email, currentChatUser.email].sort();
                 const convSnapshot = await db.collection('conversations')
                     .where('participants', '==', participants)
                     .get();
                 
-                const conversationId = convSnapshot.docs[0].id;
-                await db.collection('conversations').doc(conversationId).collection('messages').doc(messageId).delete();
+                if (!convSnapshot.empty) {
+                    await db.collection('conversations').doc(convSnapshot.docs[0].id).collection('messages').doc(messageId).delete();
+                }
             }
             
             showToast('Message deleted!', 'success');
@@ -4588,125 +6367,152 @@
         }
     }
     
-    async function blockUser() {
-        if (!currentChatUser) return;
-        if (!confirm(`Block ${currentChatUser.full_name}? They won't be able to message you.`)) return;
-        
-        try {
-            await db.collection('users').doc(currentUser.id).update({
-                blockedUsers: firebase.firestore.FieldValue.arrayUnion(currentChatUser.email)
-            });
-            currentUser.blockedUsers = currentUser.blockedUsers || [];
-            currentUser.blockedUsers.push(currentChatUser.email);
-            localStorage.setItem('streamx-current-user', JSON.stringify(currentUser));
-            
-            showToast('User blocked!', 'success');
-            navigateTo('conversations');
-        } catch (error) {
-            console.error('Error blocking user:', error);
-            showToast('Error blocking user', 'error');
-        }
-    }
-    
-    async function deleteConversation() {
-        if (!confirm('Delete this conversation? This cannot be undone.')) return;
-        
-        try {
-            if (currentGroupChat) {
-                const isAdmin = currentGroupChat.admins && currentGroupChat.admins.includes(currentUser.email);
-                if (!isAdmin) {
-                    showToast('Only admins can delete the group!', 'error');
-                    return;
-                }
-                
-                const messagesSnapshot = await db.collection('conversations').doc(currentGroupChat.id).collection('messages').limit(100).get();
-                
-                for (const doc of messagesSnapshot.docs) {
-                    await doc.ref.delete();
-                    await new Promise(resolve => setTimeout(resolve, 50));
-                }
-                
-                await db.collection('conversations').doc(currentGroupChat.id).delete();
-            } else {
-                const participants = [currentUser.email, currentChatUser.email].sort();
-                const convSnapshot = await db.collection('conversations')
-                    .where('participants', '==', participants)
-                    .get();
-                
-                if (!convSnapshot.empty) {
-                    const conversationId = convSnapshot.docs[0].id;
-                    
-                    const messagesSnapshot = await db.collection('conversations').doc(conversationId).collection('messages').limit(100).get();
-                    
-                    for (const doc of messagesSnapshot.docs) {
-                        await doc.ref.delete();
-                        await new Promise(resolve => setTimeout(resolve, 50));
-                    }
-                    
-                    await db.collection('conversations').doc(conversationId).delete();
-                }
-            }
-            
-            showToast('Conversation deleted!', 'success');
-            navigateTo('conversations');
-        } catch (error) {
-            console.error('Error deleting conversation:', error);
-            showToast('Error deleting conversation', 'error');
-        }
-    }
-    
     function renderAdminPanel() {
-        const container = document.getElementById('adminPostsList');
+        const activeAds = ads.filter(a => !a.archived);
+        const archivedAds = ads.filter(a => a.archived);
+        const totalRevenue = ads.reduce((sum, a) => sum + (a.payment_amount || 0), 0);
         
-        if (posts.length === 0) {
-            container.innerHTML = '<p style="text-align:center;color:#6b7280;">No posts to manage.</p>';
-            return;
+        let adsHTML = activeAds.map(ad => `
+            <div class="admin-post-item">
+                <img src="${ad.content_urls[0]}" class="admin-post-thumbnail">
+                <div class="admin-post-info">
+                    <div class="admin-post-caption">${ad.company_name}</div>
+                    <div class="admin-post-stats">👁️ ${(ad.views_count || 0).toLocaleString()} • End: ${ad.end_date ? new Date(ad.end_date).toLocaleDateString() : 'N/A'} • R${ad.payment_amount || 0}</div>
+                </div>
+                <button class="admin-action-btn delete" onclick="deleteAd('${ad.id}')">Delete</button>
+            </div>
+        `).join('');
+        
+        if (activeAds.length === 0) {
+            adsHTML = '<p style="color:#6b7280;text-align:center;padding:2rem;">No active ads</p>';
         }
         
-        container.innerHTML = posts.map(post => {
-            const user = users.find(u => u.email === post.created_by) || { full_name: 'User', email: post.created_by };
-            const thumbnail = (post.content_urls && post.content_urls[0]) || 'https://via.placeholder.com/64';
-            
+        let postsHTML = posts.slice(0, 50).map(post => {
+            const user = users.find(u => u.email === post.created_by) || { full_name: 'User' };
             return `
                 <div class="admin-post-item">
-                    <img src="${thumbnail}" class="admin-post-thumbnail" alt="Post">
+                    <img src="${post.content_urls?.[0] || 'https://via.placeholder.com/100'}" class="admin-post-thumbnail">
                     <div class="admin-post-info">
-                        <div class="admin-post-caption">${(post.caption || 'No caption').substring(0, 50)}</div>
-                        <div class="admin-post-stats">${(post.views_count || 0).toLocaleString()} views • ${user.full_name}</div>
+                        <div class="admin-post-caption">${post.caption?.substring(0, 50) || 'No caption'}${post.caption?.length > 50 ? '...' : ''}</div>
+                        <div class="admin-post-stats">By ${user.full_name} • 👁️ ${(post.views_count || 0).toLocaleString()} • ❤️ ${post.likes_count || 0}</div>
                     </div>
                     <div class="admin-actions">
-                        <button class="admin-action-btn views" onclick="increaseViews('${post.id}', 10000)">+10K Views</button>
-                        <button class="admin-action-btn views" onclick="customViews('${post.id}')">Custom</button>
+                        <button class="admin-action-btn views" onclick="boostViews('${post.id}', 10000)">+10K</button>
+                        <button class="admin-action-btn views" onclick="customBoost('${post.id}')">Custom</button>
                         <button class="admin-action-btn delete" onclick="deletePost('${post.id}')">Delete</button>
                     </div>
                 </div>
             `;
         }).join('');
+        
+        if (posts.length === 0) {
+            postsHTML = '<p style="color:#6b7280;text-align:center;padding:2rem;">No posts yet</p>';
+        }
+        
+        let usersHTML = users.slice(0, 30).map(user => {
+            const userPosts = posts.filter(p => p.created_by === user.email);
+            return `
+                <div class="admin-post-item">
+                    <img src="${user.profile_picture}" class="admin-post-thumbnail" style="border-radius:50%;">
+                    <div class="admin-post-info">
+                        <div class="admin-post-caption">${user.full_name}</div>
+                        <div class="admin-post-stats">${user.email} • ${userPosts.length} posts</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        if (users.length === 0) {
+            usersHTML = '<p style="color:#6b7280;text-align:center;padding:2rem;">No users yet</p>';
+        }
+        
+        let historyHTML = '';
+        if (archivedAds.length > 0) {
+            historyHTML = archivedAds.map(ad => `
+                <div style="padding:0.75rem;background:#f9fafb;border-radius:0.5rem;margin-bottom:0.5rem;">
+                    <div style="font-weight:600;font-size:0.9375rem;">${ad.company_name}</div>
+                    <div style="font-size:0.8125rem;color:#6b7280;">Ended: ${new Date(ad.archived_date || ad.end_date).toLocaleDateString()} • Payment: R${ad.payment_amount || 0} • Views: ${(ad.views_count || 0).toLocaleString()}</div>
+                </div>
+            `).join('');
+        } else {
+            historyHTML = '<p style="color:#6b7280;text-align:center;">No ad history yet</p>';
+        }
+        
+        document.getElementById('adminPage').innerHTML = `
+            <div class="page-header">
+                <h1>StreamX Admin</h1>
+                <p>Manage posts, users, and ads</p>
+            </div>
+            
+            <div class="admin-section">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                    <h3 class="admin-section-title" style="margin:0;">Advertisements</h3>
+                    <button class="admin-btn admin-btn-submit" style="padding:0.5rem 1rem;" onclick="openAdModal()">+ Create Ad</button>
+                </div>
+                <div id="adminAdsList">${adsHTML}</div>
+                
+                <div style="background:#f3f4f6;padding:1rem;border-radius:0.5rem;margin-top:1rem;">
+                    <h4 style="font-weight:bold;margin-bottom:0.5rem;">Revenue Summary</h4>
+                    <p style="font-size:1.25rem;font-weight:bold;color:#10b981;">Total: R${totalRevenue.toLocaleString()}</p>
+                </div>
+                
+                <h4 style="font-weight:bold;margin:1.5rem 0 0.75rem;">Ad History</h4>
+                <div id="adHistory">${historyHTML}</div>
+            </div>
+            
+            <div class="admin-section">
+                <h3 class="admin-section-title">Post Management</h3>
+                <div id="adminPostsList">${postsHTML}</div>
+            </div>
+            
+            <div class="admin-section">
+                <h3 class="admin-section-title">Users</h3>
+                <div id="adminUsersList">${usersHTML}</div>
+            </div>
+        `;
     }
     
-    async function increaseViews(postId, amount) {
+    async function boostViews(postId, amount) {
         try {
             const post = posts.find(p => p.id === postId);
-            if (post) {
-                const newViews = (post.views_count || 0) + amount;
-                await db.collection('posts').doc(postId).update({
-                    views_count: newViews
-                });
-                showToast(`Views increased to ${newViews.toLocaleString()}!`, 'success');
-            }
+            if (!post) return;
+            
+            await db.collection('posts').doc(postId).update({
+                views_count: (post.views_count || 0) + amount
+            });
+            
+            showToast(`✅ Boosted +${amount.toLocaleString()} views!`, 'success');
         } catch (error) {
-            console.error('Error increasing views:', error);
+            console.error('Error boosting views:', error);
+            showToast('Error boosting views', 'error');
         }
     }
     
-    async function customViews(postId) {
-        const amount = prompt('Enter number of views to add:');
-        if (amount && !isNaN(amount)) {
-            await increaseViews(postId, parseInt(amount));
+    async function customBoost(postId) {
+        const amount = prompt('Enter custom view boost amount:');
+        if (!amount) return;
+        
+        const num = parseInt(amount);
+        if (isNaN(num) || num <= 0) {
+            showToast('Invalid amount!', 'error');
+            return;
+        }
+        
+        await boostViews(postId, num);
+    }
+    
+    async function deleteAd(adId) {
+        if (!confirm('Delete this ad?')) return;
+        
+        try {
+            await db.collection('posts').doc(adId).delete();
+            showToast('Ad deleted!', 'success');
+            renderAdminPanel();
+        } catch (error) {
+            console.error('Error deleting ad:', error);
+            showToast('Error deleting ad', 'error');
         }
     }
 </script>
 </body>
 </html>
-
-

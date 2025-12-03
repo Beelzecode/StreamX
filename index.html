@@ -3,10 +3,10 @@
 <head>
 
 
-     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#FFFFFF">
-    <link rel="icon" href="https://i.postimg.cc/02SxC8P7/IMG-2225.png">
-    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href__="manifest.json">
+    <meta name="theme-color" content="#000000">
+    <link rel="icon" href__="https://i.postimg.cc/tRVKxp3k/Screenshot-2025-12-03-144025.png">
+      <link rel="stylesheet" href="style.css">
 
 
     <meta charset="UTF-8">
@@ -22,7 +22,7 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #ffffff;
+            background:white;
             color: #000000;
             line-height: 1.6;
             min-height: 100vh;
@@ -88,7 +88,7 @@
         }
         
         .admin-modal p, .group-modal p, .verify-modal p {
-            color: #6b7280;
+            color: #f00101;
             margin-bottom: 1.5rem;
             font-size: 0.875rem;
         }
@@ -127,18 +127,31 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
+
         }
+
+
+
+
+
         
         .admin-btn-submit, .group-btn-submit, .ad-btn-submit, .verify-btn-submit {
-            background: #000000;
+           background: linear-gradient(45deg, #e9e649, #27f16b);
             color: white;
         }
         
         .admin-btn-cancel, .group-btn-cancel, .ad-btn-cancel, .verify-btn-cancel {
-            background: #e5e7eb;
-            color: #374151;
+            background: linear-gradient(45deg, #ffc760, #f12727);
+            color: #ffffff;
         }
         
+
+
+
+        
+
+
+
         .auth-modal {
             background: white;
             border-radius: 1.5rem;
@@ -220,9 +233,9 @@
         .auth-btn {
             width: 100%;
             padding: 0.75rem;
-            background: #000000;
+            background: linear-gradient(45deg, #e9e649, #27f16b);
             color: white;
-            border: none;
+            border: 1KKpx solid black;
             border-radius: 0.75rem;
             font-weight: 600;
             font-size: 0.9375rem;
@@ -2962,6 +2975,9 @@
                 </button>
             </div>
             
+
+
+            
             <div id="loginForm" style="display:none;">
                 <input type="email" id="loginEmail" class="auth-input" placeholder="Email">
                 <input type="text" id="loginCode" class="auth-input" placeholder="6-Digit Access Code" maxlength="6">
@@ -2971,6 +2987,11 @@
                 </button>
                 <span class="auth-link" onclick="switchAuthTab('forgot')">Forgot Permanent Code?</span>
             </div>
+
+
+            
+
+
             
             <div id="forgotForm" style="display:none;">
                 <input type="email" id="forgotEmail" class="auth-input" placeholder="Email">
@@ -2992,6 +3013,13 @@
         </div>
     </div>
 
+
+
+
+
+
+    
+
     <div id="groupModal" class="group-modal-overlay">
         <div class="group-modal">
             <h2>Create Group Chat 👥</h2>
@@ -3010,6 +3038,12 @@
             </div>
         </div>
     </div>
+
+
+
+
+
+
 
     <div id="membersModal" class="members-modal-overlay">
         <div class="members-modal">
@@ -7494,9 +7528,3 @@
 </script>
 </body>
 </html>
-
-
-
-
-
-

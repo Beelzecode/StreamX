@@ -4241,191 +4241,235 @@
         }
     }
     
-    async function handleRegister() {
-        const name = document.getElementById('registerName').value.trim();
-        const email = document.getElementById('registerEmail').value.trim();
-        const errorDiv = document.getElementById('authError');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Google Sign-In Function
+async function signInWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    try {
+        const result = await auth.signInWithPopup(provider);
+        const user = result.user;
         
-        if (!name || !email) {
-            errorDiv.textContent = 'Please fill in all fields';
-            errorDiv.style.display = 'block';
-            return;
-        }
+        // Check if user exists in Firestore, if not create profile
+        const userDoc = await db.collection('users').where('email', '==', user.email).get();
         
-        document.getElementById('registerText').style.display = 'none';
-        document.getElementById('registerLoading').style.display = 'inline-block';
-        
-        try {
-            const usersRef = db.collection('users');
-            const existing = await usersRef.where('email', '==', email).get();
-            
-            if (!existing.empty) {
-                errorDiv.textContent = 'This email is already in use!';
-                errorDiv.style.display = 'block';
-                document.getElementById('registerText').style.display = 'inline';
-                document.getElementById('registerLoading').style.display = 'none';
-                return;
-            }
-            
+        if (userDoc.empty) {
+            // Create new user profile
             const accessCode = Math.floor(100000 + Math.random() * 900000).toString();
             const resetCode = generateResetCode();
             
             const newUser = {
-                email,
-                full_name: name,
-                accessCode,
-                resetCode,
-                profile_picture: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=200&background=000000&color=ffffff`,
+                email: user.email,
+                full_name: user.displayName || 'User',
+                profile_picture: user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName)}&size=200&background=000000&color=ffffff`,
+                accessCode: accessCode,
+                resetCode: resetCode,
                 created_date: new Date().toISOString(),
                 blockedUsers: [],
                 bio: '',
-                website: '',
-                phone: '',
-                whatsapp: '',
-                verified: false,
-                verified_type: ''
+                verified: false
             };
             
-            const docRef = await usersRef.add(newUser);
+            const docRef = await db.collection('users').add(newUser);
             newUser.id = docRef.id;
-            
-            alert(`✅ Account created!\n\nYour Access Code: ${accessCode}\nYour Reset Code: ${resetCode}\n\nSave both codes!`);
-            
             currentUser = newUser;
-            localStorage.setItem('streamx-current-user', JSON.stringify(currentUser));
-            saveAccountToList(currentUser);
-            hideAuthModal();
-            updateHeaderUI();
-            updateNavButtons();
-            loadData();
-            showToast('Welcome to StreamX! 🎉');
-        } catch (error) {
-            console.error('Error creating account:', error);
-            errorDiv.textContent = 'Error creating account. Please try again.';
-            errorDiv.style.display = 'block';
+        } else {
+            currentUser = { id: userDoc.docs[0].id, ...userDoc.docs[0].data() };
         }
         
-        document.getElementById('registerText').style.display = 'inline';
-        document.getElementById('registerLoading').style.display = 'none';
+        localStorage.setItem('streamx-current-user', JSON.stringify(currentUser));
+        saveAccountToList(currentUser);
+        hideAuthModal();
+        updateHeaderUI();
+        loadData();
+        showToast('Welcome! 🎉');
+    } catch (error) {
+        console.error('Google sign-in error:', error);
+        document.getElementById('authError').textContent = error.message;
+        document.getElementById('authError').style.display = 'block';
+    }
+}
+
+// Email/Password Sign Up
+async function signUpWithEmail() {
+    const email = document.getElementById('registerEmail').value.trim();
+    const name = document.getElementById('registerName').value.trim();
+    const password = document.getElementById('registerPassword').value;
+    
+    if (!email || !name || !password) {
+        showAuthError('Please fill in all fields');
+        return;
     }
     
-    async function handleLogin() {
-        const email = document.getElementById('loginEmail').value.trim();
-        const code = document.getElementById('loginCode').value.trim();
-        const errorDiv = document.getElementById('authError');
+    if (password.length < 6) {
+        showAuthError('Password must be at least 6 characters');
+        return;
+    }
+    
+    try {
+        document.getElementById('registerText').style.display = 'none';
+        document.getElementById('registerLoading').style.display = 'inline-block';
         
-        if (!email || !code) {
-            errorDiv.textContent = 'Please fill in all fields';
-            errorDiv.style.display = 'block';
-            return;
-        }
+        const result = await auth.createUserWithEmailAndPassword(email, password);
+        await result.user.updateProfile({ displayName: name });
         
+        // Create user in Firestore
+        const accessCode = Math.floor(100000 + Math.random() * 900000).toString();
+        const resetCode = generateResetCode();
+        
+        const newUser = {
+            email: email,
+            full_name: name,
+            profile_picture: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=200&background=000000&color=ffffff`,
+            accessCode: accessCode,
+            resetCode: resetCode,
+            created_date: new Date().toISOString(),
+            blockedUsers: [],
+            bio: '',
+            verified: false
+        };
+        
+        const docRef = await db.collection('users').add(newUser);
+        newUser.id = docRef.id;
+        currentUser = newUser;
+        
+        localStorage.setItem('streamx-current-user', JSON.stringify(currentUser));
+        saveAccountToList(currentUser);
+        hideAuthModal();
+        updateHeaderUI();
+        loadData();
+        showToast('Account created! 🎉');
+    } catch (error) {
+        showAuthError(error.message);
+    }
+    
+    document.getElementById('registerText').style.display = 'inline';
+    document.getElementById('registerLoading').style.display = 'none';
+}
+
+// Email/Password Sign In
+async function signInWithEmail() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    
+    if (!email || !password) {
+        showAuthError('Please fill in all fields');
+        return;
+    }
+    
+    try {
         document.getElementById('loginText').style.display = 'none';
         document.getElementById('loginLoading').style.display = 'inline-block';
         
-        try {
-            const usersRef = db.collection('users');
-            const emailQuery = await usersRef.where('email', '==', email).get();
-            
-            if (emailQuery.empty) {
-                errorDiv.textContent = 'Email not found!';
-                errorDiv.style.display = 'block';
-                document.getElementById('loginText').style.display = 'inline';
-                document.getElementById('loginLoading').style.display = 'none';
-                return;
-            }
-            
-            const userDoc = emailQuery.docs[0];
-            const userData = userDoc.data();
-            
-            if (!userData.accessCode || !userData.resetCode) {
-                const newAccessCode = Math.floor(100000 + Math.random() * 900000).toString();
-                const newResetCode = generateResetCode();
-                
-                await userDoc.ref.update({
-                    accessCode: newAccessCode,
-                    resetCode: newResetCode,
-                    bio: userData.bio || '',
-                    website: userData.website || '',
-                    phone: userData.phone || '',
-                    whatsapp: userData.whatsapp || '',
-                    verified: userData.verified || false,
-                    verified_type: userData.verified_type || ''
-                });
-                
-                alert(`⚠️ Account updated!\n\nAccess Code: ${newAccessCode}\nReset Code: ${newResetCode}`);
-                
-                document.getElementById('loginText').style.display = 'inline';
-                document.getElementById('loginLoading').style.display = 'none';
-                return;
-            }
-            
-            if (userData.accessCode.toString() !== code.toString()) {
-                errorDiv.textContent = 'Incorrect access code!';
-                errorDiv.style.display = 'block';
-                document.getElementById('loginText').style.display = 'inline';
-                document.getElementById('loginLoading').style.display = 'none';
-                return;
-            }
-            
-            userData.id = userDoc.id;
-            currentUser = userData;
+        await auth.signInWithEmailAndPassword(email, password);
+        
+        // Get user from Firestore
+        const userDoc = await db.collection('users').where('email', '==', email).get();
+        if (!userDoc.empty) {
+            currentUser = { id: userDoc.docs[0].id, ...userDoc.docs[0].data() };
             localStorage.setItem('streamx-current-user', JSON.stringify(currentUser));
             saveAccountToList(currentUser);
             hideAuthModal();
             updateHeaderUI();
-            updateNavButtons();
             loadData();
             showToast('Welcome back! 🎉');
-        } catch (error) {
-            console.error('Error logging in:', error);
-            errorDiv.textContent = 'Error logging in.';
-            errorDiv.style.display = 'block';
         }
-        
-        document.getElementById('loginText').style.display = 'inline';
-        document.getElementById('loginLoading').style.display = 'none';
+    } catch (error) {
+        showAuthError(error.message);
     }
     
-    async function handleForgotCode() {
-        const email = document.getElementById('forgotEmail').value.trim();
-        const resetCode = document.getElementById('resetCodeInput').value.trim();
-        const errorDiv = document.getElementById('authError');
-        
-        if (!email || !resetCode) {
-            errorDiv.textContent = 'Please fill in all fields';
-            errorDiv.style.display = 'block';
-            return;
-        }
-        
-        document.getElementById('forgotText').style.display = 'none';
-        document.getElementById('forgotLoading').style.display = 'inline-block';
-        
-        try {
-            const usersRef = db.collection('users');
-            const snapshot = await usersRef.where('email', '==', email).where('resetCode', '==', resetCode).get();
-            
-            if (snapshot.empty) {
-                errorDiv.textContent = 'Incorrect email or reset code!';
-                errorDiv.style.display = 'block';
-                document.getElementById('forgotText').style.display = 'inline';
-                document.getElementById('forgotLoading').style.display = 'none';
-                return;
-            }
-            
-            const userData = snapshot.docs[0].data();
-            alert(`✅ Your Access Code: ${userData.accessCode}`);
-            switchAuthTab('login');
-            document.getElementById('loginEmail').value = email;
-        } catch (error) {
-            console.error('Error recovering code:', error);
-            errorDiv.textContent = 'Error recovering code.';
-            errorDiv.style.display = 'block';
-        }
-        
-        document.getElementById('forgotText').style.display = 'inline';
-        document.getElementById('forgotLoading').style.display = 'none';
+    document.getElementById('loginText').style.display = 'inline';
+    document.getElementById('loginLoading').style.display = 'none';
+}
+
+// Password Reset
+async function resetPassword() {
+    const email = document.getElementById('forgotEmail').value.trim();
+    if (!email) {
+        showAuthError('Enter your email');
+        return;
     }
+    
+    try {
+        await auth.sendPasswordResetEmail(email);
+        showToast('Password reset email sent! 📧');
+        switchAuthTab('login');
+    } catch (error) {
+        showAuthError(error.message);
+    }
+}
+
+// Logout
+function handleLogout() {
+    if (confirm('Are you sure you want to logout?')) {
+        auth.signOut();
+        currentUser = null;
+        localStorage.removeItem('streamx-current-user');
+        sessionStorage.removeItem('streamx-admin');
+        isAdminAuthenticated = false;
+        showAuthModal();
+        updateHeaderUI();
+    }
+}
+
+function showAuthError(message) {
+    const errorDiv = document.getElementById('authError');
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+}
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     async function changeResetCode() {
         const newResetCode = prompt('Enter new reset code (must start with r):');
